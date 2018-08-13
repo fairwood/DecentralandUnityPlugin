@@ -1,0 +1,15 @@
+import * as DCL from 'metaverse-api'
+
+// This is an interface, you can use it to enforce the types of your state
+export interface IState {
+  isDoorClosed: boolean
+}
+
+export default class UnityScene extends DCL.ScriptableScene<any, IState> {
+  async render() {
+
+    return (
+      {XML}
+    )
+  }
+}
