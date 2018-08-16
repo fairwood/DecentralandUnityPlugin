@@ -14,6 +14,12 @@ public class DclExporter : EditorWindow
 
     void OnGUI()
     {
+        var parcelCount = 16;
+
+		EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField(string.Format("Parcels({0})", parcelCount));
+        GUILayout.Button("Edit");
+        EditorGUILayout.EndHorizontal();
         if (GUILayout.Button("Hey")){
             GetSceneFileTemplate();
         }
