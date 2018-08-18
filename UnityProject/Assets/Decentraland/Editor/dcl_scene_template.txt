@@ -9,7 +9,7 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
   async render() {
 
     return (
-      {XML}
+{XML}
     )
   }
 }

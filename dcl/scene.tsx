@@ -7,19 +7,19 @@ export interface IState {
 
 export default class UnityScene extends DCL.ScriptableScene<any, IState> {
   async render() {
-    const doorRotation = {
-      x: 0,
-      y: this.state.isDoorClosed ? 0 : 90,
-      z: 0
-    }
 
     return (
-      <scene position={{ x: 5, y: 0, z: 5 }}>
-        <entity rotation={doorRotation} transition={{ rotation: { duration: 1000, timing: 'ease-in' } }}>
-          <box id="door" scale={{ x: 1, y: 2, z: 0.05 }} position={{ x: 0.5, y: 1, z: 0 }} color="#00FF00" />
-        </entity>
-        <box position={{ x: 2, y: 1, z: 0 }} scale={{ x: 2, y: 2, z: 0.05 }} color="#0000FF" />
-        <box position={{ x: -1, y: 1, z: 0 }} scale={{ x: 2, y: 2, z: 0.05 }} color="#00AAAA" />
+      <scene position={{x:5,y:0,z:5}}>
+        <entity position={{x:0,y:1,z:-10}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
+        <entity position={{x:0,y:3,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
+        <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
+        <box position={{x:0,y:1.601,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:340.3932,y:0,z:0}}>
+          <cylinder position={{x:1.73,y:-0.2600312,z:-0.273499}} scale={{x:1,y:1,z:1}} rotation={{x:1.008312,y:6.339324,z:341.9426}} radius={0.5}></cylinder>
+        </box>
+        <sphere position={{x:3.53,y:1.61,z:-0.273499}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></sphere>
+        <entity position={{x:-14.07,y:-0.2600312,z:7.6}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
+        <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
+        <plane position={{x:-2.531,y:1.340969,z:-0.273499}} scale={{x:1,y:1.4595,z:1}} rotation={{x:0,y:0,z:12.78434}}></plane>
       </scene>
     )
   }
