@@ -134,6 +134,8 @@ public class DclExporter : EditorWindow
 
     StringBuilder RecursivelyGetNodeXml(Transform tra, int indentLevel)
     {
+        if (!tra.gameObject.activeInHierarchy) return null;
+
         StringBuilder xmlNode = null;
         StringBuilder xmlNodeTail = null;
         var components = tra.GetComponents<Component>();

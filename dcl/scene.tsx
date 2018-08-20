@@ -11,15 +11,14 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
     return (
       <scene position={{x:5,y:0,z:5}}>
         <entity position={{x:0,y:1,z:-10}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <entity position={{x:0,y:3,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
+        <entity position={{x:6.13,y:6.46,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:45,y:270,z:0}}></entity>
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <box position={{x:0,y:1.601,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:340.3932,y:0,z:0}}>
-          <cylinder position={{x:1.73,y:-0.2600312,z:-0.273499}} scale={{x:1,y:1,z:1}} rotation={{x:1.008312,y:6.339324,z:341.9426}} radius={0.5}></cylinder>
+        <box position={{x:-1.45,y:1.601,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:340.3932,y:0,z:0}}>
+          <cylinder position={{x:2.72,y:0.07,z:-0.16}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} radius={0.5}></cylinder>
         </box>
-        <sphere position={{x:3.53,y:1.61,z:-0.273499}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></sphere>
+        <sphere position={{x:2.93,y:1.74,z:-0.273499}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></sphere>
         <entity position={{x:-14.07,y:-0.2600312,z:7.6}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <plane position={{x:-2.531,y:1.340969,z:-0.273499}} scale={{x:1,y:1.4595,z:1}} rotation={{x:0,y:0,z:12.78434}}></plane>
+        <sphere position={{x:2.93,y:1.74,z:-1.26}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></sphere>
       </scene>
     )
   }
