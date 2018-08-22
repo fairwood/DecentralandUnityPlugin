@@ -23,6 +23,23 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <sphere position={{ x: 1, y: 1, z: 2 }} scale={{ x: 1, y: 1, z: 1 }} color="#00AAAA"></sphere >
         <cylinder position={{ x: -1, y: 1, z: 3 }} scale={{ x: 1, y: 1, z: 1 }} color="#00AAAA"></cylinder >
         <plane position={{ x: -1, y: 1, z: -3 }} scale={{ x: 1, y: 1, z: 1 }} color="#00AA00"></plane >
+        <text value="TEST 1,2,3" position={{ x: -1.21, y: 0.253, z: -4.548 }} rotation={{ x: 0, y: 0, z: 0 }}></text>
+        <gltf-model
+          position={{ x: 4, y: 1, z: 4 }}
+          scale={0.5}
+          src="models/testscene001.gltf"
+        />
+        
+    <gltf-model
+      src="https://caza.la/decentraland-shoal-scene/bichi.gltf"
+      position={{ x:-4, y:1, z:-4 }}
+      scale={1}
+      transition={{
+        position: { duration: 200 },
+        rotation: { duration: 200 }
+      }}
+      skeletalAnimation={[{ clip: 'animation_0', playing: true, weight: 10 }]}
+    />
       </scene>
     )
   }

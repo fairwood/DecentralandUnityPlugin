@@ -205,6 +205,10 @@ public class DclExporter : EditorWindow
         StringBuilder xmlNodeTail = null;
         var components = tra.GetComponents<Component>();
         string nodeName = null;
+        var position = tra.localPosition;
+        var scale = tra.localScale;
+        var eulerAngles = tra.localEulerAngles;
+        string pColor = null;
         var extraProperties = new StringBuilder();
         foreach (var component in components)
         {
@@ -229,16 +233,44 @@ public class DclExporter : EditorWindow
                     nodeName = "cylinder";
                     extraProperties.Append(" radius={0.5}");
                 }
-
+                if (nodeName != null)
+                {
+                    //read color
+                    var rdrr = tra.GetComponent<MeshRenderer>();
+                    if (rdrr)
+                    {
+                        var matColor = rdrr.sharedMaterial.color;
+                        pColor = ToHexString(matColor);
+                    }
+                }
+            }
+            if (component is TextMesh)
+            {
+                nodeName = "text";
+                var tm = component as TextMesh;
+                extraProperties.AppendFormat(" value=\"{0}\"", tm.text);
+                scale *= tm.fontSize * 0.5f;
+                //extraProperties.AppendFormat(" fontS=\"{0}\"", 100);
+                pColor = ToHexString(tm.color);
+                var rdrr = tra.GetComponent<MeshRenderer>();
+                if (rdrr)
+                {
+                    var width = rdrr.bounds.extents.x * 2;
+                    extraProperties.AppendFormat(" width=\"{0}\"", width);
+                }
             }
         }
         if (nodeName == null)
         {
             nodeName = "entity";
         }
+        if (pColor != null)
+        {
+            extraProperties.AppendFormat(" color=\"{0}\"", pColor);
+        }
         xmlNode = new StringBuilder();
         AppendIndent(xmlNode, indentUnit, indentLevel);
-        xmlNode.AppendFormat("<{0} position={{{1}}} scale={{{2}}} rotation={{{3}}}{4}>", nodeName, Vector3ToJSONString(tra.localPosition), Vector3ToJSONString(tra.localScale), Vector3ToJSONString(tra.localEulerAngles), extraProperties);
+        xmlNode.AppendFormat("<{0} position={{{1}}} scale={{{2}}} rotation={{{3}}}{4}>", nodeName, Vector3ToJSONString(position), Vector3ToJSONString(scale), Vector3ToJSONString(eulerAngles), extraProperties);
         xmlNodeTail = new StringBuilder().AppendFormat("</{0}>\n", nodeName);
 
         var childrenXmls = new List<StringBuilder>();
@@ -367,6 +399,25 @@ public class DclExporter : EditorWindow
     public static string Vector3ToJSONString(Vector3 v)
     {
         return string.Format("{{x:{0},y:{1},z:{2}}}", v.x, v.y, v.z);
+    }
+
+    /// <summary>
+    /// Color to HEX string(e.g. #AAAAAA)
+    /// </summary>
+    private static string ToHexString(Color color)
+    {
+        var color256 = (Color32)color;
+        string R = Convert.ToString(color256.r, 16);
+        if (R == "0")
+            R = "00";
+        string G = Convert.ToString(color256.g, 16);
+        if (G == "0")
+            G = "00";
+        string B = Convert.ToString(color256.b, 16);
+        if (B == "0")
+            B = "00";
+        string HexColor = "#" + R + G + B;
+        return HexColor.ToUpper();
     }
 
     #endregion
