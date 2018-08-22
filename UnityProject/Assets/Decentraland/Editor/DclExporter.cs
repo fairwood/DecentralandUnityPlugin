@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -14,11 +15,6 @@ public class DclExporter : EditorWindow
         window.Show();
     }
 
-    public List<int[]> parcels = new List<int[]>
-    {
-        new int[] {30, -15},
-        new int[] {30, -16},
-    };
 
     public List<string> warnings = new List<string>
     {
@@ -29,25 +25,84 @@ public class DclExporter : EditorWindow
     };
 
     string exportPath = "";
+
+    private bool editParcelsMode = false;
+    private string editParcelsText;
     
     void OnGUI()
     {
+        #region Parcels
+
+        var parcels = DclSceneMeta.parcels;
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField(string.Format("Parcels({0})", parcels.Count));
-        GUILayout.Button("Edit");
-        EditorGUILayout.EndHorizontal();
-        //parcels
-        var sb = new StringBuilder();
-        if (parcels.Count > 0)
+        EditorGUILayout.LabelField(string.Format("Parcels({0})", parcels.Count), GUILayout.Width(100));
+        if (editParcelsMode)
         {
-            sb.Append(ParcelToStringBuilder(parcels[0]));
-            for (int i = 1; i < parcels.Count; i++)
+            if (GUILayout.Button("Save"))
             {
-                sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
+                try
+                {
+                    var newParcels = new List<int[]>();
+                    ParseTextToCoordinates(editParcelsText, newParcels);
+                    parcels = newParcels;
+                    DclSceneMeta.parcels = parcels;
+                    editParcelsMode = false;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e.Message);
+                    EditorUtility.DisplayDialog("Invalid Format", e.Message, "OK");
+                }
+                CheckDclSceneMetaObject();
+            }
+
+            if (GUILayout.Button("X", GUILayout.Width(20)))
+            {
+                editParcelsMode = false;
+                CheckDclSceneMetaObject();
             }
         }
+        else
+        {
+            if (GUILayout.Button("Edit"))
+            {
+                var sb = new StringBuilder();
+                if (parcels.Count > 0)
+                {
+                    sb.Append(ParcelToStringBuilder(parcels[0]));
+                    for (int i = 1; i < parcels.Count; i++)
+                    {
+                        sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
+                    }
+                }
+                editParcelsText = sb.ToString();
+                editParcelsMode = true;
+                CheckDclSceneMetaObject();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+        if (editParcelsMode)
+        {
+            editParcelsText = EditorGUILayout.TextArea(editParcelsText, GUILayout.Height(200));
+        }
+        else
+        {
+            var sb = new StringBuilder();
+            if (parcels.Count > 0)
+            {
+                sb.Append(ParcelToStringBuilder(parcels[0])).Append(" (base)");
+                for (int i = 1; i < parcels.Count; i++)
+                {
+                    sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
+                }
+            }
+            EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(200));
+        }
 
-        EditorGUILayout.TextArea(sb.ToString(), GUILayout.Height(200));
+
+        #endregion
+
+
         ShowWarningsSector();
         EditorGUILayout.LabelField("Export Path");
         exportPath = EditorGUILayout.TextField(exportPath);
@@ -58,13 +113,23 @@ public class DclExporter : EditorWindow
             Export();
         }
         GUI.backgroundColor = oriColor;
-    }
 
+
+
+        #region Parcel Gizmo
+
+//        Gizmos.DrawCube(Vector3.zero, new Vector3(10, 0.1f, 10));
+//        HandleUtility.Repaint();
+        
+
+        #endregion
+    }
+    
     void ShowWarningsSector()
     {
         var oriColor = GUI.contentColor;
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField(string.Format("Warnings({0})", parcels.Count));
+        EditorGUILayout.LabelField(string.Format("Warnings({0})", DclSceneMeta.parcels.Count), GUILayout.Width(100));
         GUILayout.Button("Refresh");
         EditorGUILayout.EndHorizontal();
         var sb = new StringBuilder();
@@ -228,6 +293,29 @@ public class DclExporter : EditorWindow
         return sb;
     }
 
+    static void CheckDclSceneMetaObject()
+    {
+        var rootGameObjects = new List<GameObject>();
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            var roots = SceneManager.GetSceneAt(i).GetRootGameObjects();
+            rootGameObjects.AddRange(roots);
+        }
+        foreach (var go in rootGameObjects)
+        {
+            if (go.name == ".dcl")
+            {
+                if (!go.GetComponent<DclSceneMeta>())
+                {
+                    go.AddComponent<DclSceneMeta>();
+                }
+                return;
+            }
+        }
+        //Did not find .dcl object. Create one.
+        new GameObject(".dcl", typeof(DclSceneMeta));
+    }
+
     void Export()
     {
         if (string.IsNullOrEmpty(exportPath))
@@ -246,6 +334,25 @@ public class DclExporter : EditorWindow
     }
 
     #region Utils
+
+    public static void ParseTextToCoordinates(string text, List<int[]> coordinates)
+    {
+        coordinates.Clear();
+        var lines = text.Replace("\r", "").Split('\n');
+        foreach (var line in lines)
+        {
+            var elements = line.Trim().Split(',');
+            if (elements.Length == 0) continue;
+            if (elements.Length != 2)
+            {
+                throw new Exception("A line does not have exactly 2 elements!");
+            }
+
+            var x = int.Parse(elements[0]);
+            var y = int.Parse(elements[1]);
+            coordinates.Add(new[] {x, y});
+        }
+    }
 
     public static StringBuilder ParcelToStringBuilder(int[] parcel)
     {
