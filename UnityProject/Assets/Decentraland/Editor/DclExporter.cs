@@ -256,7 +256,7 @@ public class DclExporter : EditorWindow
                 if (rdrr)
                 {
                     var width = rdrr.bounds.extents.x * 2;
-                    extraProperties.AppendFormat(" width=\"{0}\"", width);
+                    extraProperties.AppendFormat(" width={{{0}}}", width);
                 }
             }
         }
