@@ -435,6 +435,8 @@ public class DclExporter : EditorWindow
 
         filePath = Path.Combine(exportPath, "scene.json");
         File.WriteAllText(filePath, fileTxt);
+
+        Debug.Log("===Export Complete===");
     }
     
     #region Utils
