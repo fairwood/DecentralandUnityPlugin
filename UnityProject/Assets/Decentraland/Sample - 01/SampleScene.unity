@@ -309,6 +309,7 @@ MonoBehaviour:
     y: -11
   - x: 58
     y: -11
+  exportPath: D:\GitHub\DecentralandUnityPlugin\dcl
 --- !u!1 &369451209
 GameObject:
   m_ObjectHideFlags: 0

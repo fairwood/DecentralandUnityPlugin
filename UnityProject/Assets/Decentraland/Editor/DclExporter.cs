@@ -25,9 +25,7 @@ public class DclExporter : EditorWindow
         "Too large texture! at (12,-32)",
         "Unsupported shader! at (12,-32)"
     };
-
-    string exportPath = "";
-
+    
     private bool editParcelsMode;
     private string editParcelsText;
     
@@ -116,7 +114,13 @@ public class DclExporter : EditorWindow
 
         ShowWarningsSector();
         EditorGUILayout.LabelField("Export Path");
-        exportPath = EditorGUILayout.TextField(exportPath);
+        var newExportPath = EditorGUILayout.TextField(sceneMeta.exportPath);
+        if (newExportPath != sceneMeta.exportPath)
+        {
+            sceneMeta.exportPath = newExportPath;
+            EditorUtility.SetDirty(sceneMeta);
+            EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
+        }
         var oriColor = GUI.backgroundColor;
         GUI.backgroundColor = Color.green;
         if (GUILayout.Button("Export"))
@@ -124,8 +128,7 @@ public class DclExporter : EditorWindow
             Export();
         }
         GUI.backgroundColor = oriColor;
-
-
+        
 
         #region Parcel Gizmo
 
@@ -405,6 +408,7 @@ public class DclExporter : EditorWindow
 
     void Export()
     {
+        var exportPath = sceneMeta.exportPath;
         if (string.IsNullOrEmpty(exportPath))
         {
             EditorUtility.DisplayDialog("NO Path!", "You must assign the export path!", null, "OK");
@@ -432,7 +436,7 @@ public class DclExporter : EditorWindow
         filePath = Path.Combine(exportPath, "scene.json");
         File.WriteAllText(filePath, fileTxt);
     }
-
+    
     #region Utils
 
     public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)

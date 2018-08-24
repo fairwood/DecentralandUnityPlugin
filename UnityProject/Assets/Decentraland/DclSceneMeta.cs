@@ -12,6 +12,8 @@ public class DclSceneMeta : MonoBehaviour
         new ParcelCoordinates(30, -16),
     };
 
+    [SerializeField] [HideInInspector] public string exportPath;
+
     void OnDrawGizmos()
     {
         if (parcels.Count > 0)
