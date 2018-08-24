@@ -78,6 +78,8 @@ Click "Export" Button to export. If it succeeds, a log will be outputted to the 
 
 ### Support from Decentraland Team
 
+Ari Meilich
+
 [Esteban Ordano](https://github.com/eordano)
 
 Matias Bargas
