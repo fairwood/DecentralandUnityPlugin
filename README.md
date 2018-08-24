@@ -2,11 +2,23 @@
 
 ## Supported Elements
 
+* Box
 
+* Sphere
+
+* Quad (will be exported as two-face planes)
+
+* Cylinder
+
+* TextMesh (custom font is not supported)
+
+* so far, only the diffuse color of the default material is supported.
+
+**Note: Sphere and Cylinder have a lot of triangles that will exceed dcl limit, so use them carefully.**
 
 ## Installation Guide
 
-You should prepare on your own:
+You should prepare these tools on your own:
 
 1. [dcl SDK](https://docs.decentraland.org/documentation/installation-guide/)
 
@@ -31,6 +43,7 @@ Click the "Scene Exporter" will open the exporter.
 **Note:** an auto-generated GameObject called ".dcl" will be created in the hierarchy. Don't touch it.
 
 You can create a new scene or open the sample scene:
+
 ![Exporter UI](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/samplescene.jpg)
 
 The exporter looks like this:
@@ -62,9 +75,13 @@ Click "Export" Button to export. If it succeeds, a log will be outputted to the 
 
 
 ## Thanks
+
 ### Test Users
+
 时光倒流
+
 不异
+
 
 
 
