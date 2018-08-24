@@ -9,10 +9,9 @@
   },
   "scene": {
     "parcels": [
-      "57,-11",
-      "58,-11"
+{PARCELS}
     ],
-    "base": "57,-11"
+    "base": {BASE}
   },
   "communications": {
     "type": "webrtc",

@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 public class DclSceneMeta : MonoBehaviour
 {
-    public static List<int[]> parcels = new List<int[]>
+    [SerializeField][HideInInspector]
+    public List<ParcelCoordinates> parcels = new List<ParcelCoordinates>
     {
-        new int[] {30, -15},
-        new int[] {30, -16},
+        new ParcelCoordinates(30, -15),
+        new ParcelCoordinates(30, -16),
     };
 
     void OnDrawGizmos()
@@ -18,9 +20,21 @@ public class DclSceneMeta : MonoBehaviour
 //            Gizmos.color = new Color(0.7, 0);
             foreach (var parcel in parcels)
             {
-                var pos = new Vector3((parcel[0] - baseParcel[0]) * 10, 0, (parcel[1] - baseParcel[1]) * 10);
+                var pos = new Vector3((parcel.x - baseParcel.x) * 10, 0, (parcel.y - baseParcel.y) * 10);
                 Gizmos.DrawCube(pos, new Vector3(10, 0f, 10));
             }
         }
     }
+}
+
+[Serializable]
+public struct ParcelCoordinates
+{
+    public ParcelCoordinates(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    public int x;
+    public int y;
 }

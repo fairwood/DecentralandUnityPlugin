@@ -1,10 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEditor;
 
 public class DclExporter : EditorWindow
 {
@@ -15,37 +16,44 @@ public class DclExporter : EditorWindow
         window.Show();
     }
 
+    private DclSceneMeta sceneMeta;
 
     public List<string> warnings = new List<string>
     {
         "Out of land range! at (12,-32)",
         "Too many triangles! at (12,-32)",
         "Too large texture! at (12,-32)",
-        "Unsupported shader! at (12,-32)",
+        "Unsupported shader! at (12,-32)"
     };
 
     string exportPath = "";
 
-    private bool editParcelsMode = false;
+    private bool editParcelsMode;
     private string editParcelsText;
     
     void OnGUI()
     {
+        if (!sceneMeta)
+        {
+            CheckAndGetDclSceneMetaObject();
+        }
+
         #region Parcels
 
-        var parcels = DclSceneMeta.parcels;
+        var parcels = sceneMeta.parcels;
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField(string.Format("Parcels({0})", parcels.Count), GUILayout.Width(100));
         if (editParcelsMode)
         {
             if (GUILayout.Button("Save"))
             {
+                CheckAndGetDclSceneMetaObject();
                 try
                 {
-                    var newParcels = new List<int[]>();
+                    var newParcels = new List<ParcelCoordinates>();
                     ParseTextToCoordinates(editParcelsText, newParcels);
                     parcels = newParcels;
-                    DclSceneMeta.parcels = parcels;
+                    sceneMeta.parcels = parcels;
                     editParcelsMode = false;
                 }
                 catch (Exception e)
@@ -53,13 +61,16 @@ public class DclExporter : EditorWindow
                     Debug.LogError(e.Message);
                     EditorUtility.DisplayDialog("Invalid Format", e.Message, "OK");
                 }
-                CheckDclSceneMetaObject();
+
+                EditorUtility.SetDirty(sceneMeta);
+                EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
+
             }
 
             if (GUILayout.Button("X", GUILayout.Width(20)))
             {
                 editParcelsMode = false;
-                CheckDclSceneMetaObject();
+                CheckAndGetDclSceneMetaObject();
             }
         }
         else
@@ -77,7 +88,7 @@ public class DclExporter : EditorWindow
                 }
                 editParcelsText = sb.ToString();
                 editParcelsMode = true;
-                CheckDclSceneMetaObject();
+                CheckAndGetDclSceneMetaObject();
             }
         }
         EditorGUILayout.EndHorizontal();
@@ -129,7 +140,7 @@ public class DclExporter : EditorWindow
     {
         var oriColor = GUI.contentColor;
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField(string.Format("Warnings({0})", DclSceneMeta.parcels.Count), GUILayout.Width(100));
+        EditorGUILayout.LabelField(string.Format("Warnings({0})", sceneMeta.parcels.Count), GUILayout.Width(100));
         GUILayout.Button("Refresh");
         EditorGUILayout.EndHorizontal();
         var sb = new StringBuilder();
@@ -172,6 +183,27 @@ public class DclExporter : EditorWindow
         return template.text;
     }
 
+    string GetSceneJsonFileTemplate()
+    {
+        var guids = AssetDatabase.FindAssets("dcl_scene_json_template");
+        if (guids.Length <= 0)
+        {
+            if (EditorUtility.DisplayDialog("Cannot find dcl_scene_json_template.txt in the project!",
+                "Please re-install Decentraland Unity Plugin asset to fix this problem.", "Re-install", "Back"))
+            {
+                //TODO:
+            }
+
+            return null;
+        }
+
+        var path = AssetDatabase.GUIDToAssetPath(guids[0]);
+        Debug.Log("Path:" + path);
+        var template = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
+        Debug.Log("Txt:" + template.text);
+        return template.text;
+    }
+
     const string indentUnit = "  ";
 
     string GetSceneXml()
@@ -195,6 +227,26 @@ public class DclExporter : EditorWindow
         sceneXml.Append("</scene>");
 
         return sceneXml.ToString();
+    }
+
+    string GetParcelsString()
+    {
+        /*
+      "30,-15",
+      "30,-16",
+      "31,-15"*/
+        var sb = new StringBuilder();
+        if (sceneMeta.parcels.Count > 0)
+        {
+            AppendIndent(sb, indentUnit, 3).Append(ParcelToString(sceneMeta.parcels[0]));
+            for (var i = 1; i < sceneMeta.parcels.Count; i++)
+            {
+                sb.Append(",\n");
+                AppendIndent(sb, indentUnit, 3).Append(ParcelToString(sceneMeta.parcels[i]));
+            }
+        }
+
+        return sb.ToString();
     }
 
     StringBuilder RecursivelyGetNodeXml(Transform tra, int indentLevel)
@@ -288,32 +340,26 @@ public class DclExporter : EditorWindow
             {
                 return null;
             }
-            else
-            {
-                return xmlNode.Append(xmlNodeTail);
-            }
+
+            return xmlNode.Append(xmlNodeTail);
         }
-        else
+
+        if (xmlNode == null)
         {
-            if (xmlNode == null)
+            foreach (var childXml in childrenXmls)
             {
-                foreach (var childXml in childrenXmls)
-                {
-                    xmlNode.Append(childXml);
-                }
-                return xmlNode.Append(xmlNodeTail);
+                xmlNode.Append(childXml);
             }
-            else
-            {
-                xmlNode.Append("\n");
-                foreach (var childXml in childrenXmls)
-                {
-                    xmlNode.Append(childXml);
-                }
-                AppendIndent(xmlNode, indentUnit, indentLevel);
-                return xmlNode.Append(xmlNodeTail);
-            }
+            return xmlNode.Append(xmlNodeTail);
         }
+
+        xmlNode.Append("\n");
+        foreach (var childXml in childrenXmls)
+        {
+            xmlNode.Append(childXml);
+        }
+        AppendIndent(xmlNode, indentUnit, indentLevel);
+        return xmlNode.Append(xmlNodeTail);
     }
 
     static StringBuilder AppendIndent(StringBuilder sb, string indentUnit, int indentLevel)
@@ -325,7 +371,7 @@ public class DclExporter : EditorWindow
         return sb;
     }
 
-    static void CheckDclSceneMetaObject()
+    void CheckAndGetDclSceneMetaObject()
     {
         var rootGameObjects = new List<GameObject>();
         for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -333,19 +379,28 @@ public class DclExporter : EditorWindow
             var roots = SceneManager.GetSceneAt(i).GetRootGameObjects();
             rootGameObjects.AddRange(roots);
         }
+
         foreach (var go in rootGameObjects)
         {
             if (go.name == ".dcl")
             {
-                if (!go.GetComponent<DclSceneMeta>())
+                sceneMeta = go.GetComponent<DclSceneMeta>();
+                if (!sceneMeta)
                 {
-                    go.AddComponent<DclSceneMeta>();
+                    sceneMeta = go.AddComponent<DclSceneMeta>();
+                    EditorUtility.SetDirty(sceneMeta);
+                    EditorSceneManager.MarkSceneDirty(go.scene);
                 }
+
                 return;
             }
         }
+
         //Did not find .dcl object. Create one.
-        new GameObject(".dcl", typeof(DclSceneMeta));
+        var o = new GameObject(".dcl");
+        sceneMeta = o.AddComponent<DclSceneMeta>();
+        EditorUtility.SetDirty(sceneMeta);
+        EditorSceneManager.MarkSceneDirty(o.scene);
     }
 
     void Export()
@@ -356,18 +411,31 @@ public class DclExporter : EditorWindow
             return;
         }
 
+        if (!Directory.Exists(exportPath)) Directory.CreateDirectory("exportPath");
+
+        //scene.tsx
         var fileTxt = GetSceneFileTemplate();
         var sceneXml = GetSceneXml();
         fileTxt = fileTxt.Replace("{XML}", sceneXml);
-
-        if (!Directory.Exists(exportPath)) Directory.CreateDirectory("exportPath");
         var filePath = Path.Combine(exportPath, "scene.tsx");
+        File.WriteAllText(filePath, fileTxt);
+
+        //scene.json
+        fileTxt = GetSceneJsonFileTemplate();
+        var parcelsString = GetParcelsString();
+        fileTxt = fileTxt.Replace("{PARCELS}", parcelsString);
+        if (sceneMeta.parcels.Count > 0)
+        {
+            fileTxt = fileTxt.Replace("{BASE}", ParcelToString(sceneMeta.parcels[0]));
+        }
+
+        filePath = Path.Combine(exportPath, "scene.json");
         File.WriteAllText(filePath, fileTxt);
     }
 
     #region Utils
 
-    public static void ParseTextToCoordinates(string text, List<int[]> coordinates)
+    public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
     {
         coordinates.Clear();
         var lines = text.Replace("\r", "").Split('\n');
@@ -382,13 +450,13 @@ public class DclExporter : EditorWindow
 
             var x = int.Parse(elements[0]);
             var y = int.Parse(elements[1]);
-            coordinates.Add(new[] {x, y});
+            coordinates.Add(new ParcelCoordinates(x,y));
         }
     }
 
-    public static StringBuilder ParcelToStringBuilder(int[] parcel)
+    public static StringBuilder ParcelToStringBuilder(ParcelCoordinates parcel)
     {
-        return new StringBuilder().Append(parcel[0]).Append(',').Append(parcel[1]);
+        return new StringBuilder().Append(parcel.x).Append(',').Append(parcel.y);
     }
 
     public static StringBuilder WarningToStringBuilder(string warning)
@@ -418,6 +486,11 @@ public class DclExporter : EditorWindow
             B = "00";
         string HexColor = "#" + R + G + B;
         return HexColor.ToUpper();
+    }
+
+    public static string ParcelToString(ParcelCoordinates parcel)
+    {
+        return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
     }
 
     #endregion
