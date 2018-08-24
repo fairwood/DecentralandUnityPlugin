@@ -20,10 +20,10 @@ public class DclExporter : EditorWindow
 
     public List<string> warnings = new List<string>
     {
-        "Out of land range! at (12,-32)",
-        "Too many triangles! at (12,-32)",
-        "Too large texture! at (12,-32)",
-        "Unsupported shader! at (12,-32)"
+//        "Out of land range! at (12,-32)",
+//        "Too many triangles! at (12,-32)",
+//        "Too large texture! at (12,-32)",
+//        "Unsupported shader! at (12,-32)"
     };
     
     private bool editParcelsMode;
@@ -143,7 +143,7 @@ public class DclExporter : EditorWindow
     {
         var oriColor = GUI.contentColor;
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField(string.Format("Warnings({0})", sceneMeta.parcels.Count), GUILayout.Width(100));
+        EditorGUILayout.LabelField(string.Format("Warnings({0})", warnings.Count), GUILayout.Width(100));
         GUILayout.Button("Refresh");
         EditorGUILayout.EndHorizontal();
         var sb = new StringBuilder();
