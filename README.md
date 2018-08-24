@@ -76,13 +76,23 @@ Click "Export" Button to export. If it succeeds, a log will be outputted to the 
 
 ## Thanks
 
+### Support from Decentraland Team
+
+[Esteban Ordano](https://github.com/eordano)
+
+Matias Bargas
+
+Chris Chapman
+
+Jayson Hu
+
+Diff
+
 ### Test Users
 
 时光倒流
 
 不异
-
-
 
 
 ## （以下未完成）
