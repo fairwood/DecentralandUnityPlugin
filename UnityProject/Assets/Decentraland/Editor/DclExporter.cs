@@ -171,7 +171,7 @@ namespace Dcl
         void InfoGUI()
         {
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Infomation", EditorStyles.boldLabel, GUILayout.Width(100));
+            GUILayout.Label("Statistics", EditorStyles.boldLabel, GUILayout.Width(100));
             if (GUILayout.Button("Refresh"))
             {
                 sceneStatistics = new SceneStatistics();
