@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[ExecuteInEditMode]
 public class DclSceneMeta : MonoBehaviour
 {
     [SerializeField][HideInInspector]
@@ -13,6 +14,27 @@ public class DclSceneMeta : MonoBehaviour
     };
 
     [SerializeField] [HideInInspector] public string exportPath;
+    [SerializeField] [HideInInspector] public string ethAddress;
+    [SerializeField] [HideInInspector] public string contactName;
+    [SerializeField] [HideInInspector] public string email;
+
+    public SceneToGlTFWiz sceneToGlTFWiz;
+
+    private void Awake()
+    {
+        sceneToGlTFWiz = GetComponent<SceneToGlTFWiz>();
+        if (!sceneToGlTFWiz) sceneToGlTFWiz = gameObject.AddComponent<SceneToGlTFWiz>();
+    }
+
+    private float nextTimeRefreshWarning = 0;
+    private void Update()
+    {
+        if (Time.time > nextTimeRefreshWarning)
+        {
+
+            nextTimeRefreshWarning = Time.time + 2;
+        }
+    }
 
     void OnDrawGizmos()
     {

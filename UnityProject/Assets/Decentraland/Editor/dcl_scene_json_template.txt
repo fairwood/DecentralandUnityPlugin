@@ -2,10 +2,10 @@
   "display": {
     "title": "USample"
   },
-  "owner": "",
+  "owner": "{ETH_ADDRESS}",
   "contact": {
-    "name": "",
-    "email": ""
+    "name": "{CONTACT_NAME}",
+    "email": "{CONTACT_EMAIL}"
   },
   "scene": {
     "parcels": [
