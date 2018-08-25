@@ -2,502 +2,439 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DclExporter : EditorWindow
+namespace Dcl
 {
-    [MenuItem("Decentraland/Scene Exporter")]
-    static void Init()
+    public class DclExporter : EditorWindow
     {
-        var window = (DclExporter) GetWindow(typeof(DclExporter));
-        window.Show();
-    }
+        const int SPACE_SIZE = 5;
 
-    private DclSceneMeta sceneMeta;
-
-    public List<string> warnings = new List<string>
-    {
-//        "Out of land range! at (12,-32)",
-//        "Too many triangles! at (12,-32)",
-//        "Too large texture! at (12,-32)",
-//        "Unsupported shader! at (12,-32)"
-    };
-    
-    private bool editParcelsMode;
-    private string editParcelsText;
-    
-    void OnGUI()
-    {
-        if (!sceneMeta)
+        [MenuItem("Decentraland/Scene Exporter")]
+        static void Init()
         {
-            CheckAndGetDclSceneMetaObject();
+            var window = (DclExporter)GetWindow(typeof(DclExporter));
+            window.Show();
+            window.minSize = new Vector2(100, 200);
         }
 
-        #region Parcels
+        private DclSceneMeta sceneMeta;
 
-        var parcels = sceneMeta.parcels;
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField(string.Format("Parcels({0})", parcels.Count), GUILayout.Width(100));
-        if (editParcelsMode)
+        public List<string> warnings = new List<string>
         {
-            if (GUILayout.Button("Save"))
+            //        "Out of land range! at (12,-32)",
+            //        "Too many triangles! at (12,-32)",
+            //        "Too large texture! at (12,-32)",
+            //        "Unsupported shader! at (12,-32)"
+        };
+
+        private bool editParcelsMode;
+        private string editParcelsText;
+
+        void OnGUI()
+        {
+            if (!sceneMeta)
             {
                 CheckAndGetDclSceneMetaObject();
-                try
+            }
+
+            #region Parcels
+
+            var parcels = sceneMeta.parcels;
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label(string.Format("Parcels({0})", parcels.Count), EditorStyles.boldLabel, GUILayout.Width(100));
+            if (editParcelsMode)
+            {
+                if (GUILayout.Button("Save"))
                 {
-                    var newParcels = new List<ParcelCoordinates>();
-                    ParseTextToCoordinates(editParcelsText, newParcels);
-                    parcels = newParcels;
-                    sceneMeta.parcels = parcels;
+                    CheckAndGetDclSceneMetaObject();
+                    try
+                    {
+                        var newParcels = new List<ParcelCoordinates>();
+                        ParseTextToCoordinates(editParcelsText, newParcels);
+                        parcels = newParcels;
+                        sceneMeta.parcels = parcels;
+                        editParcelsMode = false;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                        EditorUtility.DisplayDialog("Invalid Format", e.Message, "OK");
+                    }
+
+                    EditorUtility.SetDirty(sceneMeta);
+                    EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
+
+                }
+
+                if (GUILayout.Button("X", GUILayout.Width(20)))
+                {
                     editParcelsMode = false;
+                    CheckAndGetDclSceneMetaObject();
                 }
-                catch (Exception e)
-                {
-                    Debug.LogError(e.Message);
-                    EditorUtility.DisplayDialog("Invalid Format", e.Message, "OK");
-                }
-
-                EditorUtility.SetDirty(sceneMeta);
-                EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
-
             }
-
-            if (GUILayout.Button("X", GUILayout.Width(20)))
+            else
             {
-                editParcelsMode = false;
-                CheckAndGetDclSceneMetaObject();
+                if (GUILayout.Button("Edit"))
+                {
+                    var sb = new StringBuilder();
+                    if (parcels.Count > 0)
+                    {
+                        sb.Append(ParcelToStringBuilder(parcels[0]));
+                        for (int i = 1; i < parcels.Count; i++)
+                        {
+                            sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
+                        }
+                    }
+                    editParcelsText = sb.ToString();
+                    editParcelsMode = true;
+                    CheckAndGetDclSceneMetaObject();
+                }
             }
-        }
-        else
-        {
-            if (GUILayout.Button("Edit"))
+            EditorGUILayout.EndHorizontal();
+            if (editParcelsMode)
+            {
+                editParcelsText = EditorGUILayout.TextArea(editParcelsText, GUILayout.Height(200));
+            }
+            else
             {
                 var sb = new StringBuilder();
                 if (parcels.Count > 0)
                 {
-                    sb.Append(ParcelToStringBuilder(parcels[0]));
+                    sb.Append(ParcelToStringBuilder(parcels[0])).Append(" (base)");
                     for (int i = 1; i < parcels.Count; i++)
                     {
                         sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
                     }
                 }
-                editParcelsText = sb.ToString();
-                editParcelsMode = true;
-                CheckAndGetDclSceneMetaObject();
+                EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(200));
             }
+
+
+            #endregion
+
+            InfoGUI();
+            GUILayout.Space(SPACE_SIZE);
+
+            ShowWarningsSector();
+            GUILayout.Space(SPACE_SIZE);
+
+            EditorGUI.BeginChangeCheck();
+
+            OptionsGUI();
+            GUILayout.Space(SPACE_SIZE);
+
+            GUILayout.Label("Owner Info(optional)", EditorStyles.boldLabel);
+            sceneMeta.ethAddress = EditorGUILayout.TextField("Address", sceneMeta.ethAddress);
+            sceneMeta.contactName = EditorGUILayout.TextField("Name", sceneMeta.contactName);
+            sceneMeta.email = EditorGUILayout.TextField("Email", sceneMeta.email);
+
+            GUILayout.Label("Export Path", EditorStyles.boldLabel);
+            sceneMeta.exportPath = EditorGUILayout.TextField(sceneMeta.exportPath);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                EditorUtility.SetDirty(sceneMeta);
+                EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
+            }
+
+            GUILayout.Space(SPACE_SIZE);
+
+            GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
+            var oriColor = GUI.backgroundColor;
+            GUI.backgroundColor = Color.green;
+            if (GUILayout.Button("Export", GUILayout.Width(220), GUILayout.Height(32)))
+            {
+                Export();
+            }
+            GUI.backgroundColor = oriColor;
+            GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
+
+            GUILayout.Space(SPACE_SIZE * 2);
+
+            #region Help Link
+
+            string url = "https://github.com/fairwood/DecentralandUnityPlugin";
+            if (GUILayout.Button("Document: " + url, EditorStyles.helpBox))
+            {
+                Application.OpenURL(url);
+            }
+
+            #endregion
         }
-        EditorGUILayout.EndHorizontal();
-        if (editParcelsMode)
+
+        SceneStatistics sceneStatistics = new SceneStatistics();
+        void InfoGUI()
         {
-            editParcelsText = EditorGUILayout.TextArea(editParcelsText, GUILayout.Height(200));
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Infomation", EditorStyles.boldLabel, GUILayout.Width(100));
+            if (GUILayout.Button("Refresh"))
+            {
+                sceneStatistics = new SceneStatistics();
+                SceneTraverser.TraverseAllScene(null, null, sceneStatistics);
+            }
+            EditorGUILayout.EndHorizontal();
+            GUILayout.Label("Keep these numbers smaller than the right", EditorStyles.centeredGreyMiniLabel);
+            var n = sceneMeta.parcels.Count;
+            EditorGUILayout.LabelField("Triangles", string.Format("{0} / {1}", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n)));
+            EditorGUILayout.LabelField("Entities", string.Format("{0} / {1}", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n)));
+            EditorGUILayout.LabelField("Bodies", string.Format("{0} / {1}", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n)));
+            EditorGUILayout.LabelField("Height", string.Format("{0} / {1}", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n)));
         }
-        else
+
+        void ShowWarningsSector()
         {
+            var oriColor = GUI.contentColor;
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label(string.Format("Warnings({0})", warnings.Count));
+            EditorGUILayout.EndHorizontal();
             var sb = new StringBuilder();
-            if (parcels.Count > 0)
+            if (warnings.Count > 0)
             {
-                sb.Append(ParcelToStringBuilder(parcels[0])).Append(" (base)");
-                for (int i = 1; i < parcels.Count; i++)
+                GUILayout.Label("Click the warning to focus in the scene", EditorStyles.centeredGreyMiniLabel);
+
+                sb.Append(WarningToStringBuilder(warnings[0]));
+                for (int i = 1; i < warnings.Count; i++)
                 {
-                    sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
+                    sb.Append('\n').Append(WarningToStringBuilder(warnings[i]));
                 }
             }
+
+            GUI.contentColor = new Color(1, 1f, 0f);
             EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(200));
+
+            GUI.contentColor = oriColor;
         }
 
-
-        #endregion
-
-
-        ShowWarningsSector();
-        EditorGUILayout.LabelField("Export Path");
-        var newExportPath = EditorGUILayout.TextField(sceneMeta.exportPath);
-        if (newExportPath != sceneMeta.exportPath)
+        void OptionsGUI()
         {
-            sceneMeta.exportPath = newExportPath;
-            EditorUtility.SetDirty(sceneMeta);
-            EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
+            GUILayout.Label("Options", EditorStyles.boldLabel);
+            //mExportPBR = EditorGUILayout.Toggle("Export PBR Material", mExportPBR);
+            //mExportAnimation = EditorGUILayout.Toggle("Export animation (beta)", mExportAnimation);
+            //mConvertImage = EditorGUILayout.Toggle("Convert Images", mConvertImage);
+            //mBuildZip = EditorGUILayout.Toggle("Build Zip", mBuildZip);
         }
-        var oriColor = GUI.backgroundColor;
-        GUI.backgroundColor = Color.green;
-        if (GUILayout.Button("Export"))
+
+        string GetSceneFileTemplate()
         {
-            Export();
-        }
-        GUI.backgroundColor = oriColor;
-        
-
-        #region Parcel Gizmo
-
-//        Gizmos.DrawCube(Vector3.zero, new Vector3(10, 0.1f, 10));
-//        HandleUtility.Repaint();
-        
-
-        #endregion
-    }
-    
-    void ShowWarningsSector()
-    {
-        var oriColor = GUI.contentColor;
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField(string.Format("Warnings({0})", warnings.Count), GUILayout.Width(100));
-        GUILayout.Button("Refresh");
-        EditorGUILayout.EndHorizontal();
-        var sb = new StringBuilder();
-        if (warnings.Count > 0)
-        {
-            GUI.contentColor = new Color(0.8f, 0.8f, 0.8f);
-            EditorGUILayout.LabelField("Click the warning to focus in the scene");
-
-            sb.Append(WarningToStringBuilder(warnings[0]));
-            for (int i = 1; i < warnings.Count; i++)
+            var guids = AssetDatabase.FindAssets("dcl_scene_template");
+            if (guids.Length <= 0)
             {
-                sb.Append('\n').Append(WarningToStringBuilder(warnings[i]));
-            }
-        }
-
-        GUI.contentColor = new Color(1, 1f, 0f);
-        EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(200));
-
-        GUI.contentColor = oriColor;
-    }
-
-    string GetSceneFileTemplate()
-    {
-        var guids = AssetDatabase.FindAssets("dcl_scene_template");
-        if (guids.Length <= 0)
-        {
-            if (EditorUtility.DisplayDialog("Cannot find dcl_scene_template.txt in the project!",
-                "Please re-install Decentraland Unity Plugin asset to fix this problem.", "Re-install", "Back"))
-            {
-                //TODO:
-            }
-
-            return null;
-        }
-
-        var path = AssetDatabase.GUIDToAssetPath(guids[0]);
-        Debug.Log("Path:" + path);
-        var template = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
-        Debug.Log("Txt:" + template.text);
-        return template.text;
-    }
-
-    string GetSceneJsonFileTemplate()
-    {
-        var guids = AssetDatabase.FindAssets("dcl_scene_json_template");
-        if (guids.Length <= 0)
-        {
-            if (EditorUtility.DisplayDialog("Cannot find dcl_scene_json_template.txt in the project!",
-                "Please re-install Decentraland Unity Plugin asset to fix this problem.", "Re-install", "Back"))
-            {
-                //TODO:
-            }
-
-            return null;
-        }
-
-        var path = AssetDatabase.GUIDToAssetPath(guids[0]);
-        Debug.Log("Path:" + path);
-        var template = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
-        Debug.Log("Txt:" + template.text);
-        return template.text;
-    }
-
-    const string indentUnit = "  ";
-
-    string GetSceneXml()
-    {
-        var rootGameObjects = new List<GameObject>();
-        for (int i = 0; i < SceneManager.sceneCount; i++)
-        {
-            var roots = SceneManager.GetSceneAt(i).GetRootGameObjects();
-            rootGameObjects.AddRange(roots);
-        }
-
-
-        var sceneXml = new StringBuilder();
-        AppendIndent(sceneXml, indentUnit, 3);
-        sceneXml.AppendFormat("<scene position={{{0}}}>\n", Vector3ToJSONString(new Vector3(5, 0, 5)));
-        foreach (var rootGO in rootGameObjects)
-        {
-            sceneXml.Append(RecursivelyGetNodeXml(rootGO.transform, 4));
-        }
-        AppendIndent(sceneXml, indentUnit, 3);
-        sceneXml.Append("</scene>");
-
-        return sceneXml.ToString();
-    }
-
-    string GetParcelsString()
-    {
-        /*
-      "30,-15",
-      "30,-16",
-      "31,-15"*/
-        var sb = new StringBuilder();
-        if (sceneMeta.parcels.Count > 0)
-        {
-            AppendIndent(sb, indentUnit, 3).Append(ParcelToString(sceneMeta.parcels[0]));
-            for (var i = 1; i < sceneMeta.parcels.Count; i++)
-            {
-                sb.Append(",\n");
-                AppendIndent(sb, indentUnit, 3).Append(ParcelToString(sceneMeta.parcels[i]));
-            }
-        }
-
-        return sb.ToString();
-    }
-
-    StringBuilder RecursivelyGetNodeXml(Transform tra, int indentLevel)
-    {
-        if (!tra.gameObject.activeInHierarchy) return null;
-
-        StringBuilder xmlNode = null;
-        StringBuilder xmlNodeTail = null;
-        var components = tra.GetComponents<Component>();
-        string nodeName = null;
-        var position = tra.localPosition;
-        var scale = tra.localScale;
-        var eulerAngles = tra.localEulerAngles;
-        string pColor = null;
-        var extraProperties = new StringBuilder();
-        foreach (var component in components)
-        {
-            if (component is Transform) continue;
-            if (component is MeshFilter)
-            {
-                var meshFilter = component as MeshFilter;
-                if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube))
+                if (EditorUtility.DisplayDialog("Cannot find dcl_scene_template.txt in the project!",
+                    "Please re-install Decentraland Unity Plugin asset to fix this problem.", "Re-install", "Back"))
                 {
-                    nodeName = "box";
+                    //TODO:
                 }
-                else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Sphere))
-                {
-                    nodeName = "sphere";
-                }
-                else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Quad))
-                {
-                    nodeName = "plane";
-                }
-                else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cylinder))
-                {
-                    nodeName = "cylinder";
-                    extraProperties.Append(" radius={0.5}");
-                }
-                if (nodeName != null)
-                {
-                    //read color
-                    var rdrr = tra.GetComponent<MeshRenderer>();
-                    if (rdrr)
-                    {
-                        var matColor = rdrr.sharedMaterial.color;
-                        pColor = ToHexString(matColor);
-                    }
-                }
-            }
-            if (component is TextMesh)
-            {
-                nodeName = "text";
-                var tm = component as TextMesh;
-                extraProperties.AppendFormat(" value=\"{0}\"", tm.text);
-                scale *= tm.fontSize * 0.5f;
-                //extraProperties.AppendFormat(" fontS=\"{0}\"", 100);
-                pColor = ToHexString(tm.color);
-                var rdrr = tra.GetComponent<MeshRenderer>();
-                if (rdrr)
-                {
-                    var width = rdrr.bounds.extents.x * 2;
-                    extraProperties.AppendFormat(" width={{{0}}}", width);
-                }
-            }
-        }
-        if (nodeName == null)
-        {
-            nodeName = "entity";
-        }
-        if (pColor != null)
-        {
-            extraProperties.AppendFormat(" color=\"{0}\"", pColor);
-        }
-        xmlNode = new StringBuilder();
-        AppendIndent(xmlNode, indentUnit, indentLevel);
-        xmlNode.AppendFormat("<{0} position={{{1}}} scale={{{2}}} rotation={{{3}}}{4}>", nodeName, Vector3ToJSONString(position), Vector3ToJSONString(scale), Vector3ToJSONString(eulerAngles), extraProperties);
-        xmlNodeTail = new StringBuilder().AppendFormat("</{0}>\n", nodeName);
 
-        var childrenXmls = new List<StringBuilder>();
-        foreach (Transform child in tra)
-        {
-            var childXml = RecursivelyGetNodeXml(child, indentLevel + 1);
-            if (childXml != null) childrenXmls.Add(childXml);
-        }
-
-        Debug.Log(tra.name);
-
-        if (childrenXmls.Count == 0)
-        {
-            if (xmlNode == null)
-            {
                 return null;
             }
 
-            return xmlNode.Append(xmlNodeTail);
+            var path = AssetDatabase.GUIDToAssetPath(guids[0]);
+            Debug.Log("Path:" + path);
+            var template = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
+            Debug.Log("Txt:" + template.text);
+            return template.text;
         }
 
-        if (xmlNode == null)
+        string GetSceneJsonFileTemplate()
         {
-            foreach (var childXml in childrenXmls)
+            var guids = AssetDatabase.FindAssets("dcl_scene_json_template");
+            if (guids.Length <= 0)
             {
-                xmlNode.Append(childXml);
-            }
-            return xmlNode.Append(xmlNodeTail);
-        }
-
-        xmlNode.Append("\n");
-        foreach (var childXml in childrenXmls)
-        {
-            xmlNode.Append(childXml);
-        }
-        AppendIndent(xmlNode, indentUnit, indentLevel);
-        return xmlNode.Append(xmlNodeTail);
-    }
-
-    static StringBuilder AppendIndent(StringBuilder sb, string indentUnit, int indentLevel)
-    {
-        for (int i = 0; i < indentLevel; i++)
-        {
-            sb.Append(indentUnit);
-        }
-        return sb;
-    }
-
-    void CheckAndGetDclSceneMetaObject()
-    {
-        var rootGameObjects = new List<GameObject>();
-        for (int i = 0; i < SceneManager.sceneCount; i++)
-        {
-            var roots = SceneManager.GetSceneAt(i).GetRootGameObjects();
-            rootGameObjects.AddRange(roots);
-        }
-
-        foreach (var go in rootGameObjects)
-        {
-            if (go.name == ".dcl")
-            {
-                sceneMeta = go.GetComponent<DclSceneMeta>();
-                if (!sceneMeta)
+                if (EditorUtility.DisplayDialog("Cannot find dcl_scene_json_template.txt in the project!",
+                    "Please re-install Decentraland Unity Plugin asset to fix this problem.", "Re-install", "Back"))
                 {
-                    sceneMeta = go.AddComponent<DclSceneMeta>();
-                    EditorUtility.SetDirty(sceneMeta);
-                    EditorSceneManager.MarkSceneDirty(go.scene);
+                    //TODO:
                 }
 
+                return null;
+            }
+
+            var path = AssetDatabase.GUIDToAssetPath(guids[0]);
+            Debug.Log("Path:" + path);
+            var template = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
+            Debug.Log("Txt:" + template.text);
+            return template.text;
+        }
+
+        string GetParcelsString()
+        {
+            /*
+          "30,-15",
+          "30,-16",
+          "31,-15"*/
+            var sb = new StringBuilder();
+            if (sceneMeta.parcels.Count > 0)
+            {
+                const string indentUnit = "  ";
+                sb.AppendIndent(indentUnit, 3).Append(ParcelToString(sceneMeta.parcels[0]));
+                for (var i = 1; i < sceneMeta.parcels.Count; i++)
+                {
+                    sb.Append(",\n");
+                    sb.AppendIndent(indentUnit, 3).Append(ParcelToString(sceneMeta.parcels[i]));
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        void CheckAndGetDclSceneMetaObject()
+        {
+            var rootGameObjects = new List<GameObject>();
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                var roots = SceneManager.GetSceneAt(i).GetRootGameObjects();
+                rootGameObjects.AddRange(roots);
+            }
+
+            foreach (var go in rootGameObjects)
+            {
+                if (go.name == ".dcl")
+                {
+                    sceneMeta = go.GetComponent<DclSceneMeta>();
+                    if (!sceneMeta)
+                    {
+                        sceneMeta = go.AddComponent<DclSceneMeta>();
+                        EditorUtility.SetDirty(sceneMeta);
+                        EditorSceneManager.MarkSceneDirty(go.scene);
+                    }
+
+                    return;
+                }
+            }
+
+            //Did not find .dcl object. Create one.
+            var o = new GameObject(".dcl");
+            sceneMeta = o.AddComponent<DclSceneMeta>();
+            EditorUtility.SetDirty(sceneMeta);
+            EditorSceneManager.MarkSceneDirty(o.scene);
+        }
+
+        void Export()
+        {
+            var exportPath = sceneMeta.exportPath;
+            if (string.IsNullOrEmpty(exportPath))
+            {
+                EditorUtility.DisplayDialog("NO Path!", "You must assign the export path!", null, "OK");
                 return;
             }
-        }
 
-        //Did not find .dcl object. Create one.
-        var o = new GameObject(".dcl");
-        sceneMeta = o.AddComponent<DclSceneMeta>();
-        EditorUtility.SetDirty(sceneMeta);
-        EditorSceneManager.MarkSceneDirty(o.scene);
-    }
+            if (!Directory.Exists(exportPath)) Directory.CreateDirectory("exportPath");
 
-    void Export()
-    {
-        var exportPath = sceneMeta.exportPath;
-        if (string.IsNullOrEmpty(exportPath))
-        {
-            EditorUtility.DisplayDialog("NO Path!", "You must assign the export path!", null, "OK");
-            return;
-        }
+            //delete all files in exportPath/unity_assets/
 
-        if (!Directory.Exists(exportPath)) Directory.CreateDirectory("exportPath");
-
-        //scene.tsx
-        var fileTxt = GetSceneFileTemplate();
-        var sceneXml = GetSceneXml();
-        fileTxt = fileTxt.Replace("{XML}", sceneXml);
-        var filePath = Path.Combine(exportPath, "scene.tsx");
-        File.WriteAllText(filePath, fileTxt);
-
-        //scene.json
-        fileTxt = GetSceneJsonFileTemplate();
-        var parcelsString = GetParcelsString();
-        fileTxt = fileTxt.Replace("{PARCELS}", parcelsString);
-        if (sceneMeta.parcels.Count > 0)
-        {
-            fileTxt = fileTxt.Replace("{BASE}", ParcelToString(sceneMeta.parcels[0]));
-        }
-
-        filePath = Path.Combine(exportPath, "scene.json");
-        File.WriteAllText(filePath, fileTxt);
-
-        Debug.Log("===Export Complete===");
-    }
-    
-    #region Utils
-
-    public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
-    {
-        coordinates.Clear();
-        var lines = text.Replace("\r", "").Split('\n');
-        foreach (var line in lines)
-        {
-            var elements = line.Trim().Split(',');
-            if (elements.Length == 0) continue;
-            if (elements.Length != 2)
+            var unityAssetsFolderPath = Path.Combine(exportPath, "unity_assets/");
+            if (Directory.Exists(unityAssetsFolderPath))
             {
-                throw new Exception("A line does not have exactly 2 elements!");
+                Directory.GetFiles(unityAssetsFolderPath, "*", SearchOption.AllDirectories).ToList().ForEach(File.Delete);
+                Directory.GetDirectories(unityAssetsFolderPath).ToList().ForEach(f => Directory.Delete(f, true));
+            }
+            else
+            {
+                Directory.CreateDirectory(unityAssetsFolderPath);
             }
 
-            var x = int.Parse(elements[0]);
-            var y = int.Parse(elements[1]);
-            coordinates.Add(new ParcelCoordinates(x,y));
+            var meshesToExport = new List<GameObject>();
+            var sceneXmlBuilder = new StringBuilder();
+            var statistics = new SceneStatistics();
+
+            SceneTraverser.TraverseAllScene(sceneXmlBuilder, meshesToExport, statistics);
+
+            var sceneXml = sceneXmlBuilder.ToString();
+
+            //scene.tsx
+            var fileTxt = GetSceneFileTemplate();
+            fileTxt = fileTxt.Replace("{XML}", sceneXml);
+            var filePath = Path.Combine(exportPath, "scene.tsx");
+            File.WriteAllText(filePath, fileTxt);
+
+            //glTF in unity_asset
+            foreach (var go in meshesToExport)
+            {
+                sceneMeta.sceneToGlTFWiz.ExportGameObject(go, Path.Combine(unityAssetsFolderPath, go.name + ".gltf"), null, false, true, false, false);
+            }
+
+            //scene.json
+            fileTxt = GetSceneJsonFileTemplate();
+            fileTxt = fileTxt.Replace("{ETH_ADDRESS}", sceneMeta.ethAddress);
+            fileTxt = fileTxt.Replace("{CONTACT_NAME}", sceneMeta.contactName);
+            fileTxt = fileTxt.Replace("{CONTACT_EMAIL}", sceneMeta.email);
+            var parcelsString = GetParcelsString();
+            fileTxt = fileTxt.Replace("{PARCELS}", parcelsString);
+            if (sceneMeta.parcels.Count > 0)
+            {
+                fileTxt = fileTxt.Replace("{BASE}", ParcelToString(sceneMeta.parcels[0]));
+            }
+            filePath = Path.Combine(exportPath, "scene.json");
+            File.WriteAllText(filePath, fileTxt);
+
+            Debug.Log("===Export Complete===");
         }
-    }
 
-    public static StringBuilder ParcelToStringBuilder(ParcelCoordinates parcel)
-    {
-        return new StringBuilder().Append(parcel.x).Append(',').Append(parcel.y);
-    }
+        #region Utils
+        
+        public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
+        {
+            coordinates.Clear();
+            var lines = text.Replace("\r", "").Split('\n');
+            foreach (var line in lines)
+            {
+                var elements = line.Trim().Split(',');
+                if (elements.Length == 0) continue;
+                if (elements.Length != 2)
+                {
+                    throw new Exception("A line does not have exactly 2 elements!");
+                }
 
-    public static StringBuilder WarningToStringBuilder(string warning)
-    {
-        return new StringBuilder().Append(warning);
-    }
+                var x = int.Parse(elements[0]);
+                var y = int.Parse(elements[1]);
+                coordinates.Add(new ParcelCoordinates(x, y));
+            }
+        }
 
-    public static string Vector3ToJSONString(Vector3 v)
-    {
-        return string.Format("{{x:{0},y:{1},z:{2}}}", v.x, v.y, v.z);
-    }
+        public static StringBuilder ParcelToStringBuilder(ParcelCoordinates parcel)
+        {
+            return new StringBuilder().Append(parcel.x).Append(',').Append(parcel.y);
+        }
 
-    /// <summary>
-    /// Color to HEX string(e.g. #AAAAAA)
-    /// </summary>
-    private static string ToHexString(Color color)
-    {
-        var color256 = (Color32)color;
-        string R = Convert.ToString(color256.r, 16);
-        if (R == "0")
-            R = "00";
-        string G = Convert.ToString(color256.g, 16);
-        if (G == "0")
-            G = "00";
-        string B = Convert.ToString(color256.b, 16);
-        if (B == "0")
-            B = "00";
-        string HexColor = "#" + R + G + B;
-        return HexColor.ToUpper();
-    }
+        public static StringBuilder WarningToStringBuilder(string warning)
+        {
+            return new StringBuilder().Append(warning);
+        }
 
-    public static string ParcelToString(ParcelCoordinates parcel)
-    {
-        return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
-    }
+        public static string Vector3ToJSONString(Vector3 v)
+        {
+            return string.Format("{{x:{0},y:{1},z:{2}}}", v.x, v.y, v.z);
+        }
 
-    #endregion
+        /// <summary>
+        /// Color to HEX string(e.g. #AAAAAA)
+        /// </summary>
+        private static string ToHexString(Color color)
+        {
+            var color256 = (Color32)color;
+            string R = Convert.ToString(color256.r, 16);
+            if (R == "0")
+                R = "00";
+            string G = Convert.ToString(color256.g, 16);
+            if (G == "0")
+                G = "00";
+            string B = Convert.ToString(color256.b, 16);
+            if (B == "0")
+                B = "00";
+            string HexColor = "#" + R + G + B;
+            return HexColor.ToUpper();
+        }
+
+        public static string ParcelToString(ParcelCoordinates parcel)
+        {
+            return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
+        }
+
+        #endregion
+    }
 }
