@@ -88,13 +88,13 @@ namespace Dcl
                     {
                         //read color
                         var rdrr = tra.GetComponent<MeshRenderer>();
-                        if (rdrr && rdrr.material)
+                        if (rdrr && rdrr.sharedMaterial)
                         {
-                            var matColor = rdrr.material.color;
+                            var matColor = rdrr.sharedMaterial.color;
                             pColor = ToHexString(matColor);
                         }
                         //Statistics
-                        statistics.triangleCount += meshFilter.mesh.triangles.LongLength / 3;
+                        statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
                     }
                 }
 
