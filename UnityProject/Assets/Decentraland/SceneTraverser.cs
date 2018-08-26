@@ -80,17 +80,21 @@ namespace Dcl
                         nodeName = "cylinder";
                         extraProperties.Append(" radius={0.5}");
                     }
+                    else if (meshFilter.sharedMesh == PrimitiveHelper.ConeMesh)
+                    {
+                        nodeName = "cone";
+                    }
                     if (nodeName != null)
                     {
                         //read color
                         var rdrr = tra.GetComponent<MeshRenderer>();
-                        if (rdrr)
+                        if (rdrr && rdrr.material)
                         {
-                            var matColor = rdrr.sharedMaterial.color;
+                            var matColor = rdrr.material.color;
                             pColor = ToHexString(matColor);
                         }
                         //Statistics
-                        statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+                        statistics.triangleCount += meshFilter.mesh.triangles.LongLength / 3;
                     }
                 }
 
@@ -162,8 +166,6 @@ namespace Dcl
                 xmlNodeTail = new StringBuilder().AppendFormat("</{0}>\n", nodeName);
                 childrenXmlBuilder = new StringBuilder();
             }
-
-            Debug.Log(tra.name);
 
             foreach (Transform child in tra)
             {

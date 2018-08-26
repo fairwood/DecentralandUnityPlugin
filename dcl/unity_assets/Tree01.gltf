@@ -111,7 +111,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_default_12480Tree01",
+			"name": "mesh_default_2642Tree01",
 			"primitives": [
 				{
 					"attributes": {
@@ -135,7 +135,7 @@
 			]
 		},
 		{
-			"name": "node_Tree01_-59558",
+			"name": "node_Tree01_12534",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5.84, 0, 0.39, 1]
 		}

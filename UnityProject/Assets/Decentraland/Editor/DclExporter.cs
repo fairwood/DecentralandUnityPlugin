@@ -167,23 +167,33 @@ namespace Dcl
             #endregion
         }
 
-        SceneStatistics sceneStatistics = new SceneStatistics();
         void InfoGUI()
         {
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Statistics", EditorStyles.boldLabel, GUILayout.Width(100));
             if (GUILayout.Button("Refresh"))
             {
-                sceneStatistics = new SceneStatistics();
-                SceneTraverser.TraverseAllScene(null, null, sceneStatistics);
+                sceneMeta.RefreshStatistics();
             }
             EditorGUILayout.EndHorizontal();
             GUILayout.Label("Keep these numbers smaller than the right", EditorStyles.centeredGreyMiniLabel);
             var n = sceneMeta.parcels.Count;
+            var sceneStatistics = sceneMeta.sceneStatistics;
             EditorGUILayout.LabelField("Triangles", string.Format("{0} / {1}", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n)));
             EditorGUILayout.LabelField("Entities", string.Format("{0} / {1}", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n)));
             EditorGUILayout.LabelField("Bodies", string.Format("{0} / {1}", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n)));
             EditorGUILayout.LabelField("Height", string.Format("{0} / {1}", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n)));
+        }
+
+        private float nextTimeRefresh = 0;
+        private void Update()
+        {
+            if (Time.realtimeSinceStartup > nextTimeRefresh)
+            {
+                sceneMeta.RefreshStatistics();
+                Repaint();
+                nextTimeRefresh = Time.realtimeSinceStartup + 2;
+            }
         }
 
         void ShowWarningsSector()
@@ -330,8 +340,7 @@ namespace Dcl
             var unityAssetsFolderPath = Path.Combine(exportPath, "unity_assets/");
             if (Directory.Exists(unityAssetsFolderPath))
             {
-                Directory.GetFiles(unityAssetsFolderPath, "*", SearchOption.AllDirectories).ToList().ForEach(File.Delete);
-                Directory.GetDirectories(unityAssetsFolderPath).ToList().ForEach(f => Directory.Delete(f, true));
+                ClearFolder(unityAssetsFolderPath);
             }
             else
             {
@@ -433,6 +442,48 @@ namespace Dcl
         public static string ParcelToString(ParcelCoordinates parcel)
         {
             return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
+        }
+
+        /// <summary>
+        /// Clear all content including files & folders in a folder
+        /// by [x_蜡笔小新](https://www.cnblogs.com/XuPengLB/p/6393117.html)
+        /// </summary>
+        /// <param name="dir"></param>
+        public static void ClearFolder(string dir)
+        {
+            foreach (string d in Directory.GetFileSystemEntries(dir))
+            {
+                if (File.Exists(d))
+                {
+                    try
+                    {
+                        FileInfo fi = new FileInfo(d);
+                        if (fi.Attributes.ToString().IndexOf("ReadOnly") != -1)
+                            fi.Attributes = FileAttributes.Normal;
+                        File.Delete(d);//直接删除其中的文件 
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        DirectoryInfo d1 = new DirectoryInfo(d);
+                        if (d1.GetFiles().Length != 0)
+                        {
+                            ClearFolder(d1.FullName);////递归删除子文件夹
+                        }
+                        Directory.Delete(d);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
         }
 
         #endregion

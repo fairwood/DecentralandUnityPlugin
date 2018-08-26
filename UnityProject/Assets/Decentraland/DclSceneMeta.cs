@@ -22,22 +22,14 @@ namespace Dcl
 
         public SceneToGlTFWiz sceneToGlTFWiz;
 
+        public SceneStatistics sceneStatistics = new SceneStatistics();
+
         private void Awake()
         {
             sceneToGlTFWiz = GetComponent<SceneToGlTFWiz>();
             if (!sceneToGlTFWiz) sceneToGlTFWiz = gameObject.AddComponent<SceneToGlTFWiz>();
         }
-
-        private float nextTimeRefreshWarning = 0;
-        private void Update()
-        {
-            if (Time.time > nextTimeRefreshWarning)
-            {
-
-                nextTimeRefreshWarning = Time.time + 2;
-            }
-        }
-
+        
         void OnDrawGizmos()
         {
             if (parcels.Count > 0)
@@ -52,7 +44,11 @@ namespace Dcl
             }
         }
 
-
+        public void RefreshStatistics()
+        {
+            sceneStatistics = new SceneStatistics();
+            SceneTraverser.TraverseAllScene(null, null, sceneStatistics);
+        }
     }
 
     [Serializable]
