@@ -7,15 +7,12 @@ namespace Dcl
     [ExecuteInEditMode]
     public class DclSceneMeta : MonoBehaviour
     {
-        [SerializeField]
-        [HideInInspector]
-        public List<ParcelCoordinates> parcels = new List<ParcelCoordinates>
-    {
-        new ParcelCoordinates(30, -15),
-        new ParcelCoordinates(30, -16),
-    };
+        [SerializeField] [HideInInspector] public List<ParcelCoordinates> parcels = new List<ParcelCoordinates>
+        {
+            new ParcelCoordinates(30, -15),
+            new ParcelCoordinates(30, -16),
+        };
 
-        [SerializeField] [HideInInspector] public string exportPath;
         [SerializeField] [HideInInspector] public string ethAddress;
         [SerializeField] [HideInInspector] public string contactName;
         [SerializeField] [HideInInspector] public string email;
@@ -29,7 +26,7 @@ namespace Dcl
             sceneToGlTFWiz = GetComponent<SceneToGlTFWiz>();
             if (!sceneToGlTFWiz) sceneToGlTFWiz = gameObject.AddComponent<SceneToGlTFWiz>();
         }
-        
+
         void OnDrawGizmos()
         {
             if (parcels.Count > 0)
@@ -59,6 +56,7 @@ namespace Dcl
             this.x = x;
             this.y = y;
         }
+
         public int x;
         public int y;
     }

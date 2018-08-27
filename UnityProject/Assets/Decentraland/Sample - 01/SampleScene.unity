@@ -352,7 +352,6 @@ MonoBehaviour:
     y: -11
   - x: 58
     y: -11
-  exportPath: E:\git\DecentralandUnityPlugin\dcl
   ethAddress: 0x1a38ac06099D648Bb14418D61956133a3d0E1f1C
   contactName: 
   email: 

@@ -35,6 +35,8 @@ namespace Dcl
         private bool editParcelsMode;
         private string editParcelsText;
 
+        private string exportPath;
+        
         void OnGUI()
         {
             if (!sceneMeta)
@@ -134,7 +136,14 @@ namespace Dcl
             sceneMeta.email = EditorGUILayout.TextField("Email", sceneMeta.email);
 
             GUILayout.Label("Export Path", EditorStyles.boldLabel);
-            sceneMeta.exportPath = EditorGUILayout.TextField(sceneMeta.exportPath);
+            exportPath = EditorPrefs.GetString("DclExportPath");
+            var newExportPath = EditorGUILayout.TextField(exportPath);
+            if (newExportPath != exportPath)
+            {
+                exportPath = newExportPath;
+                EditorPrefs.SetString("DclExportPath", newExportPath);
+            }
+
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -326,7 +335,6 @@ namespace Dcl
 
         void Export()
         {
-            var exportPath = sceneMeta.exportPath;
             if (string.IsNullOrEmpty(exportPath))
             {
                 EditorUtility.DisplayDialog("NO Path!", "You must assign the export path!", null, "OK");
