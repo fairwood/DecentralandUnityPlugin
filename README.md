@@ -10,6 +10,8 @@
 
 * Cylinder
 
+* Cone (must use a designated mesh)
+
 * TextMesh (custom font is not supported)
 
 * so far, only the diffuse color of the default material is supported.
@@ -30,7 +32,7 @@ Then, download the Exporter which is inside a Unity Package.
 
 ## Exporter Guide
 
-First, you have to create a Unity project, better empty.
+First, create a Unity project, better empty.
 
 Then drag the .unitypackage file into Unity or use "Import Assets.." in Unity. That will extract all assets into your Unity project.
 
@@ -40,7 +42,7 @@ After a while, you should see a new tab in the menu bar like below.
 
 Click the "Scene Exporter" will open the exporter.
 
-**Note:** an auto-generated GameObject called ".dcl" will be created in the hierarchy. Don't touch it.
+**Note:** an auto-generated GameObject called ".dcl" will be created in the hierarchy. Don't edit it.
 
 You can create a new scene or open the sample scene:
 
@@ -61,22 +63,28 @@ Edit your parcels' coordinates in the following format:
 
 **The first line will be the "base" parcel set as the center in your scene.**
 
+The statistics part shows some important indexes compared to their limitations.
+
 The warning function is not done yet. Just ignore it.
 
 Input the path of the folder to export files.
 
-2 files will be exported:
+2 files and 1 folder will be exported:
 
 * scene.tsx
 
 * scene.json
 
-Click "Export" Button to export. If it succeeds, a log will be outputted to the Unity console.
+* unity_assets/(.gltf and textures)
+
+Click "Export" button to export. If success, a log will be shown in Unity console.
 
 
 ## More Tools to Learn
 
 ### [ProBuilder](https://assetstore.unity.com/packages/tools/modeling/probuilder-111418)
+
+**ProBuilder** is a very famous 3D building tool in Unity Asset Store. It is very convenient for level design or prototyping and can be a substitution to 3D modeling software like 3DS MAX.
 
 ## Thanks
 
