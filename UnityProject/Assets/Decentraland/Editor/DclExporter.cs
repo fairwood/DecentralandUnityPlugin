@@ -238,12 +238,12 @@ namespace Dcl
             //mBuildZip = EditorGUILayout.Toggle("Build Zip", mBuildZip);
         }
 
-        string GetSceneFileTemplate()
+        string GetSceneTsxFileTemplate()
         {
-            var guids = AssetDatabase.FindAssets("dcl_scene_template");
+            var guids = AssetDatabase.FindAssets("dcl_scene_tsx_template");
             if (guids.Length <= 0)
             {
-                if (EditorUtility.DisplayDialog("Cannot find dcl_scene_template.txt in the project!",
+                if (EditorUtility.DisplayDialog("Cannot find dcl_scene_tsx_template.txt in the project!",
                     "Please re-install Decentraland Unity Plugin asset to fix this problem.", "Re-install", "Back"))
                 {
                     //TODO:
@@ -364,7 +364,7 @@ namespace Dcl
             var sceneXml = sceneXmlBuilder.ToString();
 
             //scene.tsx
-            var fileTxt = GetSceneFileTemplate();
+            var fileTxt = GetSceneTsxFileTemplate();
             fileTxt = fileTxt.Replace("{XML}", sceneXml);
             var filePath = Path.Combine(exportPath, "scene.tsx");
             File.WriteAllText(filePath, fileTxt);
