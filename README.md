@@ -14,11 +14,15 @@
 
 * TextMesh (custom font is not supported)
 
+* Standard Materials
+
 * so far, only the diffuse color of the default material is supported.
 
 * Other models not supported well
 
 **Note: Sphere and Cylinder have a lot of triangles that will exceed dcl limit, so use them carefully.**
+
+**Non-scene assets (e.g. models, materials, textures) should not have same names though duplicated names are available in different folders.**
 
 ## Installation Guide
 

@@ -12,7 +12,10 @@ namespace Dcl
 
         const string indentUnit = "  ";
 
-        public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics)
+        private static List<Material> primitiveMaterialsToExport;
+
+        public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport,
+            SceneStatistics statistics)
         {
             var rootGameObjects = new List<GameObject>();
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -27,13 +30,23 @@ namespace Dcl
                 xmlBuilder.AppendFormat("<scene position={{{0}}}>\n", Vector3ToJSONString(new Vector3(5, 0, 5)));
             }
 
+            primitiveMaterialsToExport = new List<Material>();
             foreach (var rootGO in rootGameObjects)
             {
                 RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics);
             }
 
+            statistics.materialCount += primitiveMaterialsToExport.Count;
+
+            //Append materials
             if (xmlBuilder != null)
             {
+                foreach (var material in primitiveMaterialsToExport)
+                {
+                    xmlBuilder.AppendIndent(indentUnit, 4);
+                    xmlBuilder.Append(GetMaterialXml(material)).Append("\n");
+                }
+
                 xmlBuilder.AppendIndent(indentUnit, 3);
                 xmlBuilder.Append("</scene>");
             }
@@ -52,8 +65,9 @@ namespace Dcl
             var position = tra.localPosition;
             var scale = tra.localScale;
             var eulerAngles = tra.localEulerAngles;
-            string pColor = null;
-            var extraProperties = new StringBuilder();
+            string pColor = null; //<...  color="#4A4A4A" ...>
+            string pMaterial = null; //<... material="#mat01" ...>
+            var extraProperties = new StringBuilder(); //TODO: can be omitted if xmlBuilder == null
 
             foreach (var component in components)
             {
@@ -87,13 +101,31 @@ namespace Dcl
 
                     if (nodeName != null)
                     {
-                        //read color
+                        //read color/mat
                         var rdrr = tra.GetComponent<MeshRenderer>();
                         if (rdrr && rdrr.sharedMaterial)
                         {
-                            var matColor = rdrr.sharedMaterial.color;
-                            pColor = ToHexString(matColor);
+                            var material = rdrr.sharedMaterial;
+                            if (material == PrimitiveHelper.GetDefaultMaterial())
+                            {
+                                //not use material
+//                                var matColor = rdrr.sharedMaterial.color;
+//                                pColor = ToHexString(matColor);
+                            }
+                            else
+                            {
+                                //need to export this material
+                                if (!primitiveMaterialsToExport.Exists(m => m == material))
+                                {
+                                    primitiveMaterialsToExport.Add(material);
+                                }
+
+                                pMaterial = string.Format("#{0}", material.name);
+                            }
+
                         }
+
+
 
                         //Collider
                         if (tra.GetComponent<Collider>())
@@ -162,6 +194,10 @@ namespace Dcl
             if (pColor != null)
             {
                 extraProperties.AppendFormat(" color=\"{0}\"", pColor);
+            }
+            if (pMaterial != null)
+            {
+                extraProperties.AppendFormat(" material=\"{0}\"", pMaterial);
             }
 
             StringBuilder xmlNode = null;
@@ -254,6 +290,23 @@ namespace Dcl
         public static string ParcelToString(ParcelCoordinates parcel)
         {
             return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
+        }
+
+        /// <summary>
+        /// like <material id="mat01" emissiveColor = "#AA00FF"/>
+        /// </summary>
+        /// <param name="material"></param>
+        /// <returns>An xml line like <material id="mat01" emissiveColor = "#AA00FF"/></returns>
+        public static StringBuilder GetMaterialXml(Material material)
+        {
+            var xml= new StringBuilder("<material");
+            xml.AppendFormat(" id=\"{0}\"", material.name);
+            xml.AppendFormat(" albedoColor=\"{0}\"", ToHexString(material.color));
+            material.EnableKeyword("_EMISSION");
+            xml.AppendFormat(" emissiveColor=\"{0}\"", ToHexString(material.GetColor("_EMISSION"))); //FIXME:TODO:always black
+
+            xml.Append("/>");
+            return xml;
         }
 
         #endregion

@@ -8,6 +8,8 @@ namespace Dcl
     {
         private static Dictionary<PrimitiveType, Mesh> primitiveMeshes = new Dictionary<PrimitiveType, Mesh>();
 
+        private static Material defaultMaterial;
+
         public static GameObject CreatePrimitive(PrimitiveType type, bool withCollider)
         {
             if (withCollider) { return GameObject.CreatePrimitive(type); }
@@ -28,6 +30,18 @@ namespace Dcl
             }
 
             return primitiveMeshes[type];
+        }
+
+        public static Material GetDefaultMaterial()
+        {
+            if (!defaultMaterial)
+            {
+                GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                defaultMaterial = gameObject.GetComponent<MeshRenderer>().sharedMaterial;
+                GameObject.DestroyImmediate(gameObject);
+            }
+
+            return defaultMaterial;
         }
 
         static Mesh _coneMesh;

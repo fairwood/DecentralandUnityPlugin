@@ -66,6 +66,8 @@ namespace Dcl
         public long triangleCount;
         public int entityCount;
         public int bodyCount;
+        public float materialCount;
+        public float textureCount;
         public float maxHeight;
     }
 }
