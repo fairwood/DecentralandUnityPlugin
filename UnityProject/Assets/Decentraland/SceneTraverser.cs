@@ -84,6 +84,7 @@ namespace Dcl
                     {
                         nodeName = "cone";
                     }
+
                     if (nodeName != null)
                     {
                         //read color
@@ -93,6 +94,13 @@ namespace Dcl
                             var matColor = rdrr.sharedMaterial.color;
                             pColor = ToHexString(matColor);
                         }
+
+                        //Collider
+                        if (tra.GetComponent<Collider>())
+                        {
+                            extraProperties.Append(" withCollisions={true}");
+                        }
+
                         //Statistics
                         statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
                     }
@@ -114,12 +122,13 @@ namespace Dcl
                         eulerAngles = Vector3.zero;
                         scale = Vector3.zero;
                         extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", tra.name);
-
+                        
                         //Statistics
                         statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
                         statistics.bodyCount += 1;
                     }
                 }
+
 
                 //TextMesh
                 if (component is TextMesh)
