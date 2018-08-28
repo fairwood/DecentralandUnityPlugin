@@ -16,6 +16,8 @@
 
 * so far, only the diffuse color of the default material is supported.
 
+* Other models not supported well
+
 **Note: Sphere and Cylinder have a lot of triangles that will exceed dcl limit, so use them carefully.**
 
 ## Installation Guide
