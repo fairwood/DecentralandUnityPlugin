@@ -2,6 +2,7 @@
 using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -13,9 +14,9 @@ namespace Dcl
         const string indentUnit = "  ";
 
         private static List<Material> primitiveMaterialsToExport;
+        public static List<Texture> primitiveTexturesToExport;
 
-        public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport,
-            SceneStatistics statistics)
+        public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics)
         {
             var rootGameObjects = new List<GameObject>();
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -31,22 +32,29 @@ namespace Dcl
             }
 
             primitiveMaterialsToExport = new List<Material>();
+            primitiveTexturesToExport = new List<Texture>();
             foreach (var rootGO in rootGameObjects)
             {
                 RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics);
             }
-
-            statistics.materialCount += primitiveMaterialsToExport.Count;
-
-            //Append materials
-            if (xmlBuilder != null)
+            foreach (var material in primitiveMaterialsToExport)
             {
-                foreach (var material in primitiveMaterialsToExport)
+                var materialXml = xmlBuilder != null ? new StringBuilder() : null;
+                TraverseMaterial(material, materialXml);
+
+                //Append materials
+                if (xmlBuilder != null)
                 {
                     xmlBuilder.AppendIndent(indentUnit, 4);
-                    xmlBuilder.Append(GetMaterialXml(material)).Append("\n");
+                    xmlBuilder.Append(materialXml).Append("\n");
                 }
+            }
 
+            statistics.materialCount += primitiveMaterialsToExport.Count; //TODO: include glTF's materials
+            statistics.textureCount += primitiveTexturesToExport.Count; //TODO: include glTF's textures
+            
+            if (xmlBuilder != null)
+            {
                 xmlBuilder.AppendIndent(indentUnit, 3);
                 xmlBuilder.Append("</scene>");
             }
@@ -291,21 +299,78 @@ namespace Dcl
         {
             return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
         }
-
+        
         /// <summary>
-        /// like <material id="mat01" emissiveColor = "#AA00FF"/>
+        /// 
         /// </summary>
         /// <param name="material"></param>
-        /// <returns>An xml line like <material id="mat01" emissiveColor = "#AA00FF"/></returns>
-        public static StringBuilder GetMaterialXml(Material material)
+        /// <param name="xml">Will append an xml line like <material id="mat01" emissiveColor = "#AA00FF"/></param>
+        public static void TraverseMaterial(Material material, StringBuilder xml)
         {
-            var xml= new StringBuilder("<material");
-            xml.AppendFormat(" id=\"{0}\"", material.name);
-            xml.AppendFormat(" albedoColor=\"{0}\"", ToHexString(material.color));
-            xml.AppendFormat(" emissiveColor=\"{0}\"", ToHexString(material.GetColor("_EmissionColor")));
+            var albedoTex = material.GetTexture("_MainTex");
+            var refractionTexture = material.GetTexture("_MetallicGlossMap");
+            var bumpTexture = material.GetTexture("_BumpMap");
+            var emisiveTexture = material.GetTexture("_EmissionMap");
 
-            xml.Append("/>");
-            return xml;
+            if (albedoTex)
+            {
+                primitiveTexturesToExport.Add(albedoTex);
+            }
+            if (refractionTexture)
+            {
+                primitiveTexturesToExport.Add(refractionTexture);
+            }
+            if (bumpTexture)
+            {
+                primitiveTexturesToExport.Add(bumpTexture);
+            }
+            if (emisiveTexture)
+            {
+                primitiveTexturesToExport.Add(emisiveTexture);
+            }
+
+            if (xml != null)
+            {
+                xml.Append("<material");
+                xml.AppendFormat(" id=\"{0}\"", material.name);
+                xml.AppendFormat(" albedoColor=\"{0}\"", ToHexString(material.color));
+                if (albedoTex)
+                {
+                    xml.AppendFormat(" albedoTexture=\"{0}\"", GetTextureRelativePath(albedoTex));
+                }
+                if (refractionTexture)
+                {
+                    xml.AppendFormat(" refractionTexture=\"{0}\"", GetTextureRelativePath(refractionTexture));
+                }
+                if (bumpTexture)
+                {
+                    xml.AppendFormat(" bumpTexture=\"{0}\"", GetTextureRelativePath(bumpTexture));
+                }
+                if (emisiveTexture)
+                {
+                    xml.AppendFormat(" emisiveTexture=\"{0}\"", GetTextureRelativePath(emisiveTexture));
+                }
+                xml.AppendFormat(" emissiveColor=\"{0}\"", ToHexString(material.GetColor("_EmissionColor")));
+                xml.AppendFormat(" metallic={{{0}}}", material.GetFloat("_Metallic"));
+                xml.AppendFormat(" roughness={{{0}}}", 1 - material.GetFloat("_Glossiness"));
+
+                xml.Append("/>");
+            }
+        }
+
+        public static string GetTextureRelativePath(Texture texture)
+        {
+            var relPath= AssetDatabase.GetAssetPath(texture);
+            if (string.IsNullOrEmpty(relPath))
+            {
+                //TODO: this is a built-in asset
+                relPath = texture.name + ".png";
+            }
+            else
+            {
+                
+            }
+            return "./unity_assets/" + relPath;
         }
 
         #endregion

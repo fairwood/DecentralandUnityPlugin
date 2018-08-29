@@ -11,7 +11,7 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
     return (
       <scene position={{x:5,y:0,z:5}}>
         <entity position={{x:0,y:1,z:-10}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <cone position={{x:3.55,y:0,z:-1.03}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true}></cone>
+        <cone position={{x:3.55,y:0,z:-1.03}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board"></cone>
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01.gltf"></gltf-model>
         <entity position={{x:1.341,y:6.197,z:-2.323}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
@@ -35,9 +35,14 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/Tree01.gltf"></gltf-model>
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01 (1).gltf"></gltf-model>
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01 (2).gltf"></gltf-model>
-        <material id="Gray" albedoColor="#4A4A4A" emissiveColor="#000000"/>
-        <material id="Blue" albedoColor="#3C4C70" emissiveColor="#3A00FF"/>
-        <material id="Rod" albedoColor="#1C0000" emissiveColor="#000000"/>
+        <sphere position={{x:2.473,y:0.69,z:-2.263}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Rod"></sphere>
+        <box position={{x:5.878,y:0.6,z:-2.994}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board"></box>
+        <plane position={{x:9.5,y:1.939861,z:-0.4372959}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board"></plane>
+        <cylinder position={{x:3.281,y:0.7026528,z:-3.761227}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} radius={0.5} withCollisions={true} material="#Board"></cylinder>
+        <material id="Board" albedoColor="#FFFFFF" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/dcl_map.png" bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={0} roughness={0.794}/>
+        <material id="Gray" albedoColor="#4A4A4A" emissiveColor="#000000" metallic={0} roughness={0.5}/>
+        <material id="Blue" albedoColor="#3C4C70" emissiveColor="#2C00BF" metallic={0} roughness={0.5}/>
+        <material id="Rod" albedoColor="#FFB449" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/dcl_map.png" emissiveColor="#000000" metallic={0.206} roughness={0.186}/>
       </scene>
     )
   }

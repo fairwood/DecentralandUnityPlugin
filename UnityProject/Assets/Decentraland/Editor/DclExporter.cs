@@ -377,6 +377,26 @@ namespace Dcl
                 sceneMeta.sceneToGlTFWiz.ExportGameObject(go, Path.Combine(unityAssetsFolderPath, go.name + ".gltf"), null, false, true, false, false);
             }
 
+            //textures
+            var primitiveTexturesToExport = SceneTraverser.primitiveTexturesToExport;
+            foreach (var texture in primitiveTexturesToExport)
+            {
+                var relPath = AssetDatabase.GetAssetPath(texture);
+                if (string.IsNullOrEmpty(relPath))
+                {
+                    //TODO: built-in asset
+                }
+                else
+                {
+                    var path = Application.dataPath; //<path to project folder>/Assets
+                    path = path.Remove(path.Length - 6, 6) + relPath;
+                    var toPath = unityAssetsFolderPath + relPath;
+                    var directoryPath = Path.GetDirectoryName(toPath);
+                    if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                    File.Copy(path, toPath, true);
+                }
+            }
+
             //scene.json
             fileTxt = GetSceneJsonFileTemplate();
             fileTxt = fileTxt.Replace("{ETH_ADDRESS}", sceneMeta.ethAddress);

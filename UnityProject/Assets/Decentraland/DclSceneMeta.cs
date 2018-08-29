@@ -36,7 +36,8 @@ namespace Dcl
                 foreach (var parcel in parcels)
                 {
                     var pos = new Vector3((parcel.x - baseParcel.x) * 10, 0, (parcel.y - baseParcel.y) * 10);
-                    Gizmos.DrawCube(pos, new Vector3(10, 0f, 10));
+                    //Gizmos.DrawCube(pos, new Vector3(10, 0f, 10));
+                    //Gizmos.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos);
                 }
             }
         }
