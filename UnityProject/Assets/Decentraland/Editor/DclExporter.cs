@@ -191,6 +191,8 @@ namespace Dcl
             EditorGUILayout.LabelField("Triangles", string.Format("{0} / {1}", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n)));
             EditorGUILayout.LabelField("Entities", string.Format("{0} / {1}", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n)));
             EditorGUILayout.LabelField("Bodies", string.Format("{0} / {1}", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n)));
+            EditorGUILayout.LabelField("Materials", string.Format("{0} / {1}", sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n)));
+            EditorGUILayout.LabelField("Textures", string.Format("{0} / {1}", sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n)));
             EditorGUILayout.LabelField("Height", string.Format("{0} / {1}", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n)));
         }
 

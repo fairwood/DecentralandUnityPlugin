@@ -36,7 +36,7 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01 (1).gltf"></gltf-model>
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01 (2).gltf"></gltf-model>
         <material id="Gray" albedoColor="#4A4A4A" emissiveColor="#000000"/>
-        <material id="Blue" albedoColor="#3C4C70" emissiveColor="#000000"/>
+        <material id="Blue" albedoColor="#3C4C70" emissiveColor="#3A00FF"/>
         <material id="Rod" albedoColor="#1C0000" emissiveColor="#000000"/>
       </scene>
     )

@@ -302,8 +302,7 @@ namespace Dcl
             var xml= new StringBuilder("<material");
             xml.AppendFormat(" id=\"{0}\"", material.name);
             xml.AppendFormat(" albedoColor=\"{0}\"", ToHexString(material.color));
-            material.EnableKeyword("_EMISSION");
-            xml.AppendFormat(" emissiveColor=\"{0}\"", ToHexString(material.GetColor("_EMISSION"))); //FIXME:TODO:always black
+            xml.AppendFormat(" emissiveColor=\"{0}\"", ToHexString(material.GetColor("_EmissionColor")));
 
             xml.Append("/>");
             return xml;
