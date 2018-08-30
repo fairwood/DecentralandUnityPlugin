@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "C:\\Users\\stv1024\\AppData\\Local\\Temp\\0.25257014528206345.WebWorker.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\0.3709999055670925.WebWorker.js");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -689,15 +689,15 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 
 /***/ }),
 
-/***/ "C:\\Users\\stv1024\\AppData\\Local\\Temp\\0.25257014528206345.WebWorker.js":
+/***/ "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\0.3709999055670925.WebWorker.js":
 /*!****************************************************************************!*\
-  !*** C:/Users/stv1024/AppData/Local/Temp/0.25257014528206345.WebWorker.js ***!
+  !*** C:/Users/ADMINI~1/AppData/Local/Temp/0.3709999055670925.WebWorker.js ***!
   \****************************************************************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var E_git_DecentralandUnityPlugin_dcl_node_modules_metaverse_rpc_lib_common_transports_WebWorker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/metaverse-rpc/lib/common/transports/WebWorker */ \"./node_modules/metaverse-rpc/lib/common/transports/WebWorker.js\");\n\n\nconst imported = __webpack_require__(/*! ./scene.tsx */ \"./scene.tsx\")\n\nif (imported && imported.__esModule && imported['default']) {\n  new imported['default'](Object(E_git_DecentralandUnityPlugin_dcl_node_modules_metaverse_rpc_lib_common_transports_WebWorker__WEBPACK_IMPORTED_MODULE_0__[\"WebWorkerTransport\"])(self))\n}\n\n\n//# sourceURL=webpack:///C:/Users/stv1024/AppData/Local/Temp/0.25257014528206345.WebWorker.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var D_GitHubFw_DecentralandUnityPlugin_dcl_node_modules_metaverse_rpc_lib_common_transports_WebWorker__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/metaverse-rpc/lib/common/transports/WebWorker */ \"./node_modules/metaverse-rpc/lib/common/transports/WebWorker.js\");\n\n\nconst imported = __webpack_require__(/*! ./scene.tsx */ \"./scene.tsx\")\n\nif (imported && imported.__esModule && imported['default']) {\n  new imported['default'](Object(D_GitHubFw_DecentralandUnityPlugin_dcl_node_modules_metaverse_rpc_lib_common_transports_WebWorker__WEBPACK_IMPORTED_MODULE_0__[\"WebWorkerTransport\"])(self))\n}\n\n\n//# sourceURL=webpack:///C:/Users/ADMINI~1/AppData/Local/Temp/0.3709999055670925.WebWorker.js?");
 
 /***/ })
 

@@ -168,7 +168,7 @@ namespace Dcl
             #region Help Link
 
             string url = "https://github.com/fairwood/DecentralandUnityPlugin";
-            if (GUILayout.Button("Document: " + url, EditorStyles.helpBox))
+            if (GUILayout.Button(string.Format(LabelLocalization.Document, url), EditorStyles.helpBox))
             {
                 Application.OpenURL(url);
             }
@@ -185,7 +185,7 @@ namespace Dcl
                 sceneMeta.RefreshStatistics();
             }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("Keep these numbers smaller than the right", EditorStyles.centeredGreyMiniLabel);
+            GUILayout.Label(LabelLocalization.KeepTheseNumbersSmaller, EditorStyles.centeredGreyMiniLabel);
             var n = sceneMeta.parcels.Count;
             var sceneStatistics = sceneMeta.sceneStatistics;
             EditorGUILayout.LabelField("Triangles", string.Format("{0} / {1}", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n)));
