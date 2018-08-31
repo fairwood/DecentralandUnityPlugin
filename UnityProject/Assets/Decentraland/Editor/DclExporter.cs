@@ -136,13 +136,21 @@ namespace Dcl
             sceneMeta.email = EditorGUILayout.TextField("Email", sceneMeta.email);
 
             GUILayout.Label("Export Path", EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
             exportPath = EditorPrefs.GetString("DclExportPath");
             var newExportPath = EditorGUILayout.TextField(exportPath);
+            if (GUILayout.Button("...", GUILayout.Width(24)))
+            {
+                newExportPath = EditorUtility.OpenFolderPanel("Select the folder to export", exportPath, "");
+                if (string.IsNullOrEmpty(newExportPath)) newExportPath = exportPath;
+            }
             if (newExportPath != exportPath)
             {
                 exportPath = newExportPath;
                 EditorPrefs.SetString("DclExportPath", newExportPath);
             }
+
+            EditorGUILayout.EndHorizontal();
 
 
             if (EditorGUI.EndChangeCheck())
