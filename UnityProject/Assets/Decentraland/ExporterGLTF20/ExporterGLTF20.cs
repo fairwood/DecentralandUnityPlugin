@@ -201,7 +201,7 @@ public class ExporterGLTF20 : EditorWindow {
         return true;
     }
 
-    [MenuItem("Decentraland/Export to glTF 2.0")]
+    [MenuItem("Decentraland/glTF Exporter(trial)")]
     static void Init() {
 #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX // edit: added Platform Dependent Compilation - win or osx standalone
         ExporterGLTF20 window = (ExporterGLTF20)EditorWindow.GetWindow(typeof(ExporterGLTF20));

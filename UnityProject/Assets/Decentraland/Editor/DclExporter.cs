@@ -13,7 +13,7 @@ namespace Dcl
     {
         const int SPACE_SIZE = 5;
 
-        [MenuItem("Decentraland/Scene Exporter")]
+        [MenuItem("Decentraland/Scene Exporter", false, 1)]
         static void Init()
         {
             var window = (DclExporter) GetWindow(typeof(DclExporter));
