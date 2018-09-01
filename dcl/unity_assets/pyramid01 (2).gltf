@@ -111,7 +111,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Pyramid001_11408pyramid01 (2)",
+			"name": "mesh_Pyramid001_3030pyramid01 (2)",
 			"primitives": [
 				{
 					"attributes": {
@@ -135,7 +135,7 @@
 			]
 		},
 		{
-			"name": "node_pyramid01 (2)_-1314",
+			"name": "node_pyramid01 (2)_-869158",
 			"mesh": 0,
 			"matrix": [0.45954, 0, 0, 0, 0, 0.1047609, 0.4474395, 0, 0, -1.332299, 0.3119368, 0, -3.5, 0.39, 4.043, 1]
 		}

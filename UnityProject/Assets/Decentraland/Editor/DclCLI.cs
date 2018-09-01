@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,7 +17,7 @@ namespace Dcl
         static void Command (string cmd)
         {
             var processInfo = new ProcessStartInfo("cmd.exe", cmd);
-            processInfo.CreateNoWindow = true;
+            processInfo.CreateNoWindow = false;
             processInfo.UseShellExecute = false;
     
             var process = Process.Start(processInfo);
@@ -22,11 +25,17 @@ namespace Dcl
             process.WaitForExit();
             process.Close();
         }
-
-        [MenuItem("Decentraland/Create DCL Project")]
-        static void DclInit(){
-            //TODO:先要定位到文件夹
-            //ExecuteCommand("dcl init");
+        
+        public static void DclInit(string path)
+        {
+            var cmd = string.Format("/k cd /d {0} & dcl init", path);
+            ExecuteCommand(cmd);
+        }
+        
+        public static void DclStart(string path)
+        {
+            var cmd = string.Format("/k cd /d {0} & dcl start", path);
+            ExecuteCommand(cmd);
         }
     }
 }

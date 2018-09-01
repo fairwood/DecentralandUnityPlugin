@@ -30,7 +30,7 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}>
           <box position={{x:0,y:2.97,z:0}} scale={{x:2.7033,y:1.1506,z:0.2454139}} rotation={{x:0,y:24.42181,z:0}} withCollisions={true} material="#Blue"></box>
           <cylinder position={{x:0,y:1.2,z:0}} scale={{x:0.2,y:1.2,z:0.2}} rotation={{x:0,y:0,z:0}} radius={0.5} withCollisions={true} material="#Rod"></cylinder>
-          <text position={{x:-0.061,y:2.97,z:-0.134}} scale={{x:2.187967,y:2.187967,z:2.187967}} rotation={{x:0,y:24.42181,z:0}} value="Decentraland" width={2.324235} color="#00FF28"></text>
+          <text position={{x:-0.061,y:2.97,z:-0.134}} scale={{x:2.187967,y:2.187967,z:2.187967}} rotation={{x:0,y:24.42181,z:0}} value="Decentraland" width={1.162118} height={0.244437} color="#00FF28"></text>
         </entity>
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/Tree01.gltf"></gltf-model>
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01 (1).gltf"></gltf-model>

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using Object = UnityEngine.Object;
 
 namespace Dcl
 {
@@ -16,7 +17,9 @@ namespace Dcl
         private static List<Material> primitiveMaterialsToExport;
         public static List<Texture> primitiveTexturesToExport;
 
-        public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics)
+        private static DclSceneMeta _sceneMeta;
+
+        public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             var rootGameObjects = new List<GameObject>();
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -31,22 +34,34 @@ namespace Dcl
                 xmlBuilder.AppendFormat("<scene position={{{0}}}>\n", Vector3ToJSONString(new Vector3(5, 0, 5)));
             }
 
+            _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
             primitiveMaterialsToExport = new List<Material>();
             primitiveTexturesToExport = new List<Texture>();
+
+            //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics);
+                RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder);
             }
             foreach (var material in primitiveMaterialsToExport)
             {
                 var materialXml = xmlBuilder != null ? new StringBuilder() : null;
-                TraverseMaterial(material, materialXml);
-
+                TraverseMaterial(material, materialXml, warningRecorder);
+                
                 //Append materials
                 if (xmlBuilder != null)
                 {
                     xmlBuilder.AppendIndent(indentUnit, 4);
                     xmlBuilder.Append(materialXml).Append("\n");
+                }
+            }
+
+            //Check textures
+            if (warningRecorder != null)
+            {
+                foreach (var texture in primitiveTexturesToExport)
+                {
+                    CheckTextureValidity(texture, warningRecorder);
                 }
             }
 
@@ -60,7 +75,7 @@ namespace Dcl
             }
         }
 
-        static void RecursivelyTraverseTransform(Transform tra, StringBuilder xmlBuilder, List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics)
+        static void RecursivelyTraverseTransform(Transform tra, StringBuilder xmlBuilder, List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             if (!tra.gameObject.activeInHierarchy) return;
 
@@ -182,17 +197,45 @@ namespace Dcl
                     var rdrr = tra.GetComponent<MeshRenderer>();
                     if (rdrr)
                     {
-                        var width = rdrr.bounds.extents.x * 2;
+                        var width = rdrr.bounds.extents.x;
+                        var height = rdrr.bounds.extents.y * 1;
                         extraProperties.AppendFormat(" width={{{0}}}", width);
+                        extraProperties.AppendFormat(" height={{{0}}}", height);
                     }
                 }
 
                 if (component is MeshRenderer)
                 {
                     var meshRenderer = component as MeshRenderer;
+
                     //Statistics
                     var curHeight = meshRenderer.bounds.max.y;
                     if (curHeight > statistics.maxHeight) statistics.maxHeight = curHeight;
+
+                    //Warnings
+                    if (warningRecorder != null)
+                    {
+                        //OutOfLand
+                        if (_sceneMeta)
+                        {
+                            var isOutOfLand = false;
+                            var startParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.min);
+                            var endParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.max);
+                            for (int x = startParcel.x; x <= endParcel.x; x++)
+                            {
+                                for (int y = startParcel.y; y <= endParcel.y; y++)
+                                {
+                                    if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
+                                    {
+                                        warningRecorder.OutOfLandWarnings.Add(new SceneWarningRecorder.OutOfLand(meshRenderer));
+                                        isOutOfLand = true;
+                                        break;
+                                    }
+                                }
+                                if (isOutOfLand) break;
+                            }
+                        }
+                    }
                 }
             }
             if (nodeName == null)
@@ -222,7 +265,7 @@ namespace Dcl
 
             foreach (Transform child in tra)
             {
-                RecursivelyTraverseTransform(child, childrenXmlBuilder, meshesToExport, indentLevel + 1, statistics);
+                RecursivelyTraverseTransform(child, childrenXmlBuilder, meshesToExport, indentLevel + 1, statistics, warningRecorder);
             }
 
             if (xmlBuilder != null)
@@ -305,8 +348,14 @@ namespace Dcl
         /// </summary>
         /// <param name="material"></param>
         /// <param name="xml">Will append an xml line like <material id="mat01" emissiveColor = "#AA00FF"/></param>
-        public static void TraverseMaterial(Material material, StringBuilder xml)
+        public static void TraverseMaterial(Material material, StringBuilder xml, SceneWarningRecorder warningRecorder)
         {
+            //Check is it a Unity Standard Material
+            if (material.shader.name != "Standard")
+            {
+                warningRecorder.UnsupportedShaderWarnings.Add(new SceneWarningRecorder.UnsupportedShader(material));
+            }
+
             var albedoTex = material.GetTexture("_MainTex");
             var refractionTexture = material.GetTexture("_MetallicGlossMap");
             var bumpTexture = material.GetTexture("_BumpMap");
@@ -358,9 +407,35 @@ namespace Dcl
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="texture"></param>
+        /// <returns>false if </returns>
+        static void CheckTextureValidity(Texture texture, SceneWarningRecorder warningRecorder)
+        {
+            if (!IsTextureSizeValid(texture.width) || !IsTextureSizeValid(texture.height))
+            {
+                warningRecorder.InvalidTextureWarnings.Add(new SceneWarningRecorder.InvalidTexture(texture));
+            }
+        }
+
+        static bool IsTextureSizeValid(int x)
+        {
+            if ((x != 0) && ((x & (x - 1)) == 0))
+            {
+                if (1 <= x && x <= 512)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static string GetTextureRelativePath(Texture texture)
         {
-            var relPath= AssetDatabase.GetAssetPath(texture);
+            var relPath = AssetDatabase.GetAssetPath(texture);
             if (string.IsNullOrEmpty(relPath))
             {
                 //TODO: this is a built-in asset

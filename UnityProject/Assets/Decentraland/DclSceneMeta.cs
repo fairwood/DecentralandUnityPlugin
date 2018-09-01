@@ -20,6 +20,7 @@ namespace Dcl
         public SceneToGlTFWiz sceneToGlTFWiz;
 
         public SceneStatistics sceneStatistics = new SceneStatistics();
+        public SceneWarningRecorder sceneWarningRecorder = new SceneWarningRecorder();
 
         private void Awake()
         {
@@ -41,12 +42,21 @@ namespace Dcl
                     //Gizmos.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos);
                 }
             }
+
+            foreach (var outOfLandWarning in sceneWarningRecorder.OutOfLandWarnings)
+            {
+                var oriColor = Gizmos.color;
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireCube(outOfLandWarning.meshRenderer.bounds.center, outOfLandWarning.meshRenderer.bounds.size);
+                Gizmos.color = oriColor;
+            }
         }
 
         public void RefreshStatistics()
         {
             sceneStatistics = new SceneStatistics();
-            SceneTraverser.TraverseAllScene(null, null, sceneStatistics);
+            sceneWarningRecorder = new SceneWarningRecorder();
+            SceneTraverser.TraverseAllScene(null, null, sceneStatistics, sceneWarningRecorder);
         }
     }
 
@@ -61,6 +71,40 @@ namespace Dcl
 
         public int x;
         public int y;
+
+        public static bool operator ==(ParcelCoordinates a, ParcelCoordinates b)
+        {
+            return a.x == b.x && a.y == b.y;
+        }
+
+        public static bool operator !=(ParcelCoordinates a, ParcelCoordinates b)
+        {
+            return !(a == b);
+        }
+
+        public bool Equals(ParcelCoordinates other)
+        {
+            return x == other.x && y == other.y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is ParcelCoordinates && Equals((ParcelCoordinates)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (x * 397) ^ y;
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0},{1}", x, y);
+        }
     }
 
     public class SceneStatistics

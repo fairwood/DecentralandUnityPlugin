@@ -23,15 +23,7 @@ namespace Dcl
         }
 
         private DclSceneMeta sceneMeta;
-
-        public List<string> warnings = new List<string>
-        {
-            //        "Out of land range! at (12,-32)",
-            //        "Too many triangles! at (12,-32)",
-            //        "Too large texture! at (12,-32)",
-            //        "Unsupported shader! at (12,-32)"
-        };
-
+        
         private bool editParcelsMode;
         private string editParcelsText;
 
@@ -122,7 +114,7 @@ namespace Dcl
             InfoGUI();
             GUILayout.Space(SPACE_SIZE);
 
-            ShowWarningsSector();
+            WarningsGUI();
             GUILayout.Space(SPACE_SIZE);
 
             EditorGUI.BeginChangeCheck();
@@ -135,13 +127,13 @@ namespace Dcl
             sceneMeta.contactName = EditorGUILayout.TextField("Name", sceneMeta.contactName);
             sceneMeta.email = EditorGUILayout.TextField("Email", sceneMeta.email);
 
-            GUILayout.Label("Export Path", EditorStyles.boldLabel);
+            GUILayout.Label(LabelLocalization.DCLProjectPath, EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
             exportPath = EditorPrefs.GetString("DclExportPath");
             var newExportPath = EditorGUILayout.TextField(exportPath);
-            if (GUILayout.Button("...", GUILayout.Width(24)))
+            if (GUILayout.Button("...", GUILayout.Width(24), GUILayout.Height(24)))
             {
-                newExportPath = EditorUtility.OpenFolderPanel("Select the folder to export", exportPath, "");
+                newExportPath = EditorUtility.OpenFolderPanel(LabelLocalization.SelectDCLProjectPath, exportPath, "");
                 if (string.IsNullOrEmpty(newExportPath)) newExportPath = exportPath;
             }
             if (newExportPath != exportPath)
@@ -173,6 +165,45 @@ namespace Dcl
 
             GUILayout.Space(SPACE_SIZE * 2);
 
+            GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Init Project", GUILayout.Width(105)))
+            {
+                if (Directory.Exists(exportPath))
+                {
+                    if (EditorUtility.DisplayDialog("Confirm to init DCL project?",
+                        string.Format("This will run 'dcl init' command in {0}. Are you sure?", exportPath), "Yes",
+                        "No"))
+                    {
+                        DclCLI.DclInit(exportPath);
+                    }
+                }
+                else
+                {
+                    ShowNotification(new GUIContent("You need to select a valid project folder!"));
+                }
+            }
+
+            if (GUILayout.Button("Run Project", GUILayout.Width(105)))
+            {
+                if (Directory.Exists(exportPath))
+                {
+                    if (EditorUtility.DisplayDialog("Confirm to run DCL project?",
+                        string.Format("This will run 'dcl start' command in {0}. Are you sure?", exportPath), "Yes",
+                        "No"))
+                    {
+                        DclCLI.DclStart(exportPath);
+                        ShowNotification(new GUIContent("DCL is starting\nWait 10 seconds"));
+                    }
+                }
+                else
+                {
+                    ShowNotification(new GUIContent("You need to select a valid project folder!"));
+                }
+            }
+            GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
+            
+            GUILayout.Space(SPACE_SIZE * 2);
+
             #region Help Link
 
             string url = "https://github.com/fairwood/DecentralandUnityPlugin";
@@ -196,12 +227,28 @@ namespace Dcl
             GUILayout.Label(LabelLocalization.KeepTheseNumbersSmaller, EditorStyles.centeredGreyMiniLabel);
             var n = sceneMeta.parcels.Count;
             var sceneStatistics = sceneMeta.sceneStatistics;
-            EditorGUILayout.LabelField("Triangles", string.Format("{0} / {1}", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n)));
-            EditorGUILayout.LabelField("Entities", string.Format("{0} / {1}", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n)));
-            EditorGUILayout.LabelField("Bodies", string.Format("{0} / {1}", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n)));
-            EditorGUILayout.LabelField("Materials", string.Format("{0} / {1}", sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n)));
-            EditorGUILayout.LabelField("Textures", string.Format("{0} / {1}", sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n)));
-            EditorGUILayout.LabelField("Height", string.Format("{0} / {1}", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n)));
+            StatisticsLineGUI("Triangles", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n));
+            StatisticsLineGUI("Entities", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n));
+            StatisticsLineGUI("Bodies", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n));
+            StatisticsLineGUI("Materials", sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n));
+            StatisticsLineGUI("Textures", sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n));
+            StatisticsLineGUI("Height", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n));
+        }
+
+        void StatisticsLineGUI(string indexName, long leftValue, long rightValue)
+        {
+            var oriColor = GUI.contentColor;
+            if (leftValue > rightValue) GUI.contentColor = Color.red;
+            EditorGUILayout.LabelField(indexName, string.Format("{0} / {1}", leftValue, rightValue));
+            GUI.contentColor = oriColor;
+        }
+
+        void StatisticsLineGUI(string indexName, float leftValue, float rightValue)
+        {
+            var oriColor = GUI.contentColor;
+            if (leftValue > rightValue) GUI.contentColor = Color.yellow;
+            EditorGUILayout.LabelField(indexName, string.Format("{0} / {1}", leftValue, rightValue));
+            GUI.contentColor = oriColor;
         }
 
         private float nextTimeRefresh = 0;
@@ -215,28 +262,58 @@ namespace Dcl
             }
         }
 
-        void ShowWarningsSector()
+        void WarningsGUI()
         {
             var oriColor = GUI.contentColor;
+
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label(string.Format("Warnings({0})", warnings.Count));
+            var warningCount = sceneMeta.sceneWarningRecorder.OutOfLandWarnings.Count +
+                               sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings.Count +
+                               sceneMeta.sceneWarningRecorder.InvalidTextureWarnings.Count;
+            
+//            GUILayout.Label(string.Format("Warnings({0})", warningCount));
             EditorGUILayout.EndHorizontal();
-            var sb = new StringBuilder();
-            if (warnings.Count > 0)
+            if (warningCount > 0)
             {
                 GUILayout.Label("Click the warning to focus in the scene", EditorStyles.centeredGreyMiniLabel);
 
-                sb.Append(WarningToStringBuilder(warnings[0]));
-                for (int i = 1; i < warnings.Count; i++)
+                GUI.contentColor = Color.yellow;
+
+                foreach (var outOfLandWarning in sceneMeta.sceneWarningRecorder.OutOfLandWarnings)
                 {
-                    sb.Append('\n').Append(WarningToStringBuilder(warnings[i]));
+                    WarningLineGUI(string.Format("Out of land range : {0}", outOfLandWarning.meshRenderer.name), null, outOfLandWarning.meshRenderer.gameObject);
+                }
+                foreach (var warning in sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings)
+                {
+                    var path = AssetDatabase.GetAssetPath(warning.renderer);
+                    WarningLineGUI(string.Format("Unsupported shader : {0}", warning.renderer.name), LabelLocalization.OnlyStandardShaderSupported, path);
+                }
+                foreach (var warning in sceneMeta.sceneWarningRecorder.InvalidTextureWarnings)
+                {
+                    var path = AssetDatabase.GetAssetPath(warning.renderer);
+                    WarningLineGUI(string.Format("Invalid texture size : {0}", warning.renderer.name), LabelLocalization.TextureSizeMustBe, path);
                 }
             }
-
-            GUI.contentColor = new Color(1, 1f, 0f);
-            EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(200));
+            
 
             GUI.contentColor = oriColor;
+        }
+
+        void WarningLineGUI(string text, string hintMessage, GameObject gameObject)
+        {
+            if (GUILayout.Button(text, EditorStyles.label))
+            {
+                if (hintMessage != null) ShowNotification(new GUIContent(hintMessage));
+                EditorGUIUtility.PingObject(gameObject);
+            }
+        }
+        void WarningLineGUI(string text, string hintMessage, string assetPath)
+        {
+            if (GUILayout.Button(text, EditorStyles.label))
+            {
+                if (hintMessage != null) ShowNotification(new GUIContent(hintMessage));
+                Selection.activeObject = AssetDatabase.LoadMainAssetAtPath(assetPath);
+            }
         }
 
         void OptionsGUI()
@@ -263,9 +340,7 @@ namespace Dcl
             }
 
             var path = AssetDatabase.GUIDToAssetPath(guids[0]);
-            Debug.Log("Path:" + path);
             var template = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
-            Debug.Log("Txt:" + template.text);
             return template.text;
         }
 
@@ -284,9 +359,7 @@ namespace Dcl
             }
 
             var path = AssetDatabase.GUIDToAssetPath(guids[0]);
-            Debug.Log("Path:" + path);
             var template = AssetDatabase.LoadAssetAtPath(path, typeof(TextAsset)) as TextAsset;
-            Debug.Log("Txt:" + template.text);
             return template.text;
         }
 
@@ -369,7 +442,7 @@ namespace Dcl
             var sceneXmlBuilder = new StringBuilder();
             var statistics = new SceneStatistics();
 
-            SceneTraverser.TraverseAllScene(sceneXmlBuilder, meshesToExport, statistics);
+            SceneTraverser.TraverseAllScene(sceneXmlBuilder, meshesToExport, statistics, null);
 
             var sceneXml = sceneXmlBuilder.ToString();
 
@@ -392,7 +465,9 @@ namespace Dcl
                 var relPath = AssetDatabase.GetAssetPath(texture);
                 if (string.IsNullOrEmpty(relPath))
                 {
-                    //TODO: built-in asset
+                    //built-in asset
+                    var bytes = ((Texture2D) texture).EncodeToPNG();
+                    File.WriteAllBytes(Path.Combine(unityAssetsFolderPath, texture.name + ".png"), bytes);
                 }
                 else
                 {
@@ -447,12 +522,7 @@ namespace Dcl
         {
             return new StringBuilder().Append(parcel.x).Append(',').Append(parcel.y);
         }
-
-        public static StringBuilder WarningToStringBuilder(string warning)
-        {
-            return new StringBuilder().Append(warning);
-        }
-
+        
         public static string Vector3ToJSONString(Vector3 v)
         {
             return string.Format("{{x:{0},y:{1},z:{2}}}", v.x, v.y, v.z);

@@ -38,5 +38,57 @@ namespace Dcl
                 }
             }
         }
+        public static string DCLProjectPath
+        {
+            get
+            {
+                switch (Language)
+                {
+                    case ELanguage.CN:
+                        return "DCL工程文件夹";
+                    default:
+                        return "DCL Project Path";
+                }
+            }
+        }
+        public static string SelectDCLProjectPath
+        {
+            get
+            {
+                switch (Language)
+                {
+                    case ELanguage.CN:
+                        return "选择DCL工程文件夹";
+                    default:
+                        return "Select the DCL Project folder";
+                }
+            }
+        }
+        public static string OnlyStandardShaderSupported
+        {
+            get
+            {
+                switch (Language)
+                {
+                    case ELanguage.CN:
+                        return "只支持Standard材质";
+                    default:
+                        return "Only Standard Shader is supported";
+                }
+            }
+        }
+        public static string TextureSizeMustBe
+        {
+            get
+            {
+                switch (Language)
+                {
+                    case ELanguage.CN:
+                        return "贴图的边长必须是1,2,4,8,..., 512";
+                    default:
+                        return "Texture sizes must be one of 1,2,4,8,..., 512";
+                }
+            }
+        }
     }
 }
