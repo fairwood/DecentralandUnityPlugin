@@ -92,7 +92,7 @@ namespace Dcl
             EditorGUILayout.EndHorizontal();
             if (editParcelsMode)
             {
-                editParcelsText = EditorGUILayout.TextArea(editParcelsText, GUILayout.Height(200));
+                editParcelsText = EditorGUILayout.TextArea(editParcelsText, GUILayout.Height(120));
             }
             else
             {
@@ -105,7 +105,7 @@ namespace Dcl
                         sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
                     }
                 }
-                EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(200));
+                EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(120));
             }
 
 
@@ -246,8 +246,14 @@ namespace Dcl
         void StatisticsLineGUI(string indexName, float leftValue, float rightValue)
         {
             var oriColor = GUI.contentColor;
-            if (leftValue > rightValue) GUI.contentColor = Color.yellow;
+            EditorGUILayout.BeginHorizontal();
+            if (leftValue > rightValue)
+            {
+                GUILayout.Label(DclEditorSkin.WarningIconSmall, GUILayout.Width(20));
+                GUI.contentColor = Color.yellow;
+            }
             EditorGUILayout.LabelField(indexName, string.Format("{0} / {1}", leftValue, rightValue));
+            EditorGUILayout.EndHorizontal();
             GUI.contentColor = oriColor;
         }
 
@@ -256,6 +262,7 @@ namespace Dcl
         {
             if (Time.realtimeSinceStartup > nextTimeRefresh)
             {
+                CheckAndGetDclSceneMetaObject();
                 sceneMeta.RefreshStatistics();
                 Repaint();
                 nextTimeRefresh = Time.realtimeSinceStartup + 2;
@@ -264,21 +271,16 @@ namespace Dcl
 
         void WarningsGUI()
         {
-            var oriColor = GUI.contentColor;
 
-            EditorGUILayout.BeginHorizontal();
             var warningCount = sceneMeta.sceneWarningRecorder.OutOfLandWarnings.Count +
                                sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings.Count +
                                sceneMeta.sceneWarningRecorder.InvalidTextureWarnings.Count;
             
 //            GUILayout.Label(string.Format("Warnings({0})", warningCount));
-            EditorGUILayout.EndHorizontal();
             if (warningCount > 0)
             {
                 GUILayout.Label("Click the warning to focus in the scene", EditorStyles.centeredGreyMiniLabel);
-
-                GUI.contentColor = Color.yellow;
-
+                
                 foreach (var outOfLandWarning in sceneMeta.sceneWarningRecorder.OutOfLandWarnings)
                 {
                     WarningLineGUI(string.Format("Out of land range : {0}", outOfLandWarning.meshRenderer.name), null, outOfLandWarning.meshRenderer.gameObject);
@@ -294,26 +296,35 @@ namespace Dcl
                     WarningLineGUI(string.Format("Invalid texture size : {0}", warning.renderer.name), LabelLocalization.TextureSizeMustBe, path);
                 }
             }
-            
-
-            GUI.contentColor = oriColor;
         }
 
         void WarningLineGUI(string text, string hintMessage, GameObject gameObject)
         {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label(DclEditorSkin.WarningIconSmall, GUILayout.Width(20));
+            var oriColor = GUI.contentColor;
+            GUI.contentColor = Color.yellow;
             if (GUILayout.Button(text, EditorStyles.label))
             {
                 if (hintMessage != null) ShowNotification(new GUIContent(hintMessage));
                 EditorGUIUtility.PingObject(gameObject);
             }
+            EditorGUILayout.EndHorizontal();
+            GUI.contentColor = oriColor;
         }
         void WarningLineGUI(string text, string hintMessage, string assetPath)
         {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label(DclEditorSkin.WarningIconSmall, GUILayout.Width(20));
+            var oriColor = GUI.contentColor;
+            GUI.contentColor = Color.yellow;
             if (GUILayout.Button(text, EditorStyles.label))
             {
                 if (hintMessage != null) ShowNotification(new GUIContent(hintMessage));
                 Selection.activeObject = AssetDatabase.LoadMainAssetAtPath(assetPath);
             }
+            EditorGUILayout.EndHorizontal();
+            GUI.contentColor = oriColor;
         }
 
         void OptionsGUI()
