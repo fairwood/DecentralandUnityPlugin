@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -17,18 +16,18 @@ namespace Dcl
         [MenuItem("Decentraland/Scene Exporter")]
         static void Init()
         {
-            var window = (DclExporter)GetWindow(typeof(DclExporter));
+            var window = (DclExporter) GetWindow(typeof(DclExporter));
             window.Show();
             window.minSize = new Vector2(100, 200);
         }
 
         private DclSceneMeta sceneMeta;
-        
+
         private bool editParcelsMode;
         private string editParcelsText;
 
         private string exportPath;
-        
+
         void OnGUI()
         {
             if (!sceneMeta)
@@ -36,85 +35,10 @@ namespace Dcl
                 CheckAndGetDclSceneMetaObject();
             }
 
-            #region Parcels
-
-            var parcels = sceneMeta.parcels;
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label(string.Format("Parcels({0})", parcels.Count), EditorStyles.boldLabel, GUILayout.Width(100));
-            if (editParcelsMode)
-            {
-                if (GUILayout.Button("Save"))
-                {
-                    CheckAndGetDclSceneMetaObject();
-                    try
-                    {
-                        var newParcels = new List<ParcelCoordinates>();
-                        ParseTextToCoordinates(editParcelsText, newParcels);
-                        parcels = newParcels;
-                        sceneMeta.parcels = parcels;
-                        editParcelsMode = false;
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError(e.Message);
-                        EditorUtility.DisplayDialog("Invalid Format", e.Message, "OK");
-                    }
-
-                    EditorUtility.SetDirty(sceneMeta);
-                    EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
-
-                }
-
-                if (GUILayout.Button("X", GUILayout.Width(20)))
-                {
-                    editParcelsMode = false;
-                    CheckAndGetDclSceneMetaObject();
-                }
-            }
-            else
-            {
-                if (GUILayout.Button("Edit"))
-                {
-                    var sb = new StringBuilder();
-                    if (parcels.Count > 0)
-                    {
-                        sb.Append(ParcelToStringBuilder(parcels[0]));
-                        for (int i = 1; i < parcels.Count; i++)
-                        {
-                            sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
-                        }
-                    }
-                    editParcelsText = sb.ToString();
-                    editParcelsMode = true;
-                    CheckAndGetDclSceneMetaObject();
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-            if (editParcelsMode)
-            {
-                editParcelsText = EditorGUILayout.TextArea(editParcelsText, GUILayout.Height(120));
-            }
-            else
-            {
-                var sb = new StringBuilder();
-                if (parcels.Count > 0)
-                {
-                    sb.Append(ParcelToStringBuilder(parcels[0])).Append(" (base)");
-                    for (int i = 1; i < parcels.Count; i++)
-                    {
-                        sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
-                    }
-                }
-                EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(120));
-            }
-
-
-            #endregion
-
-            InfoGUI();
+            ParcelGUI();
             GUILayout.Space(SPACE_SIZE);
 
-            WarningsGUI();
+            StatGUI();
             GUILayout.Space(SPACE_SIZE);
 
             EditorGUI.BeginChangeCheck();
@@ -122,10 +46,8 @@ namespace Dcl
             OptionsGUI();
             GUILayout.Space(SPACE_SIZE);
 
-            GUILayout.Label("Owner Info(optional)", EditorStyles.boldLabel);
-            sceneMeta.ethAddress = EditorGUILayout.TextField("Address", sceneMeta.ethAddress);
-            sceneMeta.contactName = EditorGUILayout.TextField("Name", sceneMeta.contactName);
-            sceneMeta.email = EditorGUILayout.TextField("Email", sceneMeta.email);
+            OwnerGUI();
+            GUILayout.Space(SPACE_SIZE * 3);
 
             GUILayout.Label(LabelLocalization.DCLProjectPath, EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
@@ -136,6 +58,7 @@ namespace Dcl
                 newExportPath = EditorUtility.OpenFolderPanel(LabelLocalization.SelectDCLProjectPath, exportPath, "");
                 if (string.IsNullOrEmpty(newExportPath)) newExportPath = exportPath;
             }
+
             if (newExportPath != exportPath)
             {
                 exportPath = newExportPath;
@@ -153,19 +76,23 @@ namespace Dcl
 
             GUILayout.Space(SPACE_SIZE);
 
-            GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
             var oriColor = GUI.backgroundColor;
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Export", GUILayout.Width(220), GUILayout.Height(32)))
             {
                 Export();
             }
+
             GUI.backgroundColor = oriColor;
-            GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(SPACE_SIZE * 2);
 
-            GUILayout.BeginHorizontal(); GUILayout.FlexibleSpace();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
             if (GUILayout.Button("Init Project", GUILayout.Width(105)))
             {
                 if (Directory.Exists(exportPath))
@@ -200,8 +127,10 @@ namespace Dcl
                     ShowNotification(new GUIContent("You need to select a valid project folder!"));
                 }
             }
-            GUILayout.FlexibleSpace(); GUILayout.EndHorizontal();
-            
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
             GUILayout.Space(SPACE_SIZE * 2);
 
             #region Help Link
@@ -215,24 +144,135 @@ namespace Dcl
             #endregion
         }
 
-        void InfoGUI()
+        void ParcelGUI()
         {
+            EditorGUILayout.BeginVertical("box");
+            var parcels = sceneMeta.parcels;
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Statistics", EditorStyles.boldLabel, GUILayout.Width(100));
-            if (GUILayout.Button("Refresh"))
+            var style = EditorStyles.foldout;
+            style.fontStyle = FontStyle.Bold;
+            var oriFoldout = EditorPrefs.GetBool("DclFoldParcel", true);
+            var foldout =
+                EditorGUILayout.Foldout(oriFoldout, string.Format("Parcels({0})", parcels.Count), true, style);
+            if (foldout)
             {
-                sceneMeta.RefreshStatistics();
+                if (editParcelsMode)
+                {
+                    if (GUILayout.Button("Save"))
+                    {
+                        CheckAndGetDclSceneMetaObject();
+                        try
+                        {
+                            var newParcels = new List<ParcelCoordinates>();
+                            ParseTextToCoordinates(editParcelsText, newParcels);
+                            parcels = newParcels;
+                            sceneMeta.parcels = parcels;
+                            editParcelsMode = false;
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError(e.Message);
+                            EditorUtility.DisplayDialog("Invalid Format", e.Message, "OK");
+                        }
+
+                        EditorUtility.SetDirty(sceneMeta);
+                        EditorSceneManager.MarkSceneDirty(sceneMeta.gameObject.scene);
+
+                    }
+
+                    if (GUILayout.Button("X", GUILayout.Width(20)))
+                    {
+                        editParcelsMode = false;
+                        CheckAndGetDclSceneMetaObject();
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("Edit"))
+                    {
+                        var sb = new StringBuilder();
+                        if (parcels.Count > 0)
+                        {
+                            sb.Append(ParcelToStringBuilder(parcels[0]));
+                            for (int i = 1; i < parcels.Count; i++)
+                            {
+                                sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
+                            }
+                        }
+
+                        editParcelsText = sb.ToString();
+                        editParcelsMode = true;
+                        CheckAndGetDclSceneMetaObject();
+                    }
+                }
             }
+
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label(LabelLocalization.KeepTheseNumbersSmaller, EditorStyles.centeredGreyMiniLabel);
-            var n = sceneMeta.parcels.Count;
-            var sceneStatistics = sceneMeta.sceneStatistics;
-            StatisticsLineGUI("Triangles", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n));
-            StatisticsLineGUI("Entities", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n));
-            StatisticsLineGUI("Bodies", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n));
-            StatisticsLineGUI("Materials", sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n));
-            StatisticsLineGUI("Textures", sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n));
-            StatisticsLineGUI("Height", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n));
+            EditorGUI.indentLevel = 1;
+            if (foldout)
+            {
+                if (editParcelsMode)
+                {
+                    editParcelsText = EditorGUILayout.TextArea(editParcelsText, GUILayout.Height(120));
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+                    if (parcels.Count > 0)
+                    {
+                        sb.Append(ParcelToStringBuilder(parcels[0])).Append(" (base)");
+                        for (int i = 1; i < parcels.Count; i++)
+                        {
+                            sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
+                        }
+                    }
+
+                    EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(120));
+                }
+            }
+
+            if (foldout != oriFoldout) EditorPrefs.SetBool("DclFoldParcel", foldout);
+            EditorGUI.indentLevel = 0;
+            EditorGUILayout.EndVertical();
+        }
+
+        #region StatGUI
+
+        void StatGUI()
+        {
+            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.BeginHorizontal();
+            var oriFoldout = EditorPrefs.GetBool("DclFoldStat", true);
+            var foldout = EditorGUILayout.Foldout(oriFoldout, "Statistics", true);
+            if (foldout)
+            {
+                if (GUILayout.Button("Refresh"))
+                {
+                    sceneMeta.RefreshStatistics();
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUI.indentLevel = 1;
+            if (foldout)
+            {
+                GUILayout.Label(LabelLocalization.KeepTheseNumbersSmaller, EditorStyles.centeredGreyMiniLabel);
+                var n = sceneMeta.parcels.Count;
+                var sceneStatistics = sceneMeta.sceneStatistics;
+                StatisticsLineGUI("Triangles", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n));
+                StatisticsLineGUI("Entities", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n));
+                StatisticsLineGUI("Bodies", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n));
+                StatisticsLineGUI("Materials", sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n));
+                StatisticsLineGUI("Textures", sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n));
+                StatisticsLineGUI("Height", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n));
+            }
+
+            if (foldout != oriFoldout) EditorPrefs.SetBool("DclFoldStat", foldout);
+
+            WarningsGUI();
+            EditorGUI.indentLevel = 0;
+            EditorGUILayout.EndVertical();
         }
 
         void StatisticsLineGUI(string indexName, long leftValue, long rightValue)
@@ -252,48 +292,49 @@ namespace Dcl
                 GUILayout.Label(DclEditorSkin.WarningIconSmall, GUILayout.Width(20));
                 GUI.contentColor = Color.yellow;
             }
+
             EditorGUILayout.LabelField(indexName, string.Format("{0} / {1}", leftValue, rightValue));
             EditorGUILayout.EndHorizontal();
             GUI.contentColor = oriColor;
         }
 
-        private float nextTimeRefresh = 0;
-        private void Update()
-        {
-            if (Time.realtimeSinceStartup > nextTimeRefresh)
-            {
-                CheckAndGetDclSceneMetaObject();
-                sceneMeta.RefreshStatistics();
-                Repaint();
-                nextTimeRefresh = Time.realtimeSinceStartup + 2;
-            }
-        }
+        #endregion
+
+        #region WarningsGUI
 
         void WarningsGUI()
         {
-
-            var warningCount = sceneMeta.sceneWarningRecorder.OutOfLandWarnings.Count +
-                               sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings.Count +
-                               sceneMeta.sceneWarningRecorder.InvalidTextureWarnings.Count;
-            
-//            GUILayout.Label(string.Format("Warnings({0})", warningCount));
-            if (warningCount > 0)
+            var foldout = EditorPrefs.GetBool("DclFoldStat", true);
+            if (foldout)
             {
-                GUILayout.Label("Click the warning to focus in the scene", EditorStyles.centeredGreyMiniLabel);
-                
-                foreach (var outOfLandWarning in sceneMeta.sceneWarningRecorder.OutOfLandWarnings)
+                var warningCount = sceneMeta.sceneWarningRecorder.OutOfLandWarnings.Count +
+                                   sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings.Count +
+                                   sceneMeta.sceneWarningRecorder.InvalidTextureWarnings.Count;
+
+                //            GUILayout.Label(string.Format("Warnings({0})", warningCount));
+                if (warningCount > 0)
                 {
-                    WarningLineGUI(string.Format("Out of land range : {0}", outOfLandWarning.meshRenderer.name), null, outOfLandWarning.meshRenderer.gameObject);
-                }
-                foreach (var warning in sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings)
-                {
-                    var path = AssetDatabase.GetAssetPath(warning.renderer);
-                    WarningLineGUI(string.Format("Unsupported shader : {0}", warning.renderer.name), LabelLocalization.OnlyStandardShaderSupported, path);
-                }
-                foreach (var warning in sceneMeta.sceneWarningRecorder.InvalidTextureWarnings)
-                {
-                    var path = AssetDatabase.GetAssetPath(warning.renderer);
-                    WarningLineGUI(string.Format("Invalid texture size : {0}", warning.renderer.name), LabelLocalization.TextureSizeMustBe, path);
+                    GUILayout.Label("Click the warning to focus in the scene", EditorStyles.centeredGreyMiniLabel);
+
+                    foreach (var outOfLandWarning in sceneMeta.sceneWarningRecorder.OutOfLandWarnings)
+                    {
+                        WarningLineGUI(string.Format("Out of land range : {0}", outOfLandWarning.meshRenderer.name),
+                            null, outOfLandWarning.meshRenderer.gameObject);
+                    }
+
+                    foreach (var warning in sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings)
+                    {
+                        var path = AssetDatabase.GetAssetPath(warning.renderer);
+                        WarningLineGUI(string.Format("Unsupported shader : {0}", warning.renderer.name),
+                            LabelLocalization.OnlyStandardShaderSupported, path);
+                    }
+
+                    foreach (var warning in sceneMeta.sceneWarningRecorder.InvalidTextureWarnings)
+                    {
+                        var path = AssetDatabase.GetAssetPath(warning.renderer);
+                        WarningLineGUI(string.Format("Invalid texture size : {0}", warning.renderer.name),
+                            LabelLocalization.TextureSizeMustBe, path);
+                    }
                 }
             }
         }
@@ -309,9 +350,11 @@ namespace Dcl
                 if (hintMessage != null) ShowNotification(new GUIContent(hintMessage));
                 EditorGUIUtility.PingObject(gameObject);
             }
+
             EditorGUILayout.EndHorizontal();
             GUI.contentColor = oriColor;
         }
+
         void WarningLineGUI(string text, string hintMessage, string assetPath)
         {
             EditorGUILayout.BeginHorizontal();
@@ -323,18 +366,69 @@ namespace Dcl
                 if (hintMessage != null) ShowNotification(new GUIContent(hintMessage));
                 Selection.activeObject = AssetDatabase.LoadMainAssetAtPath(assetPath);
             }
+
             EditorGUILayout.EndHorizontal();
             GUI.contentColor = oriColor;
         }
 
+        #endregion
+
         void OptionsGUI()
         {
-            GUILayout.Label("Options", EditorStyles.boldLabel);
-            //mExportPBR = EditorGUILayout.Toggle("Export PBR Material", mExportPBR);
-            //mExportAnimation = EditorGUILayout.Toggle("Export animation (beta)", mExportAnimation);
-            //mConvertImage = EditorGUILayout.Toggle("Convert Images", mConvertImage);
-            //mBuildZip = EditorGUILayout.Toggle("Build Zip", mBuildZip);
+            EditorGUILayout.BeginVertical("box");
+
+            var oriFoldout = EditorPrefs.GetBool("DclFoldOptions");
+            var foldout = EditorGUILayout.Foldout(oriFoldout, "Options", true);
+            if (foldout)
+            {
+                //mExportPBR = EditorGUILayout.Toggle("Export PBR Material", mExportPBR);
+                //mExportAnimation = EditorGUILayout.Toggle("Export animation (beta)", mExportAnimation);
+                //mConvertImage = EditorGUILayout.Toggle("Convert Images", mConvertImage);
+                //mBuildZip = EditorGUILayout.Toggle("Build Zip", mBuildZip);
+            }
+
+            if (foldout != oriFoldout) EditorPrefs.SetBool("DclFoldOptions", foldout);
+
+            EditorGUILayout.EndVertical();
         }
+
+        void OwnerGUI()
+        {
+            EditorGUILayout.BeginVertical("box");
+
+            var oriFoldout = EditorPrefs.GetBool("DclBoldOwner");
+            var foldout = EditorGUILayout.Foldout(oriFoldout, "Owner Info (optional)", true);
+            if (foldout)
+            {
+                EditorGUI.indentLevel = 1;
+                sceneMeta.ethAddress = EditorGUILayout.TextField("Address", sceneMeta.ethAddress);
+                sceneMeta.contactName = EditorGUILayout.TextField("Name", sceneMeta.contactName);
+                sceneMeta.email = EditorGUILayout.TextField("Email", sceneMeta.email);
+                EditorGUI.indentLevel = 0;
+            }
+
+            if (foldout != oriFoldout) EditorPrefs.SetBool("DclBoldOwner", foldout);
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private DateTime nextTimeRefresh;
+
+        private void Update()
+        {
+            if (DateTime.Now > nextTimeRefresh)
+            {
+                if (!sceneMeta)
+                {
+                    CheckAndGetDclSceneMetaObject();
+                }
+
+                sceneMeta.RefreshStatistics();
+                Repaint();
+                nextTimeRefresh = DateTime.Now.AddSeconds(1);
+            }
+        }
+
 
         string GetSceneTsxFileTemplate()
         {
@@ -466,7 +560,8 @@ namespace Dcl
             //glTF in unity_asset
             foreach (var go in meshesToExport)
             {
-                sceneMeta.sceneToGlTFWiz.ExportGameObject(go, Path.Combine(unityAssetsFolderPath, go.name + ".gltf"), null, false, true, false, false);
+                sceneMeta.sceneToGlTFWiz.ExportGameObject(go, Path.Combine(unityAssetsFolderPath, go.name + ".gltf"),
+                    null, false, true, false, false);
             }
 
             //textures
@@ -502,6 +597,7 @@ namespace Dcl
             {
                 fileTxt = fileTxt.Replace("{BASE}", ParcelToString(sceneMeta.parcels[0]));
             }
+
             filePath = Path.Combine(exportPath, "scene.json");
             File.WriteAllText(filePath, fileTxt);
 
@@ -509,7 +605,7 @@ namespace Dcl
         }
 
         #region Utils
-        
+
         public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
         {
             coordinates.Clear();
@@ -533,7 +629,7 @@ namespace Dcl
         {
             return new StringBuilder().Append(parcel.x).Append(',').Append(parcel.y);
         }
-        
+
         public static string Vector3ToJSONString(Vector3 v)
         {
             return string.Format("{{x:{0},y:{1},z:{2}}}", v.x, v.y, v.z);
@@ -544,7 +640,7 @@ namespace Dcl
         /// </summary>
         private static string ToHexString(Color color)
         {
-            var color256 = (Color32)color;
+            var color256 = (Color32) color;
             string R = Convert.ToString(color256.r, 16);
             if (R == "0")
                 R = "00";
@@ -579,7 +675,7 @@ namespace Dcl
                         FileInfo fi = new FileInfo(d);
                         if (fi.Attributes.ToString().IndexOf("ReadOnly") != -1)
                             fi.Attributes = FileAttributes.Normal;
-                        File.Delete(d);//直接删除其中的文件 
+                        File.Delete(d); //直接删除其中的文件 
                     }
                     catch
                     {
@@ -593,8 +689,9 @@ namespace Dcl
                         DirectoryInfo d1 = new DirectoryInfo(d);
                         if (d1.GetFiles().Length != 0)
                         {
-                            ClearFolder(d1.FullName);////递归删除子文件夹
+                            ClearFolder(d1.FullName); ////递归删除子文件夹
                         }
+
                         Directory.Delete(d);
                     }
                     catch
