@@ -17,8 +17,9 @@ namespace Dcl
         static void Init()
         {
             var window = (DclExporter) GetWindow(typeof(DclExporter));
+            window.titleContent = new GUIContent("DCL Exporter");
             window.Show();
-            window.minSize = new Vector2(100, 200);
+            window.minSize = new Vector2(240, 400);
         }
 
         private DclSceneMeta sceneMeta;

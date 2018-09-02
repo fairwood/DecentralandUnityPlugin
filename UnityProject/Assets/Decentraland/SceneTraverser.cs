@@ -100,24 +100,23 @@ namespace Dcl
                 if (component is MeshFilter)
                 {
                     var meshFilter = component as MeshFilter;
-                    if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube))
+                    if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.box))
                     {
                         nodeName = "box";
                     }
-                    else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Sphere))
+                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.sphere))
                     {
                         nodeName = "sphere";
                     }
-                    else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Quad))
+                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.plane))
                     {
                         nodeName = "plane";
                     }
-                    else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cylinder))
+                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.cylinder))
                     {
                         nodeName = "cylinder";
-                        extraProperties.Append(" radius={0.5}");
                     }
-                    else if (meshFilter.sharedMesh == PrimitiveHelper.ConeMesh)
+                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.cone))
                     {
                         nodeName = "cone";
                     }

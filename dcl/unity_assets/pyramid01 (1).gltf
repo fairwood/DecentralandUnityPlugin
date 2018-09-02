@@ -90,7 +90,7 @@
 	],
 	"images": [
 		{
-			"uri": "Assets/Decentraland/Sample - 01/Materials/dcl_map.jpg"
+			"uri": "Assets/Decentraland/Sample - 01/Materials/colormap.jpg"
 		}
 	],
 	"materials": [
@@ -100,7 +100,7 @@
 					"index" : 0,
 					"texCoord" : 0
 				},
-				"baseColorFactor": [1, 0.7068272, 0.2877358, 1],
+				"baseColorFactor": [1, 1, 1, 1],
 				"metallicFactor": 0.206,
 				"roughnessFactor": 0.186
 			},
@@ -111,7 +111,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Pyramid001_3030pyramid01 (1)",
+			"name": "mesh_Pyramid001_3050pyramid01 (1)",
 			"primitives": [
 				{
 					"attributes": {
@@ -135,7 +135,7 @@
 			]
 		},
 		{
-			"name": "node_pyramid01 (1)_-869166",
+			"name": "node_pyramid01 (1)_-1072",
 			"mesh": 0,
 			"matrix": [0.8996978, -2.980232E-08, 0.4365132, 0, -0.4365132, 1.192093E-07, 0.8996978, 0, -5.960464E-08, -0.9999999, 1.192093E-07, 0, -3.5, 0.39, 1.93, 1]
 		}

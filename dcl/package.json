@@ -11,5 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "metaverse-api": "latest"
+  },
+  "dependencies": {
+    "decentraland-api": "^4.1.0"
   }
 }
