@@ -172,9 +172,10 @@ namespace Dcl
                             meshesToExport.Add(tra.gameObject);
                         }
                         nodeName = "gltf-model";
-                        position = Vector3.zero;
-                        eulerAngles = Vector3.zero;
-                        scale = Vector3.zero;
+                        // TODO: delete postion info (by alking)
+                        // position = Vector3.zero;
+                        // eulerAngles = Vector3.zero;
+                        // scale = Vector3.zero;
                         extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", tra.name);
                         
                         //Statistics
