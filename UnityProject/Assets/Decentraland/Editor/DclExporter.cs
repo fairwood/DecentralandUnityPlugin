@@ -279,8 +279,14 @@ namespace Dcl
         void StatisticsLineGUI(string indexName, long leftValue, long rightValue)
         {
             var oriColor = GUI.contentColor;
-            if (leftValue > rightValue) GUI.contentColor = Color.red;
+            EditorGUILayout.BeginHorizontal();
+            if (leftValue > rightValue)
+            {
+                GUILayout.Label(DclEditorSkin.WarningIconSmall, GUILayout.Width(20));
+                GUI.contentColor = Color.yellow;
+            }
             EditorGUILayout.LabelField(indexName, string.Format("{0} / {1}", leftValue, rightValue));
+            EditorGUILayout.EndHorizontal();
             GUI.contentColor = oriColor;
         }
 
@@ -293,7 +299,6 @@ namespace Dcl
                 GUILayout.Label(DclEditorSkin.WarningIconSmall, GUILayout.Width(20));
                 GUI.contentColor = Color.yellow;
             }
-
             EditorGUILayout.LabelField(indexName, string.Format("{0} / {1}", leftValue, rightValue));
             EditorGUILayout.EndHorizontal();
             GUI.contentColor = oriColor;
