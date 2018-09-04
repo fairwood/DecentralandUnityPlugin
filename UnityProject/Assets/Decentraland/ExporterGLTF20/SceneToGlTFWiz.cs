@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Reflection;
 using Ionic.Zip;
@@ -566,7 +567,7 @@ public class SceneToGlTFWiz : MonoBehaviour
 	}
 
 
-    public bool ExportGameObject(GameObject go, string path, Preset presetAsset, bool buildZip, bool exportPBRMaterials, bool exportAnimation = true, bool doConvertImages = false)
+    public bool ExportGameObjectAndChildren(GameObject go, string path, Preset presetAsset, bool buildZip, bool exportPBRMaterials, bool exportAnimation = true, bool doConvertImages = false)
     {
         writer = new GlTF_Writer();
         writer.Init();
@@ -594,7 +595,7 @@ public class SceneToGlTFWiz : MonoBehaviour
         parsedSkins.Clear();
 
         // first, collect objects in the scene, add to lists
-        List<Transform> trs = new List<Transform>() { go.transform };
+        List<Transform> trs = go.GetComponentsInChildren<Transform>().ToList();
         // Prefilter selected nodes and look for skinning in order to list "bones" nodes
         //FIXME: improve this
         List<Transform> bones = new List<Transform>();

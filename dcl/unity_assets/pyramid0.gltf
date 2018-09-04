@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.3f1",
+		"generator": "Unity 2018.2.2f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -102,7 +102,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Pyramid001_3034pyramid0",
+			"name": "mesh_Pyramid001_11400pyramid0",
 			"primitives": [
 				{
 					"attributes": {
@@ -126,7 +126,7 @@
 			]
 		},
 		{
-			"name": "node_pyramid0_-1070",
+			"name": "node_pyramid0_-24400",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}
