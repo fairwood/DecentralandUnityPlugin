@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace Dcl
 {
-    public class SceneTraverser
+    public static class SceneTraverser
     {
 
         const string indentUnit = "  ";
