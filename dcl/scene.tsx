@@ -11,8 +11,6 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
     return (
       <scene position={{x:5,y:0,z:5}}>
         <entity position={{x:0,y:1,z:-10}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <cone position={{x:3.55,y:0,z:-1.03}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board"></cone>
-        <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01.gltf"></gltf-model>
         <entity position={{x:1.341,y:6.197,z:-2.323}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
         <box position={{x:-1.21,y:0.6264758,z:0}} scale={{x:0.16804,y:0.2136183,z:9.6}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Gray">
@@ -32,17 +30,20 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
           <cylinder position={{x:0,y:1.2,z:0}} scale={{x:0.1,y:1.2,z:0.1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Rod"></cylinder>
           <text position={{x:-0.061,y:2.97,z:-0.134}} scale={{x:2.187967,y:2.187967,z:2.187967}} rotation={{x:0,y:24.42181,z:0}} value="Decentraland" width={1.162118} height={0.244437} color="#00FF28"></text>
         </entity>
-        <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01 (1).gltf"></gltf-model>
-        <gltf-model position={{x:0,y:0,z:0}} scale={{x:0,y:0,z:0}} rotation={{x:0,y:0,z:0}} src="./unity_assets/pyramid01 (2).gltf"></gltf-model>
-        <sphere position={{x:1.4,y:0.69,z:-2.263}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Rod"></sphere>
-        <box position={{x:5.5,y:0.5,z:-3.5}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board"></box>
+        <gltf-model position={{x:-3.5,y:0.39,z:0.56}} scale={{x:1,y:1,z:1}} rotation={{x:270,y:0,z:0}} src="./unity_assets/pyramid0.gltf"></gltf-model>
+        <gltf-model position={{x:-3.17,y:0.17,z:-2.09}} scale={{x:1,y:1,z:1}} rotation={{x:270,y:25.88162,z:0}} src="./unity_assets/pyramid_shouldpackchildren.gltf"></gltf-model>
+        <box position={{x:5.5,y:0.5,z:-2.14}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board">
+          <gltf-model position={{x:-0.1,y:0.69,z:1.25}} scale={{x:1,y:1,z:1}} rotation={{x:270,y:0,z:0}} src="./unity_assets/pyramid3_underbox.gltf"></gltf-model>
+        </box>
         <plane position={{x:9.5,y:1.939861,z:-0.4372959}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board"></plane>
-        <cylinder position={{x:3.281,y:18.566,z:-3.761227}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board"></cylinder>
         <cylinder position={{x:8,y:1,z:-3}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:343.7085}} withCollisions={true} material="#Board"></cylinder>
-        <material id="Board" albedoColor="#FFFFFF" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={0} roughness={0.794}/>
+        <sphere position={{x:1.4,y:0.69,z:-2.263}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Rod"></sphere>
+        <gltf-model position={{x:9.09,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} src="./unity_assets/tree.gltf"></gltf-model>
+        <cone position={{x:3.67,y:0,z:-0.24}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} material="#Board"></cone>
         <material id="Gray" albedoColor="#4A4A4A" emissiveColor="#000000" metallic={0} roughness={0.5}/>
         <material id="Blue" albedoColor="#3C4C70" emissiveColor="#2C00BF" metallic={0} roughness={0.5}/>
-        <material id="Rod" albedoColor="#FFFFFF" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" emissiveColor="#000000" metallic={0.206} roughness={0.186}/>
+        <material id="Rod" albedoColor="#563131" emissiveColor="#000000" metallic={0.206} roughness={0.186}/>
+        <material id="Board" albedoColor="#FFFFFF" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={0} roughness={0.794}/>
       </scene>
     )
   }

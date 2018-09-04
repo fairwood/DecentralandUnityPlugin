@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.2f1",
+		"generator": "Unity 2018.2.3f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -56,7 +56,7 @@
 	"buffers": [
 		{
 			"byteLength": 864,
-			"uri": "pyramid01 (2).bin"
+			"uri": "pyramid0.bin"
 		}
 	],
 	"bufferViews": [
@@ -88,19 +88,10 @@
 			"byteOffset": 544
 		}
 	],
-	"images": [
-		{
-			"uri": "Assets/Decentraland/Sample - 01/Materials/colormap.jpg"
-		}
-	],
 	"materials": [
 		{
 			"pbrMetallicRoughness": {
-				"baseColorTexture" : {
-					"index" : 0,
-					"texCoord" : 0
-				},
-				"baseColorFactor": [1, 1, 1, 1],
+				"baseColorFactor": [0.3396226, 0.1938412, 0.1938412, 1],
 				"metallicFactor": 0.206,
 				"roughnessFactor": 0.186
 			},
@@ -111,7 +102,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Pyramid001_3050pyramid01 (2)",
+			"name": "mesh_Pyramid001_3034pyramid0",
 			"primitives": [
 				{
 					"attributes": {
@@ -135,17 +126,9 @@
 			]
 		},
 		{
-			"name": "node_pyramid01 (2)_-1064",
+			"name": "node_pyramid0_-1070",
 			"mesh": 0,
-			"matrix": [0.45954, 0, 0, 0, 0, 0.1047609, 0.4474395, 0, 0, -1.332299, 0.3119368, 0, -3.5, 0.39, 4.043, 1]
-		}
-	],
-	"samplers": [
-		{
-			"magFilter": 9729,
-			"minFilter": 9985,
-			"wrapS": 10497,
-			"wrapT": 10497
+			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}
 	],
 	"scenes": [
@@ -156,11 +139,5 @@
 			]
 		}
 	],
-	"scene": 0,
-	"textures": [
-		{
-			"sampler": 0,
-			"source": 0
-		}
-	]
+	"scene": 0
 }

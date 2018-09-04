@@ -263,9 +263,13 @@ namespace Dcl
                 childrenXmlBuilder = new StringBuilder();
             }
 
-            foreach (Transform child in tra)
+            if (nodeName != "gltf-model") //gltf node will force to pack all its children, so should not traverse into it again.
             {
-                RecursivelyTraverseTransform(child, childrenXmlBuilder, meshesToExport, indentLevel + 1, statistics, warningRecorder);
+                foreach (Transform child in tra)
+                {
+                    RecursivelyTraverseTransform(child, childrenXmlBuilder, meshesToExport, indentLevel + 1, statistics,
+                        warningRecorder);
+                }
             }
 
             if (xmlBuilder != null)
