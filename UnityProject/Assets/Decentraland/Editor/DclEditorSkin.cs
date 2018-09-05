@@ -53,5 +53,123 @@ namespace Dcl
                 return EditorGUIUtility.FindTexture("d_console.erroricon.sml");
             }
         }
+
+
+        #region Shapes
+
+        public static Texture2D Cube
+        {
+            get
+            {
+                return EditorGUIUtility.FindTexture("PreMatCube");
+            }
+        }
+        public static Texture2D Quad
+        {
+            get
+            {
+                return EditorGUIUtility.FindTexture("PreMatQuad");
+            }
+        }
+        public static Texture2D Sphere
+        {
+            get
+            {
+                return EditorGUIUtility.FindTexture("PreMatSphere");
+            }
+        }
+        public static Texture2D Cylinder
+        {
+            get
+            {
+                return EditorGUIUtility.FindTexture("PreMatCylinder");
+            }
+        }
+        public static Texture2D Torus
+        {
+            get { return EditorGUIUtility.FindTexture("PreMatTorus"); }
+        }
+        public static Texture2D Mesh
+        {
+            get { return EditorGUIUtility.IconContent("Mesh Icon").image as Texture2D; }
+        }
+        public static Texture2D PrefabModel
+        {
+            get
+            {
+                return EditorGUIUtility.FindTexture("PrefabModel Icon");
+            }
+        }
+        #endregion
+
+
+        #region Only In DCL Package
+
+        private static Texture2D _entity;
+        public static Texture2D Entity
+        {
+            get
+            {
+                if (!_entity)
+                {
+                    var internalFolder = FileUtil.FindFolder("Decentraland/Internal");
+                    if (internalFolder.EndsWith("/"))
+                        internalFolder = internalFolder.Remove(internalFolder.LastIndexOf("/"), 1);
+                    _entity = (Texture2D)AssetDatabase.LoadAssetAtPath(
+                        string.Format("{0}/Icons/entity.png", internalFolder), typeof(Texture2D));
+                }
+                return _entity;
+            }
+        }
+        private static Texture2D _cone;
+        public static Texture2D Cone
+        {
+            get
+            {
+                if (!_cone)
+                {
+                    var internalFolder = FileUtil.FindFolder("Decentraland/Internal");
+                    if (internalFolder.EndsWith("/"))
+                        internalFolder = internalFolder.Remove(internalFolder.LastIndexOf("/"), 1);
+                    _cone = (Texture2D) AssetDatabase.LoadAssetAtPath(
+                        string.Format("{0}/Icons/cone.png", internalFolder), typeof(Texture2D));
+                }
+                return _cone;
+            }
+        }
+        private static Texture2D _followup;
+        public static Texture2D FollowUp
+        {
+            get
+            {
+                if (!_followup)
+                {
+                    var internalFolder = FileUtil.FindFolder("Decentraland/Internal");
+                    if (internalFolder.EndsWith("/"))
+                        internalFolder = internalFolder.Remove(internalFolder.LastIndexOf("/"), 1);
+                    _followup = (Texture2D)AssetDatabase.LoadAssetAtPath(
+                        string.Format("{0}/Icons/followup.png", internalFolder), typeof(Texture2D));
+                }
+                return _followup;
+            }
+        }
+        private static Texture2D _text;
+        public static Texture2D Text
+        {
+            get
+            {
+                if (!_text)
+                {
+                    var internalFolder = FileUtil.FindFolder("Decentraland/Internal");
+                    if (internalFolder.EndsWith("/"))
+                        internalFolder = internalFolder.Remove(internalFolder.LastIndexOf("/"), 1);
+                    _text = (Texture2D)AssetDatabase.LoadAssetAtPath(
+                        string.Format("{0}/Icons/text.png", internalFolder), typeof(Texture2D));
+                }
+                return _text;
+            }
+        }
+
+        #endregion
     }
 }

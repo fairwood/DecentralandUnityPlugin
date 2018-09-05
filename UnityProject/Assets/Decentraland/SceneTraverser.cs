@@ -9,6 +9,20 @@ using Object = UnityEngine.Object;
 
 namespace Dcl
 {
+    public enum EDclNodeType
+    {
+        _none,
+        entity,
+        box,
+        sphere,
+        plane,
+        cylinder,
+        cone,
+        circle,
+        text,
+        gltf,
+        ChildOfGLTF,
+    }
     public static class SceneTraverser
     {
 
@@ -18,6 +32,8 @@ namespace Dcl
         public static List<Texture> primitiveTexturesToExport;
 
         private static DclSceneMeta _sceneMeta;
+
+        public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
 
         public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
@@ -37,6 +53,7 @@ namespace Dcl
             _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
             primitiveMaterialsToExport = new List<Material>();
             primitiveTexturesToExport = new List<Texture>();
+            GameObjectToNodeTypeDict.Clear();
 
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
@@ -85,6 +102,7 @@ namespace Dcl
 
             var components = tra.GetComponents<Component>();
             string nodeName = null;
+            var nodeType = EDclNodeType._none;
             var position = tra.localPosition;
             var scale = tra.localScale;
             var eulerAngles = tra.localEulerAngles;
@@ -103,22 +121,27 @@ namespace Dcl
                     if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.box))
                     {
                         nodeName = "box";
+                        nodeType = EDclNodeType.box;
                     }
                     else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.sphere))
                     {
                         nodeName = "sphere";
+                        nodeType = EDclNodeType.sphere;
                     }
                     else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.plane))
                     {
                         nodeName = "plane";
+                        nodeType = EDclNodeType.plane;
                     }
                     else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.cylinder))
                     {
                         nodeName = "cylinder";
+                        nodeType = EDclNodeType.cylinder;
                     }
                     else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.cone))
                     {
                         nodeName = "cone";
+                        nodeType = EDclNodeType.cone;
                     }
 
                     if (nodeName != null)
@@ -146,9 +169,7 @@ namespace Dcl
                             }
 
                         }
-
-
-
+                        
                         //Collider
                         if (tra.GetComponent<Collider>())
                         {
@@ -172,6 +193,7 @@ namespace Dcl
                             meshesToExport.Add(tra.gameObject);
                         }
                         nodeName = "gltf-model";
+                        nodeType = EDclNodeType.gltf;
                         // TODO: delete postion info (by alking)
                         // position = Vector3.zero;
                         // eulerAngles = Vector3.zero;
@@ -189,6 +211,7 @@ namespace Dcl
                 if (component is TextMesh)
                 {
                     nodeName = "text";
+                    nodeType = EDclNodeType.text;
                     var tm = component as TextMesh;
                     extraProperties.AppendFormat(" value=\"{0}\"", tm.text);
                     scale *= tm.fontSize * 0.5f;
@@ -241,6 +264,7 @@ namespace Dcl
             if (nodeName == null)
             {
                 nodeName = "entity";
+                nodeType = EDclNodeType.entity;
             }
             if (pColor != null)
             {
@@ -263,7 +287,9 @@ namespace Dcl
                 childrenXmlBuilder = new StringBuilder();
             }
 
-            if (nodeName != "gltf-model") //gltf node will force to pack all its children, so should not traverse into it again.
+            GameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
+
+            if (nodeType != EDclNodeType.gltf) //gltf node will force to pack all its children, so should not traverse into it again.
             {
                 foreach (Transform child in tra)
                 {

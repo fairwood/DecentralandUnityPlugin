@@ -109,9 +109,21 @@ You can use models from outer model files (Unity does not support importing glTF
 
 Most properties of the Standard Material can be well exported, but things might still look a bit different in DCL. We will improve the consistency all the time.
 
-### Export
+### Important notice about non-primitives
+
+The exporter traverses the whole scene. When it finds a non-primitive model, it will pack the model all the model's children and export one gltf file. That means, GameObjects under a non-primitive model will not generate their own node, even if they are primitives themselves. Instead, their data will be contained in the parent's gltf file.
+
+### Before export
 
 Before export, you should check the statistics part. That shows some important indexes with their limitations. If something is wrong, you will see bright yellow warnings.
+
+![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/statsgui.png)
+
+Then, you can also go through the hierarchy view where will tell you what type of node will be generated from each GameObject.
+
+![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/hierarchy-node-icon.png)
+
+### Export
 
 Input or select the path of the folder to export files.
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -36,7 +35,7 @@ namespace Dcl
             {
                 var meshFolder = FileUtil.FindFolder("Decentraland/Internal");
                 if (meshFolder.EndsWith("/")) meshFolder = meshFolder.Remove(meshFolder.LastIndexOf("/"), 1);
-                var mesh = LoadAssetAtPath<Mesh>(String.Format("{0}/{1}.asset", meshFolder, type.ToString()));
+                var mesh = LoadAssetAtPath<Mesh>(string.Format("{0}/{1}.asset", meshFolder, type.ToString()));
                 dclPrimitiveMeshes[type] = mesh;
             }
             return dclPrimitiveMeshes[type];
