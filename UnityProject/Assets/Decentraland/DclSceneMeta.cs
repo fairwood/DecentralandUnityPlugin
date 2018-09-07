@@ -9,8 +9,7 @@ namespace Dcl
     {
         [SerializeField] [HideInInspector] public List<ParcelCoordinates> parcels = new List<ParcelCoordinates>
         {
-            new ParcelCoordinates(30, -15),
-            new ParcelCoordinates(30, -16),
+            new ParcelCoordinates(57, -11),
         };
 
         [SerializeField] [HideInInspector] public string ethAddress;
