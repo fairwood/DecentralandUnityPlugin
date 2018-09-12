@@ -44,7 +44,6 @@ public class DclCustomHierarchy
 
         EDclNodeType nodeType = EDclNodeType._none;
         Texture2D tex = null;
-        Debug.LogWarning("484848 go|" + instanceID + "|" + go);
         if (go)
         {
             if (SceneTraverser.GameObjectToNodeTypeDict.TryGetValue(go, out nodeType))
