@@ -58,7 +58,7 @@ namespace Dcl
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder);
+                RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
             }
             foreach (var material in primitiveMaterialsToExport)
             {
@@ -92,13 +92,16 @@ namespace Dcl
             }
         }
 
-        static void RecursivelyTraverseTransform(Transform tra, StringBuilder xmlBuilder, List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+        public static void RecursivelyTraverseTransform(Transform tra, StringBuilder xmlBuilder, List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder, Dictionary<GameObject, EDclNodeType> gameObjectToNodeTypeDict)
         {
             if (!tra.gameObject.activeInHierarchy) return;
 
             //TODO: Hide empty
 
-            statistics.entityCount += 1;
+            if (statistics != null)
+            {
+                statistics.entityCount += 1;
+            }
 
             var components = tra.GetComponents<Component>();
             string nodeName = null;
@@ -169,7 +172,7 @@ namespace Dcl
                             }
 
                         }
-                        
+
                         //Collider
                         if (tra.GetComponent<Collider>())
                         {
@@ -177,7 +180,10 @@ namespace Dcl
                         }
 
                         //Statistics
-                        statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+                        if (statistics != null)
+                        {
+                            statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+                        }
                     }
                 }
 
@@ -199,10 +205,13 @@ namespace Dcl
                         // eulerAngles = Vector3.zero;
                         // scale = Vector3.zero;
                         extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", tra.name);
-                        
+
                         //Statistics
-                        statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
-                        statistics.bodyCount += 1;
+                        if (statistics != null)
+                        {
+                            statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+                            statistics.bodyCount += 1;
+                        }
                     }
                 }
 
@@ -232,8 +241,11 @@ namespace Dcl
                     var meshRenderer = component as MeshRenderer;
 
                     //Statistics
-                    var curHeight = meshRenderer.bounds.max.y;
-                    if (curHeight > statistics.maxHeight) statistics.maxHeight = curHeight;
+                    if (statistics != null)
+                    {
+                        var curHeight = meshRenderer.bounds.max.y;
+                        if (curHeight > statistics.maxHeight) statistics.maxHeight = curHeight;
+                    }
 
                     //Warnings
                     if (warningRecorder != null)
@@ -287,14 +299,14 @@ namespace Dcl
                 childrenXmlBuilder = new StringBuilder();
             }
 
-            GameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
+            if (gameObjectToNodeTypeDict != null) gameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
 
             if (nodeType != EDclNodeType.gltf) //gltf node will force to pack all its children, so should not traverse into it again.
             {
                 foreach (Transform child in tra)
                 {
                     RecursivelyTraverseTransform(child, childrenXmlBuilder, meshesToExport, indentLevel + 1, statistics,
-                        warningRecorder);
+                        warningRecorder, gameObjectToNodeTypeDict);
                 }
             }
 

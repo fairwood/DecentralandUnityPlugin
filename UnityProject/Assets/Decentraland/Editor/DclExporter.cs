@@ -152,9 +152,7 @@ namespace Dcl
             EditorGUILayout.BeginHorizontal();
             var style = EditorStyles.foldout;
             style.fontStyle = FontStyle.Bold;
-            var oriFoldout = EditorPrefs.GetBool("DclFoldParcel", true);
-            var foldout =
-                EditorGUILayout.Foldout(oriFoldout, string.Format("Parcels({0})", parcels.Count), true, style);
+            var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclFoldParcel", string.Format("Parcels({0})", parcels.Count), true, style);
             if (foldout)
             {
                 if (editParcelsMode)
@@ -231,8 +229,7 @@ namespace Dcl
                     EditorGUILayout.LabelField(sb.ToString(), GUILayout.Height(120));
                 }
             }
-
-            if (foldout != oriFoldout) EditorPrefs.SetBool("DclFoldParcel", foldout);
+            
             EditorGUI.indentLevel = 0;
             EditorGUILayout.EndVertical();
         }
