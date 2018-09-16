@@ -6,7 +6,7 @@
 
 * Box
 
-* Sphere
+* Sphere (UV is not correct yet)
 
 * Plane
 
