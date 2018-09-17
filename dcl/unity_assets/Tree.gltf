@@ -1,0 +1,186 @@
+{
+	"asset": {
+		"generator": "Unity 2018.2.3f1",
+		"extras": {
+			"exporterVersion" : "2.2.1"
+		},
+		"version": "2.0"
+	},
+	"accessors": [
+		{
+			"bufferView": 2,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 88,
+			"max": [ 0.4977408, 14.74258, 1.300596 ],
+			"min": [ -0.6549007, 0, -0.6725595 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"byteOffset": 1056,
+			"componentType": 5126,
+			"count": 88,
+			"max": [ 0.9999573, 0.3180238, 0.9999796 ],
+			"min": [ -0.9999003, -0.2540317, -0.9997552 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 88,
+			"max": [ 0, 0, 0, 1 ],
+			"min": [ 0, 0, 0, 0.9973123 ],
+			"type": "VEC4"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 88,
+			"max": [ 0.75, 22.33541 ],
+			"min": [ 0.25, 0 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 704,
+			"componentType": 5126,
+			"count": 88,
+			"max": [ 0.4996376, 0 ],
+			"min": [ 0, 0 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 1408,
+			"componentType": 5126,
+			"count": 88,
+			"max": [ 0.9999854, 0.2861851, 0.9999888, 1 ],
+			"min": [ -0.9999999, -0.2861851, -0.9999806, 1 ],
+			"type": "VEC4"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 0,
+			"componentType": 5123,
+			"count": 420,
+			"max": [ 87 ],
+			"min": [ 0 ],
+			"type": "SCALAR"
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 7176,
+			"uri": "Tree.bin"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 840,
+			"target": 34963,
+			"byteOffset": 6336
+		},
+		{
+			"buffer": 0,
+			"byteLength": 1408,
+			"target": 34962,
+			"byteStride": 8,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2112,
+			"target": 34962,
+			"byteStride": 12,
+			"byteOffset": 1408
+		},
+		{
+			"buffer": 0,
+			"byteLength": 2816,
+			"target": 34962,
+			"byteStride": 16,
+			"byteOffset": 3520
+		}
+	],
+	"images": [
+		{
+			"uri": "Assets/Tree_Textures/diffuse.jpg"
+		}
+	],
+	"materials": [
+		{
+			"extensions": {
+				"KHR_materials_pbrSpecularGlossiness": {
+					"baseColorTexture" : {
+						"index" : 0,
+						"texCoord" : 0
+					},
+					"baseColorFactor": [1, 1, 1, 1]				}
+
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "Optimized Bark Material"
+		}
+	],
+	"meshes": [
+		{
+			"name": "mesh_Mesh_-26090Tree",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"COLOR_0": 2,
+						"TEXCOORD_0": 3,
+						"TEXCOORD_1": 4,
+						"TANGENT": 5
+					},
+					"indices": 6,
+					"material": 0,
+					"mode": 4
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"name": "UnityGlTF_root",
+			"children": [
+				1
+			]
+		},
+		{
+			"name": "node_Tree_-26286",
+			"mesh": 0,
+			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9985,
+			"wrapS": 10497,
+			"wrapT": 10497
+		}
+	],
+	"scenes": [
+		{
+			"name":"defaultScene",
+			"nodes": [
+				0
+			]
+		}
+	],
+	"scene": 0,
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		}
+	]
+}
