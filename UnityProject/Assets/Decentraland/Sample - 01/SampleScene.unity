@@ -362,6 +362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &334711122
 GameObject:
@@ -598,6 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &504106557
 GameObject:
@@ -804,6 +806,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &673518850
 GameObject:
@@ -931,7 +934,7 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 729983584}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -991,6 +994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 0
   withCollision: 1
 --- !u!1 &734156273
 GameObject:
@@ -1089,6 +1093,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1001 &750354835
 Prefab:
@@ -1257,6 +1262,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 0
   withCollision: 1
 --- !u!1 &1167889018
 GameObject:
@@ -1355,6 +1361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &1287841974
 GameObject:
@@ -1453,6 +1460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &1298430593
 GameObject:
@@ -1551,6 +1559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1001 &1305037882
 Prefab:
@@ -1784,6 +1793,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &1347586634
 GameObject:
@@ -1892,6 +1902,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &1393512029
 GameObject:
@@ -1990,6 +2001,7 @@ GameObject:
   - component: {fileID: 1414797186}
   - component: {fileID: 1414797185}
   - component: {fileID: 1414797184}
+  - component: {fileID: 1414797188}
   m_Layer: 0
   m_Name: Sphere (1)
   m_TagString: Untagged
@@ -2064,6 +2076,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1414797188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1414797183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 1
 --- !u!1001 &1500081336
 Prefab:
   m_ObjectHideFlags: 0
@@ -2165,7 +2190,7 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1689279762}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2225,6 +2250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 0
   withCollision: 1
 --- !u!1 &1786355961
 GameObject:
@@ -2264,7 +2290,7 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1786355961}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2324,6 +2350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 0
   withCollision: 1
 --- !u!1 &1844227094
 GameObject:
@@ -2422,6 +2449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &1972786728
 GameObject:
@@ -2520,6 +2548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1
 --- !u!1 &2025744030
 GameObject:
@@ -2754,4 +2783,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 1
   withCollision: 1

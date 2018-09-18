@@ -6,17 +6,29 @@ namespace Dcl
 {
 
     [CustomEditor(typeof(DclObject))]
+    [CanEditMultipleObjects]
     public class DclObjectInspector : Editor
     {
+        SerializedProperty visible;
+        SerializedProperty withCollision;
+
+        void OnEnable()
+        {
+            visible = serializedObject.FindProperty("visible");
+            withCollision = serializedObject.FindProperty("withCollision");
+        }
+
         public override void OnInspectorGUI()
         {
-            DrawDefaultInspector();
+            serializedObject.Update();
 
-            var go = (target as DclObject).gameObject;
+            var dclObject = target as DclObject;
+            var go = dclObject.gameObject;
+
+            EditorGUILayout.PropertyField(visible, new GUIContent("visible"));
+            EditorGUILayout.PropertyField(withCollision, new GUIContent("withCollision", "Only available for primitives"));
 
             //XML Preview
-
-//            EditorGUI.indentLevel = 1;
             var style = EditorStyles.foldout;
             style.fontStyle = FontStyle.Bold;
             if (EditorUtil.GUILayout.AutoSavedFoldout("DclObjectXml", "XML Preview", true, style, false))
@@ -29,6 +41,8 @@ namespace Dcl
                 EditorGUILayout.TextArea(xml.ToString(), style);
                 EditorGUILayout.EndVertical();
             }
+
+            serializedObject.ApplyModifiedProperties();
         }
     }
 }

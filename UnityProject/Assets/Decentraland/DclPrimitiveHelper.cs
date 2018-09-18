@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -120,6 +121,23 @@ namespace Dcl
                 }
                 //TODO:注册撤销功能
             }
+        }
+
+        public static bool ShouldGameObjectExportAsAPrimitive(GameObject gameObject)
+        {
+            var meshFilter = gameObject.GetComponent<MeshFilter>();
+            if (meshFilter)
+            {
+                foreach (DclPrimitiveType primitiveType in Enum.GetValues(typeof(DclPrimitiveType)))
+                {
+                    if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(primitiveType))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 

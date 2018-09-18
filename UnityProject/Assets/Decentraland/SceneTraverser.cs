@@ -113,6 +113,9 @@ namespace Dcl
             string pMaterial = null; //<... material="#mat01" ...>
             var extraProperties = new StringBuilder(); //TODO: can be omitted if xmlBuilder == null
 
+            var dclObject = tra.GetComponent<DclObject>();
+
+            //TODO:完全不需要遍历所有Components，导出的是GameObject，而不是Component！
             foreach (var component in components)
             {
                 if (component is Transform) continue;
@@ -173,10 +176,11 @@ namespace Dcl
 
                         }
 
-                        //Collider
-                        if (tra.GetComponent<Collider>())
+                        //withCollisions
+                        if (dclObject)
                         {
-                            extraProperties.Append(" withCollisions={true}");
+                            if (dclObject.visible != true) extraProperties.Append(" visible={false}");
+                            if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
                         }
 
                         //Statistics
