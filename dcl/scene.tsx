@@ -11,6 +11,7 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
     return (
       <scene position={{x:5,y:0,z:5}}>
         <entity position={{x:0,y:1,z:-10}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
+<<<<<<< HEAD
         <entity position={{x:1.341,y:6.197,z:-2.323}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
         <box position={{x:-1.21,y:0.6264758,z:0}} scale={{x:0.16804,y:0.2136183,z:9.6}} rotation={{x:0,y:0,z:0}} visible={false} withCollisions={true} material="#Gray">
@@ -43,6 +44,12 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <material id="Gray" albedoColor="#4A4A4A" emissiveColor="#000000" metallic={0} roughness={0.5}/>
         <material id="Blue" albedoColor="#3C4C70" emissiveColor="#2C00BF" metallic={0} roughness={0.5}/>
         <material id="Rod" albedoColor="#563131" emissiveColor="#000000" metallic={0.206} roughness={0.186}/>
+=======
+        <entity position={{x:0,y:3,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
+        <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
+        <box position={{x:0,y:0,z:-0.12}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} material="#Board"></box>
+        <cone position={{x:1.015023,y:0.4215235,z:-1.400313}} scale={{x:1,y:1,z:1}} rotation={{x:49.90312,y:0,z:0}}></cone>
+>>>>>>> 4e9badb627811acc67e54c30601079c8006a2fa8
         <material id="Board" albedoColor="#FFFFFF" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={0} roughness={0.794}/>
       </scene>
     )
