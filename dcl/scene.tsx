@@ -36,7 +36,9 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
           <gltf-model position={{x:-0.1,y:0.69,z:1.25}} scale={{x:1,y:1,z:1}} rotation={{x:270,y:0,z:0}} src="./unity_assets/pyramid3_underbox.gltf"></gltf-model>
         </box>
         <plane position={{x:9.5,y:1.939861,z:-0.4372959}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Board" visible={false}></plane>
-        <cylinder position={{x:8,y:1,z:-3}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:343.7085}} material="#Board"></cylinder>
+        <cylinder radiusTop={0.5} radiusBottom={2} withCollisions={true} position={{x:8,y:0,z:-1}} scale={{x:1,y:1,z:1}} material="#Board"></cylinder>
+        <cylinder openEnded={true} arc={180/Math.PI*1.5} segmentsHeight={-2} segmentsRadial={4} radius={0.2} radiusTop={1.5} radiusBottom={2} withCollisions={true} position={{x:8,y:2,z:-3}} scale={{x:1,y:0.1,z:1}} material="#Board"></cylinder>
+        <cylinder openEnded={true} arc={180/Math.PI*1.5} segmentsHeight={0} segmentsRadial={4} radius={0.2} radiusTop={1.5} radiusBottom={2} withCollisions={true} position={{x:6,y:2,z:-3}} scale={{x:1,y:0.1,z:1}} material="#Board"></cylinder>
         <sphere position={{x:1.4,y:0.69,z:-2.263}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Rod"></sphere>
         <gltf-model position={{x:9.09,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} src="./unity_assets/tree.gltf"></gltf-model>
         <cone position={{x:3.67,y:0,z:-0.24}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} material="#Board"></cone>

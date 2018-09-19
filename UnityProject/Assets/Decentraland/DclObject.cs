@@ -1,33 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[ExecuteInEditMode]
-[DisallowMultipleComponent]
-[AddComponentMenu("DclObject")]
-public class DclObject : MonoBehaviour
+namespace Dcl
 {
-    public bool visible = true;
-
-    [Tooltip("Only available for primitives")]
-    public bool withCollision = false;
-
-
-    void Update()
+    [ExecuteInEditMode]
+    [DisallowMultipleComponent]
+    [AddComponentMenu("DclObject")]
+    public class DclObject : MonoBehaviour
     {
-        var rdrr = GetComponent<Renderer>();
-        if (rdrr)
+        public bool visible = true;
+
+        [Tooltip("Only available for primitives")]
+        public bool withCollision = false;
+
+
+        protected void Update()
         {
-            var dclObjects = GetComponentsInParent<DclObject>();
-            var rdrrVisible = true;
-            foreach (var dclObject in dclObjects)
+            var rdrr = GetComponent<Renderer>();
+            if (rdrr)
             {
-                if (!dclObject.visible)
+                var dclObjects = GetComponentsInParent<DclObject>();
+                var rdrrVisible = true;
+                foreach (var dclObject in dclObjects)
                 {
-                    rdrrVisible = false;
-                    break;
+                    if (!dclObject.visible)
+                    {
+                        rdrrVisible = false;
+                        break;
+                    }
                 }
+
+                rdrr.enabled = rdrrVisible;
             }
-            rdrr.enabled = rdrrVisible;
         }
     }
 }
