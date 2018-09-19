@@ -2,6 +2,8 @@
 using System.Collections;
 
 [ExecuteInEditMode]
+[DisallowMultipleComponent]
+[AddComponentMenu("DclObject")]
 public class DclObject : MonoBehaviour
 {
     public bool visible = true;
@@ -13,6 +15,19 @@ public class DclObject : MonoBehaviour
     void Update()
     {
         var rdrr = GetComponent<Renderer>();
-        if (rdrr) rdrr.enabled = visible;
+        if (rdrr)
+        {
+            var dclObjects = GetComponentsInParent<DclObject>();
+            var rdrrVisible = true;
+            foreach (var dclObject in dclObjects)
+            {
+                if (!dclObject.visible)
+                {
+                    rdrrVisible = false;
+                    break;
+                }
+            }
+            rdrr.enabled = rdrrVisible;
+        }
     }
 }

@@ -26,7 +26,10 @@ namespace Dcl
             var go = dclObject.gameObject;
 
             EditorGUILayout.PropertyField(visible, new GUIContent("visible"));
-            EditorGUILayout.PropertyField(withCollision, new GUIContent("withCollision", "Only available for primitives"));
+            if (DclPrimitiveHelper.ShouldGameObjectExportAsAPrimitive(go))
+            {
+                EditorGUILayout.PropertyField(withCollision, new GUIContent("withCollision", "Only available for primitives"));
+            }
 
             //XML Preview
             var style = EditorStyles.foldout;

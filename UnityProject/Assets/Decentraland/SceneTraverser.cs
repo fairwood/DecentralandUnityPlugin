@@ -179,7 +179,6 @@ namespace Dcl
                         //withCollisions
                         if (dclObject)
                         {
-                            if (dclObject.visible != true) extraProperties.Append(" visible={false}");
                             if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
                         }
 
@@ -289,6 +288,11 @@ namespace Dcl
             if (pMaterial != null)
             {
                 extraProperties.AppendFormat(" material=\"{0}\"", pMaterial);
+            }
+            
+            if (dclObject)
+            {
+                if (dclObject.visible != true) extraProperties.Append(" visible={false}");
             }
 
             StringBuilder xmlNode = null;
