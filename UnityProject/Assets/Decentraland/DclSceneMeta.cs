@@ -27,7 +27,7 @@ namespace Dcl
             if (!sceneToGlTFWiz) sceneToGlTFWiz = gameObject.AddComponent<SceneToGlTFWiz>();
         }
 
-        void OnDrawGizmos()
+        void Update()// OnDrawGizmos()
         {
             if (parcels.Count > 0)
             {
@@ -36,9 +36,10 @@ namespace Dcl
                 foreach (var parcel in parcels)
                 {
                     var pos = new Vector3((parcel.x - baseParcel.x) * 10, 0, (parcel.y - baseParcel.y) * 10);
-                    Gizmos.DrawWireCube(pos, new Vector3(10, 0f, 10));
+                    //Gizmos.DrawWireCube(pos, new Vector3(10, 0f, 10));
                     //Gizmos.DrawCube(pos, new Vector3(10, 0f, 10));
                     //Gizmos.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos);
+                    Graphics.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos, Quaternion.identity, PrimitiveHelper.GetDefaultMaterial(), 0);
                 }
             }
 
