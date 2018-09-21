@@ -11,117 +11,173 @@
 			"bufferView": 2,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 1520,
-			"max": [ 5.531616, 8.681242, 3.279367 ],
-			"min": [ -4.241988, -0.003633, -3.092859 ],
+			"count": 153,
+			"max": [ 0.4185523, 12.11129, 3.199721 ],
+			"min": [ -5.538555, 0, -4.268872 ],
 			"type": "VEC3"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 18240,
+			"byteOffset": 1836,
 			"componentType": 5126,
-			"count": 1520,
-			"max": [ 0.9997523, 0.9987864, 0.9996902 ],
-			"min": [ -0.9999765, -0.999952, -0.9994712 ],
+			"count": 153,
+			"max": [ 0.9997631, 0.956952, 0.9997787 ],
+			"min": [ -0.9996257, -0.9456908, -0.9984758 ],
 			"type": "VEC3"
-		},
-		{
-			"bufferView": 1,
-			"byteOffset": 0,
-			"componentType": 5126,
-			"count": 1520,
-			"max": [ 0.8825, 0.877 ],
-			"min": [ 0.0759, 0.1286 ],
-			"type": "VEC2"
 		},
 		{
 			"bufferView": 3,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 1520,
-			"max": [ 0.9993999, 0.999993, 0.9990661, 1 ],
-			"min": [ -0.9978276, -0.993849, -0.9975298, 1 ],
+			"count": 153,
+			"max": [ 0.6594909, 1, 0, 1 ],
+			"min": [ 0, 0, 0, 0.8584535 ],
+			"type": "VEC4"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 153,
+			"max": [ 0.75, 31.31891 ],
+			"min": [ 0.25, 0 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 1224,
+			"componentType": 5126,
+			"count": 153,
+			"max": [ 0.4245003, 0.2514143 ],
+			"min": [ 0, 0 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 2448,
+			"componentType": 5126,
+			"count": 153,
+			"max": [ 0.9999995, 0.9643391, 0.9999866, 1 ],
+			"min": [ -0.9999188, -0.9643392, -0.9999782, -1 ],
 			"type": "VEC4"
 		},
 		{
 			"bufferView": 0,
 			"byteOffset": 0,
 			"componentType": 5123,
-			"count": 1524,
-			"max": [ 1519 ],
+			"count": 636,
+			"max": [ 152 ],
 			"min": [ 0 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 1272,
+			"componentType": 5123,
+			"count": 12,
+			"max": [ 132 ],
+			"min": [ 125 ],
 			"type": "SCALAR"
 		}
 	],
 	"buffers": [
 		{
-			"byteLength": 76008,
-			"uri": "tree.bin"
+			"byteLength": 12312,
+			"uri": "Tree.bin"
 		}
 	],
 	"bufferViews": [
 		{
 			"buffer": 0,
-			"byteLength": 3048,
+			"byteLength": 1296,
 			"target": 34963,
-			"byteOffset": 72960
+			"byteOffset": 11016
 		},
 		{
 			"buffer": 0,
-			"byteLength": 12160,
+			"byteLength": 2448,
 			"target": 34962,
 			"byteStride": 8,
 			"byteOffset": 0
 		},
 		{
 			"buffer": 0,
-			"byteLength": 36480,
+			"byteLength": 3672,
 			"target": 34962,
 			"byteStride": 12,
-			"byteOffset": 12160
+			"byteOffset": 2448
 		},
 		{
 			"buffer": 0,
-			"byteLength": 24320,
+			"byteLength": 4896,
 			"target": 34962,
 			"byteStride": 16,
-			"byteOffset": 48640
+			"byteOffset": 6120
 		}
 	],
 	"images": [
 		{
-			"uri": "Assets/Decentraland/Sample - 01/Models/Tree/textures/Tree_Green.jpg"
+			"uri": "Assets/Decentraland/Sample - 03/Tree_Textures/diffuse.jpg"
 		}
 	],
 	"materials": [
 		{
-			"pbrMetallicRoughness": {
-				"baseColorTexture" : {
-					"index" : 0,
-					"texCoord" : 0
-				},
-				"baseColorFactor": [1, 1, 1, 1],
-				"metallicFactor": 0,
-				"roughnessFactor": 0.5
+			"extensions": {
+				"KHR_materials_pbrSpecularGlossiness": {
+					"baseColorTexture" : {
+						"index" : 0,
+						"texCoord" : 0
+					},
+					"baseColorFactor": [1, 1, 1, 1]				}
+
 			},
 			"emissiveFactor": [0, 0, 0],
 			"doubleSided": false,
-			"name": "Tree"
+			"name": "Optimized Bark Material"
+		},
+		{
+			"extensions": {
+				"KHR_materials_pbrSpecularGlossiness": {
+					"baseColorTexture" : {
+						"index" : 0,
+						"texCoord" : 0
+					},
+					"baseColorFactor": [1, 1, 1, 1]				}
+
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "Optimized Leaf Material"
 		}
 	],
 	"meshes": [
 		{
-			"name": "mesh_default_2664tree",
+			"name": "mesh_Mesh_2764Tree",
 			"primitives": [
 				{
 					"attributes": {
 						"POSITION": 0,
 						"NORMAL": 1,
-						"TEXCOORD_0": 2,
-						"TANGENT": 3
+						"COLOR_0": 2,
+						"TEXCOORD_0": 3,
+						"TEXCOORD_1": 4,
+						"TANGENT": 5
 					},
-					"indices": 4,
+					"indices": 6,
 					"material": 0,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"COLOR_0": 2,
+						"TEXCOORD_0": 3,
+						"TEXCOORD_1": 4,
+						"TANGENT": 5
+					},
+					"indices": 7,
+					"material": 1,
 					"mode": 4
 				}
 			]
@@ -135,7 +191,7 @@
 			]
 		},
 		{
-			"name": "node_tree_3424",
+			"name": "node_Tree_-1054",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}
