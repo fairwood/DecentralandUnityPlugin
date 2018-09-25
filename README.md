@@ -174,3 +174,32 @@ Diff
 ### Unity-glTF Tools
 
 [@neil3d/Unity-glTF-Exporter](https://github.com/neil3d/Unity-glTF-Exporter)
+
+
+### dcl env in mac
+
+#### 1. find node home path
+```
+# to ensure node has installed in this machine
+# which node
+# /opt/node-v8.10.0-linux-x64/bin/node
+# string '/opt/node-v8.10.0-linux-x64' is node home
+
+```
+
+#### 2.add node home to path
+```
+// add content to file ~/.bash_profile
+
+export NODE_HOME='value step 1 got'
+PATH=$PATH:${NODE_HOME}/bin
+
+```
+
+#### 3. how to test node home has add to your path
+```
+source $HOME/.bash_profile
+echo $PATH
+// you can see the effect
+```
+
