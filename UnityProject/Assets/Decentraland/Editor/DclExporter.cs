@@ -539,12 +539,12 @@ namespace Dcl
             var unityAssetsFolderPath = Path.Combine(exportPath, "unity_assets/");
             if (Directory.Exists(unityAssetsFolderPath))
             {
-                ClearFolder(unityAssetsFolderPath);
+                //ClearFolder(unityAssetsFolderPath);
+                UnityEditor.FileUtil.DeleteFileOrDirectory(unityAssetsFolderPath);
             }
-            else
-            {
-                Directory.CreateDirectory(unityAssetsFolderPath);
-            }
+
+            Directory.CreateDirectory(unityAssetsFolderPath);
+
 
             var meshesToExport = new List<GameObject>();
             var sceneXmlBuilder = new StringBuilder();
