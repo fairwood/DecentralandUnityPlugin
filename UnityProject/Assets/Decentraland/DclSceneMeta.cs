@@ -42,7 +42,10 @@ namespace Dcl
                     Graphics.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos, Quaternion.identity, PrimitiveHelper.GetDefaultMaterial(), 0);
                 }
             }
+        }
 
+        void OnDrawGizmos()
+        {
             foreach (var outOfLandWarning in sceneWarningRecorder.OutOfLandWarnings)
             {
                 var oriColor = Gizmos.color;
