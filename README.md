@@ -180,10 +180,12 @@ Diff
 
 #### 1. find node home path
 ```
-# to ensure node has installed in this machine
-# which node
-# /opt/node-v8.10.0-linux-x64/bin/node
-# string '/opt/node-v8.10.0-linux-x64' is node home
+// to ensure node has installed in this machine
+
+which node
+/opt/node-v8.10.0-linux-x64/bin/node
+
+// string '/opt/node-v8.10.0-linux-x64' is node home
 
 ```
 
