@@ -35,9 +35,11 @@ namespace Dcl
         public static void DclInit(string path)
         {
 #if UNITY_EDITOR_OSX
-            string from = String.Format("{0}/Decentraland/template/*",Application.dataPath);
-            string cmd = String.Format("-c 'cd {0};source $HOME/.bash_profile; cp {1} {0};rm {0}/*.meta;npm install'",path,from);
-            ExecuteCommand(cmd);
+            // string from = String.Format("{0}/Decentraland/template/*",Application.dataPath);
+            // string cmd = String.Format("-c 'cd {0};source $HOME/.bash_profile; cp {1} {0};rm {0}/*.meta;npm install'",path,from);
+            //string cmd = String.Format("-c 'source $HOME/.bash_profile;open -a Terminal {0};", path);
+            //ExecuteCommand(cmd);
+            Application.OpenURL(string.Format("file://{0}",path));
 #else
             var cmd = string.Format("/k cd /d {0} & dcl init", path);
             ExecuteCommand(cmd);
@@ -47,8 +49,9 @@ namespace Dcl
         public static void DclStart(string path)
         {
 #if UNITY_EDITOR_OSX
-            string cmd = String.Format("-c 'cd {0};source $HOME/.bash_profile; dcl start'", path);
-            ExecuteCommand(cmd);
+            // string cmd = String.Format("-c 'cd {0};source $HOME/.bash_profile; dcl start'", path);
+            // ExecuteCommand(cmd);
+            Application.OpenURL(string.Format("file://{0}", path));
 #else
             var cmd = string.Format("/k cd /d {0} & dcl start", path);
             ExecuteCommand(cmd);
