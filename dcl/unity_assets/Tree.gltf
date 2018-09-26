@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.2f1",
+		"generator": "Unity 2018.2.3f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -152,11 +152,7 @@
 	],
 	"meshes": [
 		{
-<<<<<<< HEAD
-			"name": "mesh_Mesh_2764Tree",
-=======
-			"name": "mesh_default_2666tree",
->>>>>>> 759b14f1a1049a91f2a05a83118471d8a1223ace
+			"name": "mesh_Mesh_2774Tree",
 			"primitives": [
 				{
 					"attributes": {
@@ -195,11 +191,7 @@
 			]
 		},
 		{
-<<<<<<< HEAD
-			"name": "node_Tree_-1054",
-=======
-			"name": "node_tree_3428",
->>>>>>> 759b14f1a1049a91f2a05a83118471d8a1223ace
+			"name": "node_Tree_-1064",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}
