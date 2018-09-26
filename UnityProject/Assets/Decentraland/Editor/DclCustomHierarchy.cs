@@ -77,6 +77,9 @@ public class DclCustomHierarchy
                     case EDclNodeType.gltf:
                         tex = DclEditorSkin.Mesh;
                         break;
+                    case EDclNodeType.CustomNode:
+                        tex = DclEditorSkin.CustomNode;
+                        break;
                     default:
                         break;
                 }
@@ -137,6 +140,8 @@ public class DclCustomHierarchy
                 return "<gltf-model>";
             case EDclNodeType.ChildOfGLTF:
                 return "will be contained in its parent's gltf file";
+            case EDclNodeType.CustomNode:
+                return "a customized node";
             default:
                 return null;
         }
