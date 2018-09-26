@@ -36,6 +36,59 @@ namespace Dcl
 
         public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
 
+        public static void TraverseAllScene(List<GameObject>  gos,StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder){
+
+            if (xmlBuilder != null)
+            {
+                xmlBuilder.AppendIndent(indentUnit, 3);
+                xmlBuilder.AppendFormat("<scene position={{{0}}}>\n", Vector3ToJSONString(new Vector3(5, 0, 5)));
+            }
+
+            _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
+            primitiveMaterialsToExport = new List<Material>();
+            primitiveTexturesToExport = new List<Texture>();
+            GameObjectToNodeTypeDict.Clear();
+
+            //====== Start Traversing ======
+            foreach (var rootGO in gos)
+            {
+                RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
+            }
+            foreach (var material in primitiveMaterialsToExport)
+            {
+                var materialXml = xmlBuilder != null ? new StringBuilder() : null;
+                TraverseMaterial(material, materialXml, warningRecorder);
+
+                //Append materials
+                if (xmlBuilder != null)
+                {
+                    xmlBuilder.AppendIndent(indentUnit, 4);
+                    xmlBuilder.Append(materialXml).Append("\n");
+                }
+            }
+
+            //Check textures
+            if (warningRecorder != null)
+            {
+                foreach (var texture in primitiveTexturesToExport)
+                {
+                    CheckTextureValidity(texture, warningRecorder);
+                }
+            }
+
+            statistics.materialCount += primitiveMaterialsToExport.Count; //TODO: include glTF's materials
+            statistics.textureCount += primitiveTexturesToExport.Count; //TODO: include glTF's textures
+
+            if (xmlBuilder != null)
+            {
+                xmlBuilder.AppendIndent(indentUnit, 3);
+                xmlBuilder.Append("</scene>");
+            }
+
+        }
+
+
+
         public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             var rootGameObjects = new List<GameObject>();

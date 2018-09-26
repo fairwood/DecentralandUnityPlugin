@@ -64,6 +64,23 @@ namespace Dcl
                 }
             }
         }
+
+        public static string DragPrefabHere
+        {
+            get
+            {
+                switch (Language)
+                {
+                    case ELanguage.CN:
+                        return "将prefab拖至此";
+                    default:
+                        return "drag prefab here";
+                }
+
+            }
+
+        }
+        
         public static string OnlyStandardShaderSupported
         {
             get
