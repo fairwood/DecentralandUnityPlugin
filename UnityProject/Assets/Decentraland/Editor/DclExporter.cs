@@ -144,7 +144,7 @@ namespace Dcl
             prefab = (GameObject)EditorGUI.ObjectField(new Rect(10,position.height - 80,position.width - 50,25),LabelLocalization.DragPrefabHere,prefab,typeof(GameObject),true);
             if(prefab){
 
-                if (GUILayout.Button("Expor Prefab", GUILayout.Width(220), GUILayout.Height(32)))
+                if (GUILayout.Button(LabelLocalization.ExportPrefab, GUILayout.Width(220), GUILayout.Height(32)))
                 {
                     List<GameObject> rootList = new List<GameObject>();
 
