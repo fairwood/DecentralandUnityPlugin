@@ -201,7 +201,10 @@ namespace Dcl
                         //withCollisions
                         if (dclObject)
                         {
-                            if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
+                            if (DclPrimitiveHelper.ShouldGameObjectExportAsAPrimitive(tra.gameObject))
+                            {
+                                if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
+                            }
                         }
 
                         //Statistics
