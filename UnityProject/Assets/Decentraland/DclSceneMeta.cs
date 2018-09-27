@@ -26,7 +26,7 @@ namespace Dcl
         {
             sceneToGlTFWiz = GetComponent<SceneToGlTFWiz>();
             if (!sceneToGlTFWiz) sceneToGlTFWiz = gameObject.AddComponent<SceneToGlTFWiz>();
-			m_GroundMaterial = PrimitiveHelper.GetDefaultMaterial ();
+			m_GroundMaterial = new Material(PrimitiveHelper.GetDefaultMaterial().shader);
 			m_GroundMaterial.color = Color.gray;
         }
 
