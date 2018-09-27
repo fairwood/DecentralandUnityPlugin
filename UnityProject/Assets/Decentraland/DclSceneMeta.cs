@@ -20,11 +20,14 @@ namespace Dcl
 
         public SceneStatistics sceneStatistics = new SceneStatistics();
         public SceneWarningRecorder sceneWarningRecorder = new SceneWarningRecorder();
+		public Material m_GroundMaterial;
 
         private void Awake()
         {
             sceneToGlTFWiz = GetComponent<SceneToGlTFWiz>();
             if (!sceneToGlTFWiz) sceneToGlTFWiz = gameObject.AddComponent<SceneToGlTFWiz>();
+			m_GroundMaterial = PrimitiveHelper.GetDefaultMaterial ();
+			m_GroundMaterial.color = Color.gray;
         }
 
         void Update()// OnDrawGizmos()
@@ -39,7 +42,7 @@ namespace Dcl
                     //Gizmos.DrawWireCube(pos, new Vector3(10, 0f, 10));
                     //Gizmos.DrawCube(pos, new Vector3(10, 0f, 10));
                     //Gizmos.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos);
-                    Graphics.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos, Quaternion.identity, PrimitiveHelper.GetDefaultMaterial(), 0);
+					Graphics.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos, Quaternion.identity, m_GroundMaterial, 0);
                 }
             }
         }
