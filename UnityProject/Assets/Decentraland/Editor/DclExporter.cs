@@ -29,6 +29,8 @@ namespace Dcl
 
         private string exportPath;
 
+        private GameObject prefab;
+
         void OnGUI()
         {
             if (!sceneMeta)
@@ -83,7 +85,7 @@ namespace Dcl
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Export", GUILayout.Width(220), GUILayout.Height(32)))
             {
-                Export();
+                Export(null);
             }
 
             GUI.backgroundColor = oriColor;
@@ -133,6 +135,32 @@ namespace Dcl
             GUILayout.EndHorizontal();
 
             GUILayout.Space(SPACE_SIZE * 2);
+
+
+            #region prefab select
+
+            GUILayout.BeginHorizontal();
+
+            prefab = (GameObject)EditorGUI.ObjectField(new Rect(10,position.height - 80,position.width - 50,25),LabelLocalization.DragPrefabHere,prefab,typeof(GameObject),true);
+            if(prefab){
+
+                if (GUILayout.Button(LabelLocalization.ExportPrefab, GUILayout.Width(220), GUILayout.Height(32)))
+                {
+                    List<GameObject> rootList = new List<GameObject>();
+
+                    GameObject go = Instantiate(prefab);
+                    go.name = prefab.name;
+                    rootList.Add(go);
+                    Export(rootList);
+                    DestroyImmediate(go);
+                }
+            }
+
+
+            GUILayout.EndHorizontal();
+
+
+            # endregion
 
             #region Help Link
 
@@ -524,7 +552,7 @@ namespace Dcl
             EditorSceneManager.MarkSceneDirty(o.scene);
         }
 
-        void Export()
+        void Export(List<GameObject> rootList)
         {
             if (string.IsNullOrEmpty(exportPath))
             {
@@ -549,8 +577,12 @@ namespace Dcl
             var meshesToExport = new List<GameObject>();
             var sceneXmlBuilder = new StringBuilder();
             var statistics = new SceneStatistics();
-
-            SceneTraverser.TraverseAllScene(sceneXmlBuilder, meshesToExport, statistics, null);
+            if(rootList == null || rootList.Count < 1){
+                SceneTraverser.TraverseAllScene(sceneXmlBuilder, meshesToExport, statistics, null);
+            }else{
+                SceneTraverser.TraverseAllScene(rootList, sceneXmlBuilder, meshesToExport, statistics, null);
+            }
+           
 
             var sceneXml = sceneXmlBuilder.ToString();
 
@@ -559,7 +591,6 @@ namespace Dcl
             fileTxt = fileTxt.Replace("{XML}", sceneXml);
             var filePath = Path.Combine(exportPath, "scene.tsx");
             File.WriteAllText(filePath, fileTxt);
-
             //glTF in unity_asset
             foreach (var go in meshesToExport)
             {

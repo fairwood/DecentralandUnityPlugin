@@ -5,7 +5,7 @@ namespace Dcl
 {
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
-    [AddComponentMenu("DclObject")]
+    [AddComponentMenu("DclObject", 0)]
     public class DclObject : MonoBehaviour
     {
         public bool visible = true;

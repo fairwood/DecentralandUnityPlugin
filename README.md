@@ -176,5 +176,15 @@ Diff
 [@neil3d/Unity-glTF-Exporter](https://github.com/neil3d/Unity-glTF-Exporter)
 
 
+# Donations
+
+#### ETH/MANA/LAND/ERC20...
+
+![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/ethaddricon.png) 0x1a38ac06099D648Bb14418D61956133a3d0E1f1C
+
+#### BTC
+
+1JEFCP4hqa3Gd7aQ5unWoLP6S6mD17K9HQ
+
+
 ### [mac set up tutorial](./docs/mac_setup_tutorial.md)
-  

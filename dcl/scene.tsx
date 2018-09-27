@@ -11,12 +11,8 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
     return (
       <scene position={{x:5,y:0,z:5}}>
         <entity position={{x:0,y:1,z:-10}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <gltf-model position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} src="./unity_assets/Tree.gltf"></gltf-model>
-        <entity position={{x:0,y:3,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
+        <entity position={{x:1.341,y:6.197,z:-2.323}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-<<<<<<< HEAD
-        <entity position={{x:-5,y:0.001,z:-5}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-=======
         <box position={{x:-1.21,y:0.6264758,z:0}} scale={{x:0.16804,y:0.2136183,z:9.6}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Gray">
           <box position={{x:0,y:-1.748332,z:0.3875}} scale={{x:0.5950964,y:2.602451,z:0.01041667}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Gray"></box>
           <box position={{x:0,y:-1.748332,z:0.2629166}} scale={{x:0.5950964,y:2.602451,z:0.01041667}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Gray"></box>
@@ -44,11 +40,11 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <sphere position={{x:1.4,y:0.69,z:-2.263}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Rod"></sphere>
         <gltf-model position={{x:9.09,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} src="./unity_assets/tree.gltf"></gltf-model>
         <cone position={{x:3.67,y:0,z:-0.24}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} material="#Board"></cone>
+        <video position={{x:9.21,y:2.38,z:0.44}} rotation={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} id="myVideo" width={4} src="xxxxx"></video>
         <material id="Gray" albedoColor="#4A4A4A" emissiveColor="#000000" metallic={0} roughness={0.5}/>
         <material id="Blue" albedoColor="#3C4C70" emissiveColor="#2C00BF" metallic={0} roughness={0.5}/>
         <material id="Rod" albedoColor="#563131" emissiveColor="#000000" metallic={0.206} roughness={0.186}/>
-        <material id="Board" albedoColor="#FFFFFF" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" emissiveColor="#000000" metallic={0} roughness={0.794}/>
->>>>>>> 759b14f1a1049a91f2a05a83118471d8a1223ace
+        <material id="Board" albedoColor="#FFFFFF" albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={0} roughness={0.794}/>
       </scene>
     )
   }

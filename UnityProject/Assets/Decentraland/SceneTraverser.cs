@@ -22,6 +22,7 @@ namespace Dcl
         text,
         gltf,
         ChildOfGLTF,
+        CustomNode,
     }
     public static class SceneTraverser
     {
@@ -34,6 +35,59 @@ namespace Dcl
         private static DclSceneMeta _sceneMeta;
 
         public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
+
+        public static void TraverseAllScene(List<GameObject>  gos,StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder){
+
+            if (xmlBuilder != null)
+            {
+                xmlBuilder.AppendIndent(indentUnit, 3);
+                xmlBuilder.AppendFormat("<scene position={{{0}}}>\n", Vector3ToJSONString(new Vector3(5, 0, 5)));
+            }
+
+            _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
+            primitiveMaterialsToExport = new List<Material>();
+            primitiveTexturesToExport = new List<Texture>();
+            GameObjectToNodeTypeDict.Clear();
+
+            //====== Start Traversing ======
+            foreach (var rootGO in gos)
+            {
+                RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
+            }
+            foreach (var material in primitiveMaterialsToExport)
+            {
+                var materialXml = xmlBuilder != null ? new StringBuilder() : null;
+                TraverseMaterial(material, materialXml, warningRecorder);
+
+                //Append materials
+                if (xmlBuilder != null)
+                {
+                    xmlBuilder.AppendIndent(indentUnit, 4);
+                    xmlBuilder.Append(materialXml).Append("\n");
+                }
+            }
+
+            //Check textures
+            if (warningRecorder != null)
+            {
+                foreach (var texture in primitiveTexturesToExport)
+                {
+                    CheckTextureValidity(texture, warningRecorder);
+                }
+            }
+
+            statistics.materialCount += primitiveMaterialsToExport.Count; //TODO: include glTF's materials
+            statistics.textureCount += primitiveTexturesToExport.Count; //TODO: include glTF's textures
+
+            if (xmlBuilder != null)
+            {
+                xmlBuilder.AppendIndent(indentUnit, 3);
+                xmlBuilder.Append("</scene>");
+            }
+
+        }
+
+
 
         public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
@@ -114,16 +168,35 @@ namespace Dcl
             var extraProperties = new StringBuilder(); //TODO: can be omitted if xmlBuilder == null
 
             var dclObject = tra.GetComponent<DclObject>();
-
-            //TODO:完全不需要遍历所有Components，导出的是GameObject，而不是Component！
-            foreach (var component in components)
+            
+            if (tra.GetComponent<DclCustomNode>())
             {
-                if (component is Transform) continue;
-
-                //Primitive
-                if (component is MeshFilter)
+                var customNode = tra.GetComponent<DclCustomNode>();
+                nodeName = customNode.nodeName;
+                nodeType = EDclNodeType.CustomNode;
+                if (customNode.position)
                 {
-                    var meshFilter = component as MeshFilter;
+                    extraProperties.AppendFormat(" position={{{0}}}", Vector3ToJSONString(tra.localPosition));
+                }
+                if (customNode.rotation)
+                {
+                    extraProperties.AppendFormat(" rotation={{{0}}}", Vector3ToJSONString(tra.eulerAngles));
+                }
+                if (customNode.scale)
+                {
+                    extraProperties.AppendFormat(" scale={{{0}}}", Vector3ToJSONString(tra.localScale));
+                }
+                foreach (var propertyPair in customNode.propertyPairs)
+                {
+                    extraProperties.AppendFormat(" {0}={1}", propertyPair.name, propertyPair.value);
+                }
+            }
+            else
+            {
+
+                if (tra.GetComponent<MeshFilter>() && tra.GetComponent<MeshRenderer>()) //Primitives & glTF
+                {
+                    var meshFilter = tra.GetComponent<MeshFilter>();
                     if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.box))
                     {
                         nodeName = "box";
@@ -152,6 +225,8 @@ namespace Dcl
 
                     if (nodeName != null)
                     {
+                        //Primitive
+
                         //read color/mat
                         var rdrr = tra.GetComponent<MeshRenderer>();
                         if (rdrr && rdrr.sharedMaterial)
@@ -160,8 +235,8 @@ namespace Dcl
                             if (material == PrimitiveHelper.GetDefaultMaterial())
                             {
                                 //not use material
-//                                var matColor = rdrr.sharedMaterial.color;
-//                                pColor = ToHexString(matColor);
+                                //                                var matColor = rdrr.sharedMaterial.color;
+                                //                                pColor = ToHexString(matColor);
                             }
                             else
                             {
@@ -179,7 +254,10 @@ namespace Dcl
                         //withCollisions
                         if (dclObject)
                         {
-                            if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
+                            if (DclPrimitiveHelper.ShouldGameObjectExportAsAPrimitive(tra.gameObject))
+                            {
+                                if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
+                            }
                         }
 
                         //Statistics
@@ -188,19 +266,16 @@ namespace Dcl
                             statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
                         }
                     }
-                }
-
-                //Other Model
-                if (nodeName == null)
-                {
-                    if (component is MeshFilter)
+                    else
                     {
-                        var meshFilter = component as MeshFilter;
+                        //GLTF
+
                         //export as a glTF model
                         if (meshesToExport != null)
                         {
                             meshesToExport.Add(tra.gameObject);
                         }
+
                         nodeName = "gltf-model";
                         nodeType = EDclNodeType.gltf;
                         // TODO: delete postion info (by alking)
@@ -217,14 +292,12 @@ namespace Dcl
                         }
                     }
                 }
-
-
-                //TextMesh
-                if (component is TextMesh)
+                else if (tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()) //TextMesh
                 {
+
                     nodeName = "text";
                     nodeType = EDclNodeType.text;
-                    var tm = component as TextMesh;
+                    var tm = tra.GetComponent<TextMesh>();
                     extraProperties.AppendFormat(" value=\"{0}\"", tm.text);
                     scale *= tm.fontSize * 0.5f;
                     //extraProperties.AppendFormat(" fontS=\"{0}\"", 100);
@@ -239,9 +312,9 @@ namespace Dcl
                     }
                 }
 
-                if (component is MeshRenderer)
+                if (tra.GetComponent<MeshRenderer>())
                 {
-                    var meshRenderer = component as MeshRenderer;
+                    var meshRenderer = tra.GetComponent<MeshRenderer>();
 
                     //Statistics
                     if (statistics != null)
@@ -265,34 +338,39 @@ namespace Dcl
                                 {
                                     if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
                                     {
-                                        warningRecorder.OutOfLandWarnings.Add(new SceneWarningRecorder.OutOfLand(meshRenderer));
+                                        warningRecorder.OutOfLandWarnings.Add(
+                                            new SceneWarningRecorder.OutOfLand(meshRenderer));
                                         isOutOfLand = true;
                                         break;
                                     }
                                 }
+
                                 if (isOutOfLand) break;
                             }
                         }
                     }
                 }
-            }
-            if (nodeName == null)
-            {
-                nodeName = "entity";
-                nodeType = EDclNodeType.entity;
-            }
-            if (pColor != null)
-            {
-                extraProperties.AppendFormat(" color=\"{0}\"", pColor);
-            }
-            if (pMaterial != null)
-            {
-                extraProperties.AppendFormat(" material=\"{0}\"", pMaterial);
-            }
-            
-            if (dclObject)
-            {
-                if (dclObject.visible != true) extraProperties.Append(" visible={false}");
+
+                if (nodeName == null)
+                {
+                    nodeName = "entity";
+                    nodeType = EDclNodeType.entity;
+                }
+
+                if (pColor != null)
+                {
+                    extraProperties.AppendFormat(" color=\"{0}\"", pColor);
+                }
+
+                if (pMaterial != null)
+                {
+                    extraProperties.AppendFormat(" material=\"{0}\"", pMaterial);
+                }
+
+                if (dclObject)
+                {
+                    if (dclObject.visible != true) extraProperties.Append(" visible={false}");
+                }
             }
 
             StringBuilder xmlNode = null;
@@ -302,7 +380,17 @@ namespace Dcl
             {
                 xmlNode = new StringBuilder();
                 xmlNode.AppendIndent(indentUnit, indentLevel);
-                xmlNode.AppendFormat("<{0} position={{{1}}} scale={{{2}}} rotation={{{3}}}{4}>", nodeName, Vector3ToJSONString(position), Vector3ToJSONString(scale), Vector3ToJSONString(eulerAngles), extraProperties);
+                if (nodeType == EDclNodeType.CustomNode)
+                {
+                    xmlNode.AppendFormat("<{0}{1}>", nodeName, extraProperties);
+                }
+                else
+                {
+                    xmlNode.AppendFormat("<{0} position={{{1}}} scale={{{2}}} rotation={{{3}}}{4}>", nodeName,
+                        Vector3ToJSONString(position), Vector3ToJSONString(scale), Vector3ToJSONString(eulerAngles),
+                        extraProperties);
+                }
+
                 xmlNodeTail = new StringBuilder().AppendFormat("</{0}>\n", nodeName);
                 childrenXmlBuilder = new StringBuilder();
             }

@@ -169,6 +169,22 @@ namespace Dcl
                 return _text;
             }
         }
+        private static Texture2D _customNode;
+        public static Texture2D CustomNode
+        {
+            get
+            {
+                if (!_customNode)
+                {
+                    var internalFolder = FileUtil.FindFolder("Decentraland/Internal");
+                    if (internalFolder.EndsWith("/"))
+                        internalFolder = internalFolder.Remove(internalFolder.LastIndexOf("/"), 1);
+                    _customNode = (Texture2D)AssetDatabase.LoadAssetAtPath(
+                        string.Format("{0}/Icons/custom_node.png", internalFolder), typeof(Texture2D));
+                }
+                return _customNode;
+            }
+        }
 
         #endregion
     }
