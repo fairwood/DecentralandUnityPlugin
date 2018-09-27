@@ -157,7 +157,6 @@ namespace Dcl
                 statistics.entityCount += 1;
             }
 
-            var components = tra.GetComponents<Component>();
             string nodeName = null;
             var nodeType = EDclNodeType._none;
             var position = tra.localPosition;

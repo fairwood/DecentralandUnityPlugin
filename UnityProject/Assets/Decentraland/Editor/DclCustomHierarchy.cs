@@ -8,14 +8,11 @@ using Object = UnityEngine.Object;
 [InitializeOnLoad]
 public class DclCustomHierarchy
 {
-
-    static Texture2D texture;
     static List<int> markedObjects;
 
     static DclCustomHierarchy()
     {
         // Init
-        texture = DclEditorSkin.FollowUp;
         EditorApplication.update += UpdateCB;
         EditorApplication.hierarchyWindowItemOnGUI += HierarchyItemCB;
     }
