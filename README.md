@@ -176,10 +176,7 @@ Diff
 [@neil3d/Unity-glTF-Exporter](https://github.com/neil3d/Unity-glTF-Exporter)
 
 
-### [mac set up tutorial](./docs/mac_setup_tutorial.md)
-
-
-# Donation
+# Donations
 
 #### ETH/MANA/LAND/ERC20...
 
@@ -188,3 +185,6 @@ Diff
 #### BTC
 
 1JEFCP4hqa3Gd7aQ5unWoLP6S6mD17K9HQ
+
+
+### [mac set up tutorial](./docs/mac_setup_tutorial.md)
