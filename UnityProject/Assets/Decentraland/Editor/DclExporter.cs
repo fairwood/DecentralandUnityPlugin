@@ -13,6 +13,8 @@ namespace Dcl
     {
         const int SPACE_SIZE = 5;
 
+        const bool SHOW_EXPORT_PREFAB = false;
+
         [MenuItem("Decentraland/Scene Exporter", false, 1)]
         static void Init()
         {
@@ -138,28 +140,23 @@ namespace Dcl
 
 
             #region prefab select
+            if (SHOW_EXPORT_PREFAB)
+            {
+                GUILayout.BeginHorizontal();
 
-            GUILayout.BeginHorizontal();
-
-            prefab = (GameObject)EditorGUI.ObjectField(new Rect(10,position.height - 80,position.width - 50,25),LabelLocalization.DragPrefabHere,prefab,typeof(GameObject),true);
-            if(prefab){
-
-                if (GUILayout.Button(LabelLocalization.ExportPrefab, GUILayout.Width(220), GUILayout.Height(32)))
+                prefab = (GameObject)EditorGUI.ObjectField(new Rect(10, position.height - 80, position.width - 50, 25), LabelLocalization.DragPrefabHere, prefab, typeof(GameObject), true);
+                if (prefab)
                 {
-                    List<GameObject> rootList = new List<GameObject>();
 
-                    GameObject go = Instantiate(prefab);
-                    go.name = prefab.name;
-                    rootList.Add(go);
-                    Export(rootList);
-                    DestroyImmediate(go);
+                    if (GUILayout.Button(LabelLocalization.ExportPrefab, GUILayout.Width(220), GUILayout.Height(32)))
+                    {
+                        ExportPrefab(prefab, exportPath);
+                    }
                 }
+
+                GUILayout.EndHorizontal();
+
             }
-
-
-            GUILayout.EndHorizontal();
-
-
             # endregion
 
             #region Help Link
@@ -550,6 +547,15 @@ namespace Dcl
             sceneMeta = o.AddComponent<DclSceneMeta>();
             EditorUtility.SetDirty(sceneMeta);
             EditorSceneManager.MarkSceneDirty(o.scene);
+        }
+
+        public static void ExportPrefab(GameObject prefab, string path)
+        {
+            GameObject go = Instantiate(prefab);
+            go.name = prefab.name;
+            SceneToGlTFWiz comp = go.AddComponent<SceneToGlTFWiz>();
+            comp.ExportGameObjectAndChildren(go, Path.Combine(path, go.name + ".gltf"), null, false, true, false, false);
+            DestroyImmediate(go);
         }
 
         void Export(List<GameObject> rootList)
