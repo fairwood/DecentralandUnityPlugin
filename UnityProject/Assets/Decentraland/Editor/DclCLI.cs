@@ -51,9 +51,11 @@ namespace Dcl
         {
 #if UNITY_EDITOR_OSX
             string cmd = "";
-            //string bash = string.Format("{0}/bash", Application.dataPath);
-            // string cmd = String.Format("-c 'source $HOME/.bash_profile;cd {0};sh dcl_kill.sh > /tmp/dcl_kill.log;'", bash);
-            // ExecuteCommand(cmd);
+            string bash = string.Format("{0}/bash", Application.dataPath);
+            // kill dcl first
+            cmd = String.Format("-c 'source $HOME/.bash_profile;cd {0};sh dcl_kill.sh > /tmp/dcl_kill.log;'", bash);
+            ExecuteCommand(cmd);
+            Thread.Sleep(3000);
             cmd = String.Format("-c 'source $HOME/.bash_profile;cd {0};dcl start >/tmp/dcl_start.log'", path);
             ExecuteCommand(cmd);
 #else
