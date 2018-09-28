@@ -13,8 +13,6 @@ namespace Dcl
     {
         const int SPACE_SIZE = 5;
 
-        const bool SHOW_EXPORT_PREFAB = false;
-
         [MenuItem("Decentraland/Scene Exporter", false, 1)]
         static void Init()
         {
@@ -137,28 +135,7 @@ namespace Dcl
             GUILayout.EndHorizontal();
 
             GUILayout.Space(SPACE_SIZE * 2);
-
-
-            #region prefab select
-            if (SHOW_EXPORT_PREFAB)
-            {
-                GUILayout.BeginHorizontal();
-
-                prefab = (GameObject)EditorGUI.ObjectField(new Rect(10, position.height - 80, position.width - 50, 25), LabelLocalization.DragPrefabHere, prefab, typeof(GameObject), true);
-                if (prefab)
-                {
-
-                    if (GUILayout.Button(LabelLocalization.ExportPrefab, GUILayout.Width(220), GUILayout.Height(32)))
-                    {
-                        ExportPrefab(prefab, exportPath);
-                    }
-                }
-
-                GUILayout.EndHorizontal();
-
-            }
-            # endregion
-
+            
             #region Help Link
 
             string url = "https://github.com/fairwood/DecentralandUnityPlugin";
