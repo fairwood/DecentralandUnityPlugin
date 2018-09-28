@@ -187,4 +187,5 @@ Diff
 1JEFCP4hqa3Gd7aQ5unWoLP6S6mD17K9HQ
 
 
-### [mac set up tutorial](./docs/mac_setup_tutorial.md)
+### [Mac set up tutorial](./docs/mac_setup_tutorial.md)
+In this tutorial,you can learn how to set PATH and do interaction with Terminal Application.
