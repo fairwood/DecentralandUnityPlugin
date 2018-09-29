@@ -82,7 +82,7 @@ The exporter looks like this:
 
 On Mac, you need to run a script to let the ```Init Project``` and ```Start Project``` functions work. Just double-click the ```set_path.command``` file either in Unity or in Finder.
 
-![Set Path on Mac](./mac_set_path.png)
+![Set Path on Mac](./docs/mac_set_path.png)
 
 A terminal window will open saying the process is completed. Close it.
 
@@ -133,9 +133,11 @@ Then, you can also go through the hierarchy view where will tell you what type o
 
 **Input or select the path of the folder to export files.**
 
+![](./docs/exportgui.png)
+
 **If you have not initialized a DCL project in the selected folder, you might want to create one. Just click the ```Init Project``` button.** This has the same effect as executing 'dcl init' in command line tool.
 
-(If you are on Mac and the button does not work, go check **Setup node.js environment for Unity** above.)
+(If you are on Mac and the button does not work, go check [Setup node.js environment for Unity](.#setup-nodejs-environment-for-unity-mac-only))
 
 ### Export
 
