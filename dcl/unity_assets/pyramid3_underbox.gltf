@@ -102,7 +102,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Pyramid001_3146pyramid3_underbox",
+			"name": "mesh_Pyramid001_3270pyramid3_underbox",
 			"primitives": [
 				{
 					"attributes": {
@@ -126,7 +126,7 @@
 			]
 		},
 		{
-			"name": "node_pyramid3_underbox_12056",
+			"name": "node_pyramid3_underbox_12490",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}
