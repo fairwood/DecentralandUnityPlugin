@@ -1,0 +1,20 @@
+{
+  "name": "dcl-project",
+  "version": "1.0.0",
+  "description": "My new Decentraland project",
+  "scripts": {
+    "start": "dcl start",
+    "now-start": "dcl start --ci",
+    "build": "decentraland-compiler build.json",
+    "watch": "decentraland-compiler build.json --watch"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "decentraland-api": "latest",
+    "decentraland": "latest"
+  },
+  "dependencies": {
+    "ajv": "^6.5.3"
+  }
+}
