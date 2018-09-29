@@ -2,7 +2,7 @@
 
 ## 1. Double click the set_path file to set PATH value.
 
-![img](./mac_set_path.jpg)
+![img](./mac_set_path.png)
 
 A terminal window will open saying the process is completed. Close it.
 
@@ -32,4 +32,4 @@ it will open ```Terminal``` application automatically.
 
 DCL process on MacOS has a problem that the process will not stop after you shutdown the ternimal. So we provide a script to kill all DCL processes. Just double-click it either in Unity or Finder.
 
-![img](./mac_dcl_kill.jpg)
+![img](./mac_dcl_kill.png)
