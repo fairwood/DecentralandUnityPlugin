@@ -20,15 +20,15 @@
 
 * Other models will be exported as glTF models (animations are not supported)
 
-* Lights are not supported!
+* Lights are not supported
 
 **Note**: Sphere, Cylinder and Cone have a lot of triangles that might exceed dcl limit, so use them carefully.
 
 **Note**: Non-scene assets (e.g. models, materials, textures) should not have same names though duplicated names are available in different folders.
 
-### 2. Check whether you obey the scene limitation
+### 2. Help you check whether you obey the scene limitation
 
-![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/statsgui.png)
+![](./docs/statsgui.png)
 
 All potential errors will be warned right in Unity.
 
@@ -36,7 +36,7 @@ All potential errors will be warned right in Unity.
 
 If you don't want to use command line tools.
 
-![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/exportgui.png)
+![](./docs/exportgui.png)
 
 ### 4. Edit the land info
 
@@ -64,7 +64,7 @@ Then drag the .unitypackage file into Unity or use "Import Assets.." in Unity. T
 
 After a while, you should see a new tab in the menu bar like below.
 
-![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/exporter_in_menu.png)
+![](./docs/exporter_in_menu.png)
 
 Click the "Scene Exporter" will open the exporter.
 
@@ -72,11 +72,19 @@ Click the "Scene Exporter" will open the exporter.
 
 You can create a new scene or open the sample scene:
 
-![Exporter UI](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/samplescene.jpg)
+![Exporter UI](./docs/samplescene.jpg)
 
 The exporter looks like this:
 
-![Exporter UI](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/exportergui.png)
+![Exporter UI](./docs/exportergui.png)
+
+### Setup node.js environment for Unity (Mac Only)
+
+On Mac, you need to run a script to let the ```Init Project``` and ```Start Project``` functions work. Just double-click the ```set_path.command``` file either in Unity or in Finder.
+
+![Set Path on Mac](./mac_set_path.png)
+
+A terminal window will open saying the process is completed. Close it.
 
 ### Input land infomation
 
@@ -97,7 +105,7 @@ You can also fill up the Owner Info part if you want to publish the scene.
 
 You must use the specific GameObjects to refer to the DCL primitives. To create a DCL primitive, you need to go to the following menu.
 
-![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/dclprimitives_in_menu.png)
+![](./docs/dclprimitives_in_menu.png)
 
 If you want to convert a lot of Unity primitives into DCL primitives, there is a 'Convert' function in Decentraland tab in the menubar.
 
@@ -117,19 +125,21 @@ The exporter traverses the whole scene. When it finds a non-primitive model, it 
 
 Before export, you should check the statistics part. That shows some important indexes with their limitations. If something is wrong, you will see bright yellow warnings.
 
-![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/statsgui.png)
+![](./docs/statsgui.png)
 
 Then, you can also go through the hierarchy view where will tell you what type of node will be generated from each GameObject.
 
-![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/hierarchy-node-icon.png)
+![](./docs/hierarchy-node-icon.png)
+
+**Input or select the path of the folder to export files.**
+
+**If you have not initialized a DCL project in the selected folder, you might want to create one. Just click the ```Init Project``` button.** This has the same effect as executing 'dcl init' in command line tool.
+
+(If you are on Mac and the button does not work, go check **Setup node.js environment for Unity** above.)
 
 ### Export
 
-Input or select the path of the folder to export files.
-
-If you select an empty folder, you maybe want to create a DCL project there. This can be done by click the 'Init Project' button instead of using command line tools (only supported on Windows yet).
-
-2 files and 1 folder will be exported and override all old files:
+2 files and 1 folder will be exported and all old files will be overridden:
 
 * scene.tsx
 
@@ -180,7 +190,7 @@ Diff
 
 #### ETH/MANA/LAND/ERC20...
 
-![](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/docs/ethaddricon.png) 0x1a38ac06099D648Bb14418D61956133a3d0E1f1C
+![](./docs/ethaddricon.png) 0x1a38ac06099D648Bb14418D61956133a3d0E1f1C
 
 #### BTC
 
