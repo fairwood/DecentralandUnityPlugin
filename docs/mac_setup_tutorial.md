@@ -28,8 +28,10 @@ it will open ```Terminal``` application automatically.
 
 ![img](./mac_dcl_start_01.jpg)
 
-## Kill dcl process
+## Kill DCL Process
 
-DCL process on MacOS has a problem that the process will not stop after you shutdown the ternimal. So we provide a script to kill all DCL processes. Just double-click it either in Unity or Finder.
+DCL process on MacOS has a problem that the process will not stop after you shutdown the ternimal. So we provide a script to kill all DCL processes manually. Just double-click it either in Unity or Finder.
+
+But don't worry if you use ```Start Project``` button, this button will kill old processes automatically.
 
 ![img](./mac_dcl_kill.png)
