@@ -137,7 +137,7 @@ Then, you can also go through the hierarchy view where will tell you what type o
 
 **If you have not initialized a DCL project in the selected folder, you might want to create one. Just click the ```Init Project``` button.** This has the same effect as executing 'dcl init' in command line tool.
 
-(If you are on Mac and the button does not work, go check [Setup node.js environment for Unity](.#setup-nodejs-environment-for-unity-mac-only))
+(If you are on Mac and the button does not work, go check [Setup node.js environment for Unity](https://github.com/fairwood/DecentralandUnityPlugin#setup-nodejs-environment-for-unity-mac-only))
 
 ### Export
 
