@@ -49,7 +49,7 @@ You should prepare these tools on your own:
 
 1. [dcl SDK](https://docs.decentraland.org/documentation/installation-guide/)
 
-1. [Unity 5.x\2017\2018 or higher](https://unity3d.com/)
+1. [Unity 5.x\2017\2018 or higher](https://store.unity.com/download)
 
 Then, download the Exporter which is inside a Unity Package. [Download the Exporter](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/downloads/DecentralandUnityExporter.unitypackage)
 
