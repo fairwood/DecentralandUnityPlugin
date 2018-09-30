@@ -51,6 +51,19 @@ namespace Dcl
                 }
             }
         }
+        public static string DCLNowProjectPath
+        {
+            get
+            {
+                switch (Language)
+                {
+                    case ELanguage.CN:
+                        return "DCL-Now工程文件夹";
+                    default:
+                        return "DCL-Now Project Path";
+                }
+            }
+        }
         public static string SelectDCLProjectPath
         {
             get

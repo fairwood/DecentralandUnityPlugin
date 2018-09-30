@@ -1,6 +1,22 @@
 # Decentraland Unity Exporter
 
-## What you can do
+## 2 Workflows to Choose
+
+### 1. Export a Complete DCL Project
+
+If you are going to preview the scene on your computer, or deploy the scene to IPFS, you should go this way, follow this article.
+
+This workflow includes all features of the next one.
+
+### 2. Export Only Scene Files and Publish to Now.sh
+
+If you don't want to install DCL SDK or deal with complicated node.js environment, this is a best way for you. You can publish your scene and show it to others.
+
+The only thing you need to do is installing Unity and Now.sh.
+
+Follow [Export to Now.sh](./docs/ExportToNow.md) to get started.
+
+## Introduction: What can you do
 
 ### 1. Export these elements
 
