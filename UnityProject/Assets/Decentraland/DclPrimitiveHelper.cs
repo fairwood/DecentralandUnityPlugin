@@ -21,11 +21,21 @@ namespace Dcl
 
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
             meshFilter.sharedMesh = GetDclPrimitiveMesh(type);
+
+			switch (type) {
+			case DclPrimitiveType.cone:
+				{
+					meshFilter.sharedMesh = ConeMesh.getMesh ();
+				}
+				break;
+			}
+
             var meshRenderer = gameObject.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = PrimitiveHelper.GetDefaultMaterial();
 
             var dclObj = gameObject.AddComponent<DclObject>();
             dclObj.withCollision = withCollider;
+			dclObj.PrimitiveType = type;
 
             return gameObject;
         }
@@ -70,7 +80,8 @@ namespace Dcl
         [MenuItem("GameObject/DCL Object/Cone", false, -96)]
         static void CreateCone()
         {
-            CreateDclPrimitive(DclPrimitiveType.cone);
+			ConeMesh.Create ();
+            //CreateDclPrimitive(DclPrimitiveType.cone);
         }
 
         [MenuItem("Decentraland/Convert To DCL Primitives...", false)]
@@ -149,5 +160,6 @@ namespace Dcl
         sphere,
         cylinder,
         cone,
+		other,
     }
 }

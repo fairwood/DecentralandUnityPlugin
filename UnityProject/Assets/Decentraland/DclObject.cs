@@ -12,7 +12,11 @@ namespace Dcl
 
         [Tooltip("Only available for primitives")]
         public bool withCollision = false;
-
+		private DclPrimitiveType m_primitiveType = DclPrimitiveType.other;
+		public DclPrimitiveType PrimitiveType { 
+			get{return m_primitiveType;} 
+			set{m_primitiveType = value;}
+		}
 
         protected void Update()
         {
