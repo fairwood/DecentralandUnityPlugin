@@ -12,7 +12,7 @@ https://zeit.co/download
 
 When finishing installation, you should see an Now.sh icon in the taskbar (both Windows and Mac)
 
-![](./docs/installed_now_client.png)
+![](../docs/installed_now_client.png)
 
 You need to finish all the registration yourselves.
 
@@ -28,7 +28,7 @@ Then drag the downloaded **DecentralandUnityExporter.unitypackage** file into Un
 
 After a while, you should see a new tab in the menu bar like below.
 
-![](./docs/exporter_in_menu.png)
+![](../docs/exporter_in_menu.png)
 
 Click the "Scene Exporter" will open the exporter.
 
@@ -36,29 +36,29 @@ Click the "Scene Exporter" will open the exporter.
 
 You can create a new scene or open the sample scene:
 
-![Exporter UI](./docs/samplescene.jpg)
+![Exporter UI](../docs/samplescene.jpg)
 
 The exporter looks like this:
 
-![Exporter UI](./docs/exportergui.png)
+![Exporter UI](../docs/exportergui.png)
 
 ## Export & Publish
 
 Choose an empty folder as project folder. Then, click ```Export```.
 
-![ExportToNow](./docs/export_to_now_part.png)
+![ExportToNow](../docs/export_to_now_part.png)
 
-![](./docs/open_now_upload.png)
+![](../docs/open_now_upload.png)
 
 Select the project folder to deploy.
 
-![](.docs/now_upgrade_or_deploy.png)
+![](..docs/now_upgrade_or_deploy.png)
 
 Just click ```Deploy``` if you see this dialog.
 
 Then, a web page will be opened showing a lot of logs like below.
 
-![](.docs/now_deploy_logs.png)
+![](..docs/now_deploy_logs.png)
 
 Wait for some minutes and you will see the scene!
 
