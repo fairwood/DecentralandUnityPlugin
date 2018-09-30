@@ -52,13 +52,13 @@ Choose an empty folder as project folder. Then, click ```Export```.
 
 Select the project folder to deploy.
 
-![](..docs/now_upgrade_or_deploy.png)
+![](../docs/now_upgrade_or_deploy.png)
 
 Just click ```Deploy``` if you see this dialog.
 
 Then, a web page will be opened showing a lot of logs like below.
 
-![](..docs/now_deploy_logs.png)
+![](../docs/now_deploy_logs.png)
 
 Wait for some minutes and you will see the scene!
 
