@@ -14,9 +14,7 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <gltf-model position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} src="./unity_assets/Tree.gltf"></gltf-model>
         <entity position={{x:0,y:3,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:50,y:330,z:0}}></entity>
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
-        <box position={{x:-2.35,y:1.32,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true}></box>
-        <box position={{x:-1.1,y:1.32,z:-3.44}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true}></box>
-        <cylinder position={{x:2.46,y:1.097268,z:0.56}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true}></cylinder>
+        <box position={{x:-1.24,y:3.120024,z:-3.26}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}} withCollisions={true}></box>
       </scene>
     )
   }
