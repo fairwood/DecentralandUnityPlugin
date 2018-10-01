@@ -24,7 +24,7 @@ public class GlTF_Node : GlTF_Writer {
 
 	public static string GetNameFromObject(Object o)
 	{
-		return "node_" + GlTF_Writer.GetNameFromObject(o, true);
+		return "node_" + GlTF_Writer.GetNameFromObject(o); //modified by Stephen Zhou 2018-10-1 11:04:30 before: return "node_" + GlTF_Writer.GetNameFromObject(o, true);
 	}
 
 	public override void Write ()
