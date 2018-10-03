@@ -14,7 +14,7 @@ namespace Dcl{
 				radiusTop=0;
 				radiusBottom=length*Mathf.Tan(openingAngle*Mathf.Deg2Rad/2);
 			}
-			string meshName = "Cylinder" + numVertices + "v" + radiusTop + "t" + radiusBottom + "b" + length + "l" + length + (outside?"o":"") + (inside?"i":"");
+			string meshName = isCylinder ? "Cylinder" : "Cone" + numVertices + "v" + radiusTop + "t" + radiusBottom + "b" + length + "l" + length + (outside?"o":"") + (inside?"i":"");
 			//string meshPrefabPath = "Assets/Decentraland/Internal/" + meshName + ".asset";
 			Mesh mesh = null;//(Mesh)AssetDatabase.LoadAssetAtPath(meshPrefabPath, typeof(Mesh));
 			if(mesh==null){
@@ -52,13 +52,14 @@ namespace Dcl{
 					vertices[i+numVertices]=new Vector3(radiusBottom*angleCos,0,radiusBottom*angleSin)+offsetPos;
 
 					if(radiusTop==0)
-						normals[i]=new Vector3(angleHalfCos*slopeCos,angleHalfSin*slopeCos,-slopeSin);
+						normals[i]=new Vector3(angleHalfCos*slopeCos,-slopeSin,angleHalfSin*slopeCos);
 					else
-						normals[i]=new Vector3(angleCos*slopeCos,angleSin*slopeCos,-slopeSin);
+						normals[i]=new Vector3(angleCos*slopeCos,-slopeSin,angleSin*slopeCos);
+					
 					if(radiusBottom==0)
-						normals[i+numVertices]=new Vector3(angleHalfCos*slopeCos,angleHalfSin*slopeCos,-slopeSin);
+						normals[i+numVertices]=new Vector3(angleHalfCos*slopeCos,-slopeSin,angleHalfSin*slopeCos);
 					else
-						normals[i+numVertices]=new Vector3(angleCos*slopeCos,angleSin*slopeCos,-slopeSin);
+						normals[i+numVertices]=new Vector3(angleCos*slopeCos,-slopeSin,angleSin*slopeCos);
 
 					uvs[i]=new Vector2(1.0f-1.0f*i/numVertices,1);
 					uvs[i+numVertices]=new Vector2(1.0f-1.0f*i/numVertices,0);
