@@ -25,7 +25,12 @@ namespace Dcl
 			switch (type) {
 			case DclPrimitiveType.cone:
 				{
-					meshFilter.sharedMesh = ConeMesh.getMesh ();
+					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCone (50, 0f, 0.5f, 1f, 0f, true, false);
+				}
+				break;
+			case DclPrimitiveType.cylinder:
+				{
+					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCylinder (50, 1f, 1f, 2f, 0f, true, false); 
 				}
 				break;
 			}
@@ -80,8 +85,7 @@ namespace Dcl
         [MenuItem("GameObject/DCL Object/Cone", false, -96)]
         static void CreateCone()
         {
-			ConeMesh.Create ();
-            //CreateDclPrimitive(DclPrimitiveType.cone);
+            CreateDclPrimitive(DclPrimitiveType.cone);
         }
 
         [MenuItem("Decentraland/Convert To DCL Primitives...", false)]
