@@ -7,6 +7,192 @@ namespace Dcl{
 
 	public class DclPrimitiveMeshBuilder{
 
+		static public Mesh BuildCube(float _size)
+		{
+			Mesh mesh = new Mesh();
+			mesh.name = "Primitive Mesh : cube";
+			Vector3[] vertices = new Vector3[24]; //top bottom left right front back
+			Vector3[] normals = new Vector3[24];
+			Vector2[] uvs = new Vector2[24];
+			Vector2[] uvs2 = new Vector2[24];
+			int[] tris = new int[12*3];
+
+			int vIndex = 0;
+			//top and bottom
+			Vector3 start = new Vector3(-_size/2, _size/2, _size/2);
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.right*_size;
+			vertices[vIndex++] = start+Vector3.right*_size+Vector3.back*_size;
+			vertices[vIndex++] = start+Vector3.back*_size;
+
+			start = new Vector3(-_size/2, -_size/2, _size/2);
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.right*_size;
+			vertices[vIndex++] = start+Vector3.right*_size+Vector3.back*_size;
+			vertices[vIndex++] = start+Vector3.back*_size;
+
+			//left and right
+			start = new Vector3(-_size/2, _size/2, _size/2);
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.back*_size;
+			vertices[vIndex++] = start+Vector3.back*_size+Vector3.down*_size;
+			vertices[vIndex++] = start+Vector3.down*_size;
+
+			start = new Vector3(_size/2, _size/2, _size/2);
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.back*_size;
+			vertices[vIndex++] = start+Vector3.back*_size+Vector3.down*_size;
+			vertices[vIndex++] = start+Vector3.down*_size;
+
+			//front and back
+			start = new Vector3(-_size/2, _size/2, _size/2);
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.right*_size;
+			vertices[vIndex++] = start+Vector3.right*_size+Vector3.down*_size;
+			vertices[vIndex++] = start+Vector3.down*_size;
+
+			start = new Vector3(-_size/2, _size/2, -_size/2);
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.right*_size;
+			vertices[vIndex++] = start+Vector3.right*_size+Vector3.down*_size;
+			vertices[vIndex++] = start+Vector3.down*_size;
+
+			//uv
+			vIndex = 0;
+			//top and bottom
+			uvs[vIndex++] = new Vector2(1f, 1f);
+			uvs[vIndex++] = new Vector2(1f, 0f);
+			uvs[vIndex++] = new Vector2(0f, 0f);
+			uvs[vIndex++] = new Vector2(0f, 1f);
+
+			uvs[vIndex++] = new Vector2(1f, 0f);
+			uvs[vIndex++] = new Vector2(1f, 1f);
+			uvs[vIndex++] = new Vector2(0f, 1f);
+			uvs[vIndex++] = new Vector2(0f, 0f);
+
+			//left and right
+			uvs[vIndex++] = new Vector2(1f, 1f);
+			uvs[vIndex++] = new Vector2(1f, 0f);
+			uvs[vIndex++] = new Vector2(0f, 0f);
+			uvs[vIndex++] = new Vector2(0f, 1f);
+
+			uvs[vIndex++] = new Vector2(1f, 0f);
+			uvs[vIndex++] = new Vector2(1f, 1f);
+			uvs[vIndex++] = new Vector2(0f, 1f);
+			uvs[vIndex++] = new Vector2(0f, 0f);
+
+			//front and back
+			uvs[vIndex++] = new Vector2(0f, 0f);
+			uvs[vIndex++] = new Vector2(1f, 0f);
+			uvs[vIndex++] = new Vector2(1f, 1f);
+			uvs[vIndex++] = new Vector2(0f, 1f);
+
+			uvs[vIndex++] = new Vector2(0f, 1f);
+			uvs[vIndex++] = new Vector2(1f, 1f);
+			uvs[vIndex++] = new Vector2(1f, 0f);
+			uvs[vIndex++] = new Vector2(0f, 0f); 
+
+			//uv2
+			vIndex = 0;
+			//top and bottom
+			uvs2[vIndex++] = new Vector2(1f, 1f);
+			uvs2[vIndex++] = new Vector2(1f, 0f);
+			uvs2[vIndex++] = new Vector2(0f, 0f);
+			uvs2[vIndex++] = new Vector2(0f, 1f);
+
+			uvs2[vIndex++] = new Vector2(1f, 0f);
+			uvs2[vIndex++] = new Vector2(1f, 1f);
+			uvs2[vIndex++] = new Vector2(0f, 1f);
+			uvs2[vIndex++] = new Vector2(0f, 0f);
+
+			//left and right
+			uvs2[vIndex++] = new Vector2(1f, 1f);
+			uvs2[vIndex++] = new Vector2(1f, 0f);
+			uvs2[vIndex++] = new Vector2(0f, 0f);
+			uvs2[vIndex++] = new Vector2(0f, 1f);
+
+			uvs2[vIndex++] = new Vector2(1f, 0f);
+			uvs2[vIndex++] = new Vector2(1f, 1f);
+			uvs2[vIndex++] = new Vector2(0f, 1f);
+			uvs2[vIndex++] = new Vector2(0f, 0f);
+
+			//front and back
+			uvs2[vIndex++] = new Vector2(0f, 0f);
+			uvs2[vIndex++] = new Vector2(1f, 0f);
+			uvs2[vIndex++] = new Vector2(1f, 1f);
+			uvs2[vIndex++] = new Vector2(0f, 1f);
+
+			uvs2[vIndex++] = new Vector2(0f, 1f);
+			uvs2[vIndex++] = new Vector2(1f, 1f);
+			uvs2[vIndex++] = new Vector2(1f, 0f);
+			uvs2[vIndex++] = new Vector2(0f, 0f); 
+
+			//normal
+			vIndex = 0;
+			//top and bottom
+			normals[vIndex++] = Vector3.up;
+			normals[vIndex++] = Vector3.up;
+			normals[vIndex++] = Vector3.up;
+			normals[vIndex++] = Vector3.up;
+
+			normals[vIndex++] = Vector3.down;
+			normals[vIndex++] = Vector3.down;
+			normals[vIndex++] = Vector3.down;
+			normals[vIndex++] = Vector3.down;
+
+			//left and right
+			normals[vIndex++] = Vector3.left;
+			normals[vIndex++] = Vector3.left;
+			normals[vIndex++] = Vector3.left;
+			normals[vIndex++] = Vector3.left;
+
+			normals[vIndex++] = Vector3.right;
+			normals[vIndex++] = Vector3.right;
+			normals[vIndex++] = Vector3.right;
+			normals[vIndex++] = Vector3.right;
+
+			//front and back
+			normals[vIndex++] = Vector3.forward;
+			normals[vIndex++] = Vector3.forward;
+			normals[vIndex++] = Vector3.forward;
+			normals[vIndex++] = Vector3.forward;
+
+			normals[vIndex++] = Vector3.back;
+			normals[vIndex++] = Vector3.back;
+			normals[vIndex++] = Vector3.back;
+			normals[vIndex++] = Vector3.back;
+
+
+			int cnt=0;
+			//top and bottom
+			tris[cnt++] = 0; tris[cnt++] = 1; tris[cnt++] = 2;
+			tris[cnt++] = 0; tris[cnt++] = 2; tris[cnt++] = 3;
+
+			tris[cnt++] = 4+0; tris[cnt++] = 4+2; tris[cnt++] = 4+1;
+			tris[cnt++] = 4+0; tris[cnt++] = 4+3; tris[cnt++] = 4+2;
+
+			//left and right
+			tris[cnt++] = 8+0; tris[cnt++] = 8+1; tris[cnt++] = 8+2;
+			tris[cnt++] = 8+0; tris[cnt++] = 8+2; tris[cnt++] = 8+3;
+
+			tris[cnt++] = 12+0; tris[cnt++] = 12+2; tris[cnt++] = 12+1;
+			tris[cnt++] = 12+0; tris[cnt++] = 12+3; tris[cnt++] = 12+2;
+
+			//front and back
+			tris[cnt++] = 16+0; tris[cnt++] = 16+2; tris[cnt++] = 16+1;
+			tris[cnt++] = 16+0; tris[cnt++] = 16+3; tris[cnt++] = 16+2;
+
+			tris[cnt++] = 20+0; tris[cnt++] = 20+1; tris[cnt++] = 20+2;
+			tris[cnt++] = 20+0; tris[cnt++] = 20+2; tris[cnt++] = 20+3;
+
+			mesh.vertices = vertices;
+			mesh.normals = normals;		
+			mesh.uv = uvs;
+			mesh.uv2 = uvs2;
+
+			mesh.triangles = tris;
+			return mesh;
+		}
 		static public Mesh BuildConeOrCylinder(int numVertices, float radiusTop, float radiusBottom, float length,
 			float openingAngle, bool outside, bool inside, bool isCylinder, Vector3 offsetPos=default(Vector3)) 
 		{
@@ -243,6 +429,8 @@ namespace Dcl{
 			float openingAngle, bool outside, bool inside){ 
 			return BuildConeOrCylinder (numVertices, radiusTop, radiusBottom, length, openingAngle, outside, inside, true, new Vector3(0f, -length/2, 0f));
 		}
+
+
 	}
 
 

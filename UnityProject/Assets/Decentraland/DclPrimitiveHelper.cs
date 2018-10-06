@@ -10,6 +10,47 @@ namespace Dcl
     {
         private static Dictionary<DclPrimitiveType, Mesh> dclPrimitiveMeshes = new Dictionary<DclPrimitiveType, Mesh>();
 
+		public static void ConvertToDclPrimitive(DclObject dclObject, PrimitiveType primitiveType){
+			
+			switch (primitiveType) {
+			case PrimitiveType.Cube:
+				dclObject.dclPrimitiveType = DclPrimitiveType.box;
+				break;
+			case PrimitiveType.Cylinder:
+				dclObject.dclPrimitiveType = DclPrimitiveType.cylinder;
+				break;
+			case PrimitiveType.Sphere:
+				dclObject.dclPrimitiveType = DclPrimitiveType.sphere;
+				break;
+			case PrimitiveType.Quad:
+				dclObject.dclPrimitiveType = DclPrimitiveType.plane;
+				break;
+			}
+
+			SetDclPrimitiveMesh (dclObject, dclObject.dclPrimitiveType);
+		}
+
+		public static void SetDclPrimitiveMesh(DclObject dclObject, DclPrimitiveType primitiveType){
+			var meshFilter = dclObject.GetComponent<MeshFilter> ();
+			switch (primitiveType) {
+			case DclPrimitiveType.cone:
+				{
+					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCone (50, 0f, 0.5f, 1f, 0f, true, false);
+				}
+				break;
+			case DclPrimitiveType.cylinder:
+				{
+					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCylinder (50, 1f, 1f, 2f, 0f, true, false); 
+				}
+				break;
+			case DclPrimitiveType.box:
+				{
+					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCube (1f);
+				}
+				break;
+			}
+		}
+
         public static GameObject CreateDclPrimitive(DclPrimitiveType type, bool withCollider = true,
             bool putOnFocusPosition = true)
         {
@@ -22,38 +63,32 @@ namespace Dcl
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
             meshFilter.sharedMesh = GetDclPrimitiveMesh(type);
 
-			switch (type) {
-			case DclPrimitiveType.cone:
-				{
-					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCone (50, 0f, 0.5f, 1f, 0f, true, false);
-				}
-				break;
-			case DclPrimitiveType.cylinder:
-				{
-					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCylinder (50, 1f, 1f, 2f, 0f, true, false); 
-				}
-				break;
-			}
-
             var meshRenderer = gameObject.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = PrimitiveHelper.GetDefaultMaterial();
 
             var dclObj = gameObject.AddComponent<DclObject>();
             dclObj.withCollision = withCollider;
-			dclObj.PrimitiveType = type;
+			dclObj.dclPrimitiveType = type;
+
+			SetDclPrimitiveMesh (dclObj, dclObj.dclPrimitiveType);
 
             return gameObject;
         }
 
         public static Mesh GetDclPrimitiveMesh(DclPrimitiveType type)
         {
-            if (!dclPrimitiveMeshes.ContainsKey(type))
+			if(type==DclPrimitiveType.other){
+				return null;
+			}
+
+			if (!dclPrimitiveMeshes.ContainsKey(type))
             {
                 var meshFolder = FileUtil.FindFolder("Decentraland/Internal");
                 if (meshFolder.EndsWith("/")) meshFolder = meshFolder.Remove(meshFolder.LastIndexOf("/"), 1);
                 var mesh = LoadAssetAtPath<Mesh>(string.Format("{0}/{1}.asset", meshFolder, type.ToString()));
                 dclPrimitiveMeshes[type] = mesh;
-            }
+			}
+
             return dclPrimitiveMeshes[type];
         }
 
@@ -101,24 +136,25 @@ namespace Dcl
                     if (meshFilter)
                     {
                         var converted = false;
+						PrimitiveType primitiveType = PrimitiveType.Cube;
                         if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cube))
                         {
-                            meshFilter.sharedMesh = DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.box);
+							primitiveType = PrimitiveType.Cube;
                             converted = true;
                         }
                         else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Sphere))
                         {
-                            meshFilter.sharedMesh = DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.sphere);
+							primitiveType = PrimitiveType.Sphere;
                             converted = true;
                         }
                         else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Quad))
                         {
-                            meshFilter.sharedMesh = DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.plane);
+							primitiveType = PrimitiveType.Quad;
                             converted = true;
                         }
                         else if (meshFilter.sharedMesh == PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Cylinder))
                         {
-                            meshFilter.sharedMesh = DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.cylinder);
+							primitiveType = PrimitiveType.Cylinder;
                             converted = true;
                         }
 
@@ -129,6 +165,7 @@ namespace Dcl
                             {
                                 dclObj = gameObject.AddComponent<DclObject>();
                             }
+							DclPrimitiveHelper.ConvertToDclPrimitive (dclObj, primitiveType);
                             dclObj.withCollision = gameObject.GetComponent<Collider>() != null;
                             EditorSceneManager.MarkSceneDirty(gameObject.scene);
                         }
@@ -158,7 +195,7 @@ namespace Dcl
 
     public enum DclPrimitiveType
     {
-        box,
+        box=0,
         circle,//TODO: not supported as primitive yet
         plane,
         sphere,

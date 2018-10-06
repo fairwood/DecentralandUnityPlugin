@@ -140,34 +140,33 @@ namespace Dcl
             else
             {
 
-                if (tra.GetComponent<MeshFilter>() && tra.GetComponent<MeshRenderer>()) //Primitives & glTF
+				if (tra.GetComponent<MeshFilter>() && tra.GetComponent<MeshRenderer>()) //Primitives & glTF
                 {
+					if (dclObject) {
+						switch (dclObject.dclPrimitiveType) {
+						case DclPrimitiveType.box:
+							nodeName = "box";
+							nodeType = EDclNodeType.box;
+							break;
+						case DclPrimitiveType.sphere:
+							nodeName = "sphere";
+							nodeType = EDclNodeType.sphere;
+							break;
+						case DclPrimitiveType.plane:
+							nodeName = "plane";
+							nodeType = EDclNodeType.plane;
+							break;
+						case DclPrimitiveType.cylinder:
+							nodeName = "cylinder";
+							nodeType = EDclNodeType.cylinder;
+							break;
+						case DclPrimitiveType.cone:
+							nodeName = "cone";
+							nodeType = EDclNodeType.cone;
+							break;
+						}
+					}
                     var meshFilter = tra.GetComponent<MeshFilter>();
-                    if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.box))
-                    {
-                        nodeName = "box";
-                        nodeType = EDclNodeType.box;
-                    }
-                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.sphere))
-                    {
-                        nodeName = "sphere";
-                        nodeType = EDclNodeType.sphere;
-                    }
-                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.plane))
-                    {
-                        nodeName = "plane";
-                        nodeType = EDclNodeType.plane;
-                    }
-                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.cylinder))
-                    {
-                        nodeName = "cylinder";
-                        nodeType = EDclNodeType.cylinder;
-                    }
-                    else if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(DclPrimitiveType.cone))
-                    {
-                        nodeName = "cone";
-                        nodeType = EDclNodeType.cone;
-                    }
 
                     if (nodeName != null)
                     {
@@ -200,7 +199,8 @@ namespace Dcl
                         //withCollisions
                         if (dclObject)
                         {
-                            if (DclPrimitiveHelper.ShouldGameObjectExportAsAPrimitive(tra.gameObject))
+                            //if (DclPrimitiveHelper.ShouldGameObjectExportAsAPrimitive(tra.gameObject))
+							if(dclObject.dclPrimitiveType!=DclPrimitiveType.other)
                             {
                                 if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
                             }

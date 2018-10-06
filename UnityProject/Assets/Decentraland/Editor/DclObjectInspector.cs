@@ -30,7 +30,7 @@ namespace Dcl
 			//to do : rebuild primitive mesh when mesh parameter changed
 
             //if (DclPrimitiveHelper.ShouldGameObjectExportAsAPrimitive(go))
-			if(dclObject.PrimitiveType!=DclPrimitiveType.other)
+			if(dclObject.dclPrimitiveType!=DclPrimitiveType.other)
             {
                 EditorGUILayout.PropertyField(withCollision, new GUIContent("withCollision", "Only available for primitives"));
             }
