@@ -46,8 +46,8 @@ namespace Dcl
 
             EditorGUI.BeginChangeCheck();
 
-            OptionsGUI();
-            GUILayout.Space(SPACE_SIZE);
+            //OptionsGUI(); no use yet
+            //GUILayout.Space(SPACE_SIZE);
 
             OwnerGUI();
             GUILayout.Space(SPACE_SIZE);
