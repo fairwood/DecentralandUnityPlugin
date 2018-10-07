@@ -7,6 +7,78 @@ namespace Dcl{
 
 	public class DclPrimitiveMeshBuilder{
 
+		static public Mesh BuildPlane(float _size){
+			Mesh mesh = new Mesh();
+			mesh.name = "Primitive Mesh : Plane";
+			Vector3[] vertices = new Vector3[8];
+			Vector3[] normals = new Vector3[8];
+			Vector2[] uvs = new Vector2[8];
+			Vector2[] uvs2 = new Vector2[8];
+			int[] tris = new int[4*3];
+
+			int vIndex = 0;
+			Vector3 start = new Vector3(-_size/2, _size/2, 0);
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.right*_size;
+			vertices[vIndex++] = start+Vector3.right*_size+Vector3.down*_size;
+			vertices[vIndex++] = start+Vector3.down*_size;
+
+			vertices[vIndex++] = start;
+			vertices[vIndex++] = start+Vector3.right*_size;
+			vertices[vIndex++] = start+Vector3.right*_size+Vector3.down*_size;
+			vertices[vIndex++] = start+Vector3.down*_size;
+
+			vIndex = 0;
+			uvs [vIndex++] = new Vector2(0f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 0f);
+			uvs [vIndex++] = new Vector2(0f, 0f);
+
+			uvs [vIndex++] = new Vector2(0f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 0f);
+			uvs [vIndex++] = new Vector2(0f, 0f);
+
+			vIndex = 0;
+			uvs [vIndex++] = new Vector2(0f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 0f);
+			uvs [vIndex++] = new Vector2(0f, 0f);
+
+			uvs [vIndex++] = new Vector2(0f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 1f);
+			uvs [vIndex++] = new Vector2(1f, 0f);
+			uvs [vIndex++] = new Vector2(0f, 0f);
+
+
+			vIndex = 0;
+			normals [vIndex++] = Vector3.back;
+			normals [vIndex++] = Vector3.back;
+			normals [vIndex++] = Vector3.back;
+			normals [vIndex++] = Vector3.back;
+
+			normals [vIndex++] = Vector3.forward;
+			normals [vIndex++] = Vector3.forward;
+			normals [vIndex++] = Vector3.forward;
+			normals [vIndex++] = Vector3.forward;
+
+			int cnt=0;
+			tris [cnt++] = 0; tris [cnt++] = 1; tris [cnt++] = 2;
+			tris [cnt++] = 0; tris [cnt++] = 2; tris [cnt++] = 3;
+
+			tris [cnt++] = 4+0; tris [cnt++] = 4+2; tris [cnt++] = 4+1;
+			tris [cnt++] = 4+0; tris [cnt++] = 4+3; tris [cnt++] = 4+2;
+
+			mesh.vertices = vertices;
+			mesh.normals = normals;		
+			mesh.uv = uvs;
+			mesh.uv2 = uvs2;
+
+			mesh.triangles = tris;
+			return mesh;
+
+		}
+
 		static public Mesh BuildCube(float _size)
 		{
 			Mesh mesh = new Mesh();

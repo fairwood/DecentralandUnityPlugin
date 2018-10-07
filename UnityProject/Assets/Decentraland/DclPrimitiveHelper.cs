@@ -48,6 +48,11 @@ namespace Dcl
 					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCube (1f);
 				}
 				break;
+			case DclPrimitiveType.plane:
+				{
+					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildPlane (1f);
+				}
+				break;
 			}
 		}
 
