@@ -1460,7 +1460,10 @@ public class SceneToGlTFWiz : MonoBehaviour
 		var emissiveFactor = new GlTF_Material.ColorValue();
 		emissiveFactor.name = "emissiveFactor";
 		emissiveFactor.isRGB = true;
-		emissiveFactor.color = mat.GetColor("_EmissionColor");
+		if (mat.HasProperty ("_EmissionColor")) 
+		{
+			emissiveFactor.color = mat.GetColor("_EmissionColor");
+		}
 		material.values.Add(emissiveFactor);
 
 		//Occlusion (kept as separated channel for specular workflow, but merged in R channel for metallic workflow)
