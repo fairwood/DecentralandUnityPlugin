@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Dcl
 {
@@ -69,6 +71,9 @@ namespace Dcl
             if (putOnFocusPosition)
             {
                 gameObject.transform.position = SceneView.lastActiveSceneView.pivot;
+                Selection.objects = new Object[] {gameObject};
+                EditorUtility.SetDirty(gameObject);
+                EditorSceneManager.MarkSceneDirty(gameObject.scene);
             }
 
             MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
