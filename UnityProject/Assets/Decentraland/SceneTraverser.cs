@@ -440,10 +440,10 @@ namespace Dcl
                 warningRecorder.UnsupportedShaderWarnings.Add(new SceneWarningRecorder.UnsupportedShader(material));
             }
 
-            var albedoTex = material.GetTexture("_MainTex");
-            var refractionTexture = material.GetTexture("_MetallicGlossMap");
-            var bumpTexture = material.GetTexture("_BumpMap");
-            var emisiveTexture = material.GetTexture("_EmissionMap");
+			var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
+			var refractionTexture = material.HasProperty("_MetallicGlossMap") ? material.GetTexture("_MetallicGlossMap") : null;
+			var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
+			var emisiveTexture = material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null;
 
             if (albedoTex)
             {
@@ -467,13 +467,21 @@ namespace Dcl
                 xml.Append("<material");
                 xml.AppendFormat(" id=\"{0}\"", material.name);
                 xml.AppendFormat(" albedoColor=\"{0}\"", ToHexString(material.color));
+				xml.AppendFormat(" alpha=\"{0}\"", material.color.a);
                 if (albedoTex)
                 {
                     xml.AppendFormat(" albedoTexture=\"{0}\"", GetTextureRelativePath(albedoTex));
+					bool b = !(material.IsKeywordEnabled ("_ALPHATEST_ON")==false && material.IsKeywordEnabled ("_ALPHABLEND_ON")==false && material.IsKeywordEnabled ("_ALPHAPREMULTIPLY_ON")==false);
+
+					if (b) {
+						xml.Append (" hasAlpha=\"true\"");
+					}else{
+						xml.Append (" hasAlpha=\"false\"");
+					}
                 }
                 if (refractionTexture)
                 {
-                    xml.AppendFormat(" refractionTexture=\"{0}\"", GetTextureRelativePath(refractionTexture));
+					xml.AppendFormat(" refractionTexture=\"{0}\"", GetTextureRelativePath(refractionTexture));
                 }
                 if (bumpTexture)
                 {
