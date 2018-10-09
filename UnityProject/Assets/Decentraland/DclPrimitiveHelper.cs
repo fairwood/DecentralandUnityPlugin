@@ -10,8 +10,6 @@ namespace Dcl
 {
     public static class DclPrimitiveHelper
     {
-        private static Dictionary<DclPrimitiveType, Mesh> dclPrimitiveMeshes = new Dictionary<DclPrimitiveType, Mesh>();
-
 		public static void ConvertToDclPrimitive(DclObject dclObject, PrimitiveType primitiveType){
 			
 			switch (primitiveType) {
@@ -76,9 +74,6 @@ namespace Dcl
                 EditorSceneManager.MarkSceneDirty(gameObject.scene);
             }
 
-            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = GetDclPrimitiveMesh(type);
-
             var meshRenderer = gameObject.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = PrimitiveHelper.GetDefaultMaterial();
 
@@ -89,23 +84,6 @@ namespace Dcl
 			SetDclPrimitiveMesh (dclObj, dclObj.dclPrimitiveType);
 
             return gameObject;
-        }
-
-        public static Mesh GetDclPrimitiveMesh(DclPrimitiveType type)
-        {
-			if(type==DclPrimitiveType.other){
-				return null;
-			}
-
-			if (!dclPrimitiveMeshes.ContainsKey(type))
-            {
-                var meshFolder = FileUtil.FindFolder("Decentraland/Internal");
-                if (meshFolder.EndsWith("/")) meshFolder = meshFolder.Remove(meshFolder.LastIndexOf("/"), 1);
-                var mesh = LoadAssetAtPath<Mesh>(string.Format("{0}/{1}.asset", meshFolder, type.ToString()));
-                dclPrimitiveMeshes[type] = mesh;
-			}
-
-            return dclPrimitiveMeshes[type];
         }
 
         internal static T LoadAssetAtPath<T>(string InPath) where T : UnityEngine.Object
@@ -191,22 +169,6 @@ namespace Dcl
             }
         }
 
-        public static bool ShouldGameObjectExportAsAPrimitive(GameObject gameObject)
-        {
-            var meshFilter = gameObject.GetComponent<MeshFilter>();
-            if (meshFilter)
-            {
-                foreach (DclPrimitiveType primitiveType in Enum.GetValues(typeof(DclPrimitiveType)))
-                {
-                    if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh(primitiveType))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
     }
 
     public enum DclPrimitiveType

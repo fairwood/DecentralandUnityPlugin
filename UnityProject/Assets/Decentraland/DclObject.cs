@@ -21,19 +21,7 @@ namespace Dcl
 		}
 
 		public void Start(){
-			//由于之前的方式没有正确序列化m_primitiveType,这里重新赋值
-			//Debug.Log(this.transform.gameObject.name + " DclObject start");
-			var meshFilter = GetComponent<MeshFilter>();
-			if(meshFilter!=null){
-				for(int i =0; i<System.Enum.GetValues(typeof(DclPrimitiveType)).Length; ++i){
-					DclPrimitiveType dclPT = (DclPrimitiveType)i;
-					//Debug.Log(this.transform.gameObject.name + " "+i);
-					if (meshFilter.sharedMesh == DclPrimitiveHelper.GetDclPrimitiveMesh (dclPT)) {
-						//Debug.Log(this.transform.gameObject.name + " DclObject set primitiveType");
-						m_primitiveType = dclPT;
-					}
-				}
-			}
+
 		}
 
         protected void Update()
