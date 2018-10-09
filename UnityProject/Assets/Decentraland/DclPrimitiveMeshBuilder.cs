@@ -9,7 +9,7 @@ namespace Dcl{
 
 		static public Mesh BuildSphere(float radius){
 			Mesh mesh = new Mesh();
-			mesh.name = "Primitive Mesh : Sphere";
+			mesh.name = "DCL Sphere";
 
 			//float radius = 1f;
 			// Longitude |||
@@ -110,7 +110,7 @@ namespace Dcl{
 
 		static public Mesh BuildPlane(float _size){
 			Mesh mesh = new Mesh();
-			mesh.name = "Primitive Mesh : Plane";
+			mesh.name = "DCL Plane";
 			Vector3[] vertices = new Vector3[8];
 			Vector3[] normals = new Vector3[8];
 			Vector2[] uvs = new Vector2[8];
@@ -183,7 +183,7 @@ namespace Dcl{
 		static public Mesh BuildCube(float _size)
 		{
 			Mesh mesh = new Mesh();
-			mesh.name = "Primitive Mesh : cube";
+			mesh.name = "DCL Box";
 			Vector3[] vertices = new Vector3[24]; //top bottom left right front back
 			Vector3[] normals = new Vector3[24];
 			Vector2[] uvs = new Vector2[24];
@@ -373,7 +373,7 @@ namespace Dcl{
 				radiusTop=0;
 				radiusBottom=length*Mathf.Tan(openingAngle*Mathf.Deg2Rad/2);
 			}
-			string meshName = isCylinder ? "Cylinder" : "Cone" + numVertices + "v" + radiusTop + "t" + radiusBottom + "b" + length + "l" + length + (outside?"o":"") + (inside?"i":"");
+			string meshName = isCylinder ? "DCL Cylinder" : "DCL Cone" + numVertices + "v" + radiusTop + "t" + radiusBottom + "b" + length + "l" + length + (outside?"o":"") + (inside?"i":"");
 			//string meshPrefabPath = "Assets/Decentraland/Internal/" + meshName + ".asset";
 			Mesh mesh = null;//(Mesh)AssetDatabase.LoadAssetAtPath(meshPrefabPath, typeof(Mesh));
 			if(mesh==null){
