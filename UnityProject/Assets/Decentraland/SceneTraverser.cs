@@ -36,6 +36,51 @@ namespace Dcl
 
         public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
 
+		public static string CalcName(Object _object){
+			string name = "";
+			PrefabType t = PrefabUtility.GetPrefabType (_object);
+			switch (t) {
+			case PrefabType.PrefabInstance:
+				{
+					PropertyModification[] pm = PrefabUtility.GetPropertyModifications (_object);
+
+					bool change = false;
+					foreach (var v in pm) {
+						if( !(v.propertyPath=="m_LocalPosition.x" ||
+							v.propertyPath=="m_LocalPosition.y" ||
+							v.propertyPath=="m_LocalPosition.z" ||
+							v.propertyPath=="m_LocalRotation.x" ||
+							v.propertyPath=="m_LocalRotation.y" ||
+							v.propertyPath=="m_LocalRotation.z" ||
+							v.propertyPath=="m_LocalRotation.w" ||
+							v.propertyPath=="m_RootOrder" ||
+							v.propertyPath=="m_Name") ){
+
+							change = true;
+							break;
+							//Debug.Log (v.propertyPath);
+						}
+					}
+
+					if (change == true) {
+						name = _object.name + Mathf.Abs(_object.GetInstanceID ());
+					} else {
+						Object o = PrefabUtility.GetCorrespondingObjectFromSource (_object);
+						name = o.name + Mathf.Abs(o.GetInstanceID ());
+					}
+				}
+				break;
+			case PrefabType.None:
+				name = _object.name + Mathf.Abs(_object.GetInstanceID ());
+				break;
+			default:
+				Debug.Log ("Error: PrefabType of"+_object.name+"is "+t.ToString()+" only support PrefabInstance type");
+				break;
+			}
+
+			return name;
+		}
+
         public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             var rootGameObjects = new List<GameObject>();
@@ -227,7 +272,11 @@ namespace Dcl
                         // position = Vector3.zero;
                         // eulerAngles = Vector3.zero;
                         // scale = Vector3.zero;
-                        extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", tra.name);
+
+						//if tra is a prefab and do not get any change. use the prefab's name
+
+                        //extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", tra.name);
+						extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", CalcName(tra.gameObject));
 
                         //Statistics
                         if (statistics != null)
@@ -466,16 +515,16 @@ namespace Dcl
                 xml.Append("<material");
                 xml.AppendFormat(" id=\"{0}\"", material.name);
                 xml.AppendFormat(" albedoColor=\"{0}\"", ToHexString(material.color));
-				xml.AppendFormat(" alpha=\"{0}\"", material.color.a);
+				xml.AppendFormat(" alpha={{{0}}}", material.color.a);
                 if (albedoTex)
                 {
                     xml.AppendFormat(" albedoTexture=\"{0}\"", GetTextureRelativePath(albedoTex));
 					bool b = !(material.IsKeywordEnabled ("_ALPHATEST_ON")==false && material.IsKeywordEnabled ("_ALPHABLEND_ON")==false && material.IsKeywordEnabled ("_ALPHAPREMULTIPLY_ON")==false);
 
 					if (b) {
-						xml.Append (" hasAlpha=\"true\"");
+						xml.Append (" hasAlpha={true}");
 					}else{
-						xml.Append (" hasAlpha=\"false\"");
+						xml.Append (" hasAlpha={false}");
 					}
                 }
                 if (refractionTexture)

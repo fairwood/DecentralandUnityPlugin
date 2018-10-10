@@ -649,8 +649,11 @@ namespace Dcl
             //glTF in unity_asset
             foreach (var go in meshesToExport)
             {
-                sceneMeta.sceneToGlTFWiz.ExportGameObjectAndChildren(go, Path.Combine(unityAssetsFolderPath, go.name + ".gltf"),
-                    null, false, true, false, false);
+				string tempPath = Path.Combine (unityAssetsFolderPath, SceneTraverser.CalcName (go) + ".gltf");
+				if (!File.Exists (tempPath)) {
+					sceneMeta.sceneToGlTFWiz.ExportGameObjectAndChildren(go, tempPath,
+						null, false, true, false, false);
+				}
             }
 
             //textures
