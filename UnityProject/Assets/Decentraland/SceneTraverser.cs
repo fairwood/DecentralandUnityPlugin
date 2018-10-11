@@ -284,6 +284,36 @@ namespace Dcl
                             statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
                             statistics.bodyCount += 1;
                         }
+
+						if (statistics != null) {
+							Mesh m = meshFilter.sharedMesh;
+
+							Renderer mr = tra.GetComponent<MeshRenderer> ();
+							if (mr == null) {
+								mr = tra.GetComponent<SkinnedMeshRenderer> ();
+							}
+
+							var sm = mr.sharedMaterials;
+							for (int i = 0; i < sm.Length; ++i) 
+							{
+								Material ma = sm [i];
+								if (ma != null) 
+								{
+									statistics.materialCount += 1;
+									Shader shader = ma.shader;
+									for(int j=0; j<ShaderUtil.GetPropertyCount(shader); j++)
+									{
+										if (ShaderUtil.GetPropertyType (shader, j) == ShaderUtil.ShaderPropertyType.TexEnv) 
+										{
+											Texture texture = ma.GetTexture (ShaderUtil.GetPropertyName (shader, j));
+											if (texture != null) {statistics.textureCount += 1;}
+										}
+									}
+								}
+							}
+
+						}
+
                     }
                 }
                 else if (tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()) //TextMesh
