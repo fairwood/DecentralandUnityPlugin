@@ -41,6 +41,7 @@ namespace Dcl
 			PrefabType t = PrefabUtility.GetPrefabType (_object);
 			switch (t) {
 			case PrefabType.PrefabInstance:
+			case PrefabType.ModelPrefabInstance:
 				{
 					PropertyModification[] pm = PrefabUtility.GetPropertyModifications (_object);
 
@@ -70,11 +71,8 @@ namespace Dcl
 					}
 				}
 				break;
-			case PrefabType.None:
-				name = _object.name + Mathf.Abs(_object.GetInstanceID ());
-				break;
 			default:
-				Debug.Log ("Error: PrefabType of"+_object.name+"is "+t.ToString()+" only support PrefabInstance type");
+				name = _object.name + Mathf.Abs(_object.GetInstanceID ());
 				break;
 			}
 
@@ -329,8 +327,10 @@ namespace Dcl
                     var rdrr = tra.GetComponent<MeshRenderer>();
                     if (rdrr)
                     {
-                        var width = rdrr.bounds.extents.x*2;
-                        var height = rdrr.bounds.extents.y * 2;
+						
+						var width = rdrr.bounds.size.x*2 / tra.lossyScale.x;//rdrr.bounds.extents.x*2;
+						var height = rdrr.bounds.size.y*2 / tra.lossyScale.y;//rdrr.bounds.extents.y * 2;
+
                         extraProperties.AppendFormat(" width={{{0}}}", width);
                         extraProperties.AppendFormat(" height={{{0}}}", height);
                     }
