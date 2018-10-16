@@ -81,7 +81,7 @@ namespace Dcl
             dclObj.withCollision = withCollider;
 			dclObj.dclPrimitiveType = type;
 
-			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+			gameObject.AddComponent<MeshFilter>();
 			SetDclPrimitiveMesh (dclObj, dclObj.dclPrimitiveType);
 
             return gameObject;

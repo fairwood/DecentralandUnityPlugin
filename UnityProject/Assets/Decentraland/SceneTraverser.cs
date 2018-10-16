@@ -323,17 +323,53 @@ namespace Dcl
                     nodeType = EDclNodeType.text;
                     var tm = tra.GetComponent<TextMesh>();
                     extraProperties.AppendFormat(" value=\"{0}\"", tm.text);
-                    scale *= tm.fontSize * 0.5f;
+                    //scale *= tm.fontSize * 0.5f;
                     //extraProperties.AppendFormat(" fontS=\"{0}\"", 100);
                     pColor = ToHexString(tm.color);
                     var rdrr = tra.GetComponent<MeshRenderer>();
                     if (rdrr)
                     {
-                        var width = rdrr.bounds.extents.x;
-                        var height = rdrr.bounds.extents.y * 1;
+                        var width = rdrr.bounds.extents.x*2;
+                        var height = rdrr.bounds.extents.y * 2;
                         extraProperties.AppendFormat(" width={{{0}}}", width);
                         extraProperties.AppendFormat(" height={{{0}}}", height);
                     }
+					extraProperties.AppendFormat(" fontSize={{{0}}}", tm.fontSize==0 ? 13f*38f : tm.fontSize*38f);
+
+					switch (tm.anchor) {
+					case TextAnchor.UpperLeft:
+						extraProperties.AppendFormat(" hAlign=\"right\"");
+						extraProperties.AppendFormat(" vAlign=\"bottom\"");
+						break;
+					case TextAnchor.UpperCenter:
+						extraProperties.AppendFormat(" vAlign=\"bottom\"");
+						break;
+					case TextAnchor.UpperRight:
+						extraProperties.AppendFormat(" hAlign=\"left\"");
+						extraProperties.AppendFormat(" vAlign=\"bottom\"");
+						break;
+					case TextAnchor.MiddleLeft:
+						extraProperties.AppendFormat(" hAlign=\"right\"");
+						break;
+					case TextAnchor.MiddleCenter:
+						
+						break;
+					case TextAnchor.MiddleRight:
+						extraProperties.AppendFormat(" hAlign=\"left\"");
+						break;
+					case TextAnchor.LowerLeft:
+						extraProperties.AppendFormat(" hAlign=\"right\"");
+						extraProperties.AppendFormat(" vAlign=\"top\"");
+						break;
+					case TextAnchor.LowerCenter:
+						extraProperties.AppendFormat(" vAlign=\"top\"");
+						break;
+					case TextAnchor.LowerRight:
+						extraProperties.AppendFormat(" hAlign=\"left\"");
+						extraProperties.AppendFormat(" vAlign=\"top\"");
+						break;
+					}
+
                 }
 
                 if (tra.GetComponent<MeshRenderer>())
