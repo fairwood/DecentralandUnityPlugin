@@ -61,7 +61,7 @@ namespace Dcl
             #region Help Link
 
             string url = "https://github.com/fairwood/DecentralandUnityPlugin";
-            if (GUILayout.Button(string.Format(LabelLocalization.Document, url), EditorStyles.helpBox))
+			if (GUILayout.Button(string.Format(LabelLocalization.getString(LanguageStringValue.Document), url), EditorStyles.helpBox))
             {
                 Application.OpenURL(url);
             }
@@ -184,7 +184,7 @@ namespace Dcl
             EditorGUI.indentLevel = 1;
             if (foldout)
             {
-                GUILayout.Label(LabelLocalization.KeepTheseNumbersSmaller, EditorStyles.centeredGreyMiniLabel);
+				GUILayout.Label(LabelLocalization.getString(LanguageStringValue.KeepTheseNumbersSmaller), EditorStyles.centeredGreyMiniLabel);
                 var n = sceneMeta.parcels.Count;
                 var sceneStatistics = sceneMeta.sceneStatistics;
                 StatisticsLineGUI("Triangles", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n));
@@ -256,14 +256,14 @@ namespace Dcl
                     {
                         var path = AssetDatabase.GetAssetPath(warning.renderer);
                         WarningLineGUI(string.Format("Unsupported shader : {0}", warning.renderer.name),
-                            LabelLocalization.OnlyStandardShaderSupported, path);
+							LabelLocalization.getString(LanguageStringValue.OnlyStandardShaderSupported), path);
                     }
 
                     foreach (var warning in sceneMeta.sceneWarningRecorder.InvalidTextureWarnings)
                     {
                         var path = AssetDatabase.GetAssetPath(warning.renderer);
                         WarningLineGUI(string.Format("Invalid texture size : {0}", warning.renderer.name),
-                            LabelLocalization.TextureSizeMustBe, path);
+							LabelLocalization.getString(LanguageStringValue.TextureSizeMustBe), path);
                     }
                 }
             }
@@ -349,13 +349,13 @@ namespace Dcl
             var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclExportForDCL", "Standard Export", true, null);
             if (foldout)
             {
-                GUILayout.Label(LabelLocalization.DCLProjectPath, EditorStyles.boldLabel);
+				GUILayout.Label(LabelLocalization.getString(LanguageStringValue.DCLProjectPath), EditorStyles.boldLabel);
                 EditorGUILayout.BeginHorizontal();
                 exportPath = EditorPrefs.GetString("DclExportPath");
                 var newExportPath = EditorGUILayout.TextField(exportPath);
                 if (GUILayout.Button("...", GUILayout.Width(24), GUILayout.Height(24)))
                 {
-                    newExportPath = EditorUtility.OpenFolderPanel(LabelLocalization.SelectDCLProjectPath, exportPath, "");
+					newExportPath = EditorUtility.OpenFolderPanel(LabelLocalization.getString(LanguageStringValue.SelectDCLProjectPath), exportPath, "");
                     if (string.IsNullOrEmpty(newExportPath)) newExportPath = exportPath;
                 }
 
@@ -438,13 +438,13 @@ namespace Dcl
             var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclExportForNow", "Export for Now.sh", true, null);
             if (foldout)
             {
-                GUILayout.Label(LabelLocalization.DCLNowProjectPath, EditorStyles.boldLabel);
+				GUILayout.Label(LabelLocalization.getString(LanguageStringValue.DCLNowProjectPath), EditorStyles.boldLabel);
                 EditorGUILayout.BeginHorizontal();
                 exportPath = EditorPrefs.GetString("DclNowExportPath");
                 var newExportPath = EditorGUILayout.TextField(exportPath);
                 if (GUILayout.Button("...", GUILayout.Width(24), GUILayout.Height(24)))
                 {
-                    newExportPath = EditorUtility.OpenFolderPanel(LabelLocalization.SelectDCLProjectPath, exportPath, "");
+					newExportPath = EditorUtility.OpenFolderPanel(LabelLocalization.getString(LanguageStringValue.SelectDCLProjectPath), exportPath, "");
                     if (string.IsNullOrEmpty(newExportPath)) newExportPath = exportPath;
                 }
 

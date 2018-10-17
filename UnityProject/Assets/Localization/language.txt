@@ -1,0 +1,17 @@
+CN
+以下指标不能超出右边的数字限制
+文档：{0}
+DCL工程文件夹
+DCL-Now工程文件夹
+选择DCL工程文件夹
+只支持Standard材质
+贴图的边长必须是1,2,4,8,..., 512
+
+EN
+Keep these numbers smaller than the right
+Document: {0}
+DCL Project Path
+DCL-Now Project Path
+Select the DCL Project folder
+Only Standard Shader is supported
+Texture sizes must be one of 1,2,4,8,..., 512
