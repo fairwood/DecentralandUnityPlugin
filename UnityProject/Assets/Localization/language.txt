@@ -6,6 +6,40 @@ DCL-Now工程文件夹
 选择DCL工程文件夹
 只支持Standard材质
 贴图的边长必须是1,2,4,8,..., 512
+地块({0})
+ (基础)
+编辑
+DCL 导出器
+统计
+刷新
+三角形
+实体
+模型
+材质
+纹理
+高度
+超出陆地范围 : {0}
+不支持的shader : {0}
+无效的纹理大小 : {0}
+点击警告在场景中定位出错实体
+个人信息（可选）
+地址
+名字
+邮箱
+标准导出
+导出
+初始化工程
+确认初始化dcl工程吗？
+这将运行'dcl init'命令 {0}.确认吗？
+是的
+不
+需要选择一个有效的工程文件目录!
+运行工程
+确认要运行dcl工程吗？
+这将运行'dcl start'命令 {0}.确认吗？
+DCL正在启动\n等待10秒
+导出 Now.sh
+
 
 EN
 Keep these numbers smaller than the right
@@ -15,3 +49,42 @@ DCL-Now Project Path
 Select the DCL Project folder
 Only Standard Shader is supported
 Texture sizes must be one of 1,2,4,8,..., 512
+Parcels({0})
+ (base)
+Edit
+DCL Exporter
+Statistics
+Refresh
+Triangles
+Entities
+Bodies
+Materials
+Textures
+Height
+Out of land range : {0}
+Unsupported shader : {0}
+Invalid texture size : {0}
+Click the warning to focus in the scene
+Owner Info (optional)
+Address
+Name
+Email
+Standard Export
+Export
+Init Project
+Confirm to init DCL project?
+This will run 'dcl init' command in {0}. Are you sure?
+Yes
+No
+You need to select a valid project folder!
+Run Project
+Confirm to run DCL project?
+This will run 'dcl start' command in {0}. Are you sure?
+DCL is starting\nWait 10 seconds
+Export for Now.sh
+
+
+
+
+
+

@@ -17,7 +17,7 @@ namespace Dcl
         static void Init()
         {
             var window = (DclExporter) GetWindow(typeof(DclExporter));
-            window.titleContent = new GUIContent("DCL Exporter");
+			window.titleContent = new GUIContent(LabelLocalization.getString(LanguageStringValue.DCLExporter));
             window.Show();
             window.minSize = new Vector2(240, 400);
         }
@@ -82,7 +82,7 @@ namespace Dcl
             EditorGUILayout.BeginHorizontal();
             var style = EditorStyles.foldout;
             style.fontStyle = FontStyle.Bold;
-            var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclFoldParcel", string.Format("Parcels({0})", parcels.Count), true, style);
+			var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclFoldParcel", string.Format(LabelLocalization.getString(LanguageStringValue.ParcelsCount), parcels.Count), true, style);
             if (foldout)
             {
                 if (editParcelsMode)
@@ -117,7 +117,7 @@ namespace Dcl
                 }
                 else
                 {
-                    if (GUILayout.Button("Edit"))
+					if (GUILayout.Button(LabelLocalization.getString(LanguageStringValue.Edit)))
                     {
                         var sb = new StringBuilder();
                         if (parcels.Count > 0)
@@ -149,7 +149,7 @@ namespace Dcl
                     var sb = new StringBuilder();
                     if (parcels.Count > 0)
                     {
-                        sb.Append(ParcelToStringBuilder(parcels[0])).Append(" (base)");
+						sb.Append(ParcelToStringBuilder(parcels[0])).Append(LabelLocalization.getString(LanguageStringValue.Base));
                         for (int i = 1; i < parcels.Count; i++)
                         {
                             sb.Append('\n').Append(ParcelToStringBuilder(parcels[i]));
@@ -170,10 +170,10 @@ namespace Dcl
         {
             EditorGUILayout.BeginVertical("box");
             EditorGUILayout.BeginHorizontal();
-            var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclFoldStat", "Statistics", true, null);
+			var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclFoldStat", LabelLocalization.getString(LanguageStringValue.Statistics), true, null);
             if (foldout)
             {
-                if (GUILayout.Button("Refresh"))
+				if (GUILayout.Button(LabelLocalization.getString(LanguageStringValue.Refresh)))
                 {
                     sceneMeta.RefreshStatistics();
                 }
@@ -187,12 +187,12 @@ namespace Dcl
 				GUILayout.Label(LabelLocalization.getString(LanguageStringValue.KeepTheseNumbersSmaller), EditorStyles.centeredGreyMiniLabel);
                 var n = sceneMeta.parcels.Count;
                 var sceneStatistics = sceneMeta.sceneStatistics;
-                StatisticsLineGUI("Triangles", sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n));
-                StatisticsLineGUI("Entities", sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n));
-                StatisticsLineGUI("Bodies", sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n));
-                StatisticsLineGUI("Materials", sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n));
-                StatisticsLineGUI("Textures", sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n));
-                StatisticsLineGUI("Height", sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n));
+				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Triangles), sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n));
+				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Entities), sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n));
+				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Bodies), sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n));
+				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Materials), sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n));
+				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Textures), sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n));
+				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Height), sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n));
             }
 
             WarningsGUI();
@@ -244,25 +244,25 @@ namespace Dcl
                 //            GUILayout.Label(string.Format("Warnings({0})", warningCount));
                 if (warningCount > 0)
                 {
-                    GUILayout.Label("Click the warning to focus in the scene", EditorStyles.centeredGreyMiniLabel);
+					GUILayout.Label(LabelLocalization.getString(LanguageStringValue.ClickWarning), EditorStyles.centeredGreyMiniLabel);
 
                     foreach (var outOfLandWarning in sceneMeta.sceneWarningRecorder.OutOfLandWarnings)
                     {
-                        WarningLineGUI(string.Format("Out of land range : {0}", outOfLandWarning.meshRenderer.name),
+						WarningLineGUI(string.Format(LabelLocalization.getString(LanguageStringValue.OutofLandRange), outOfLandWarning.meshRenderer.name),
                             null, outOfLandWarning.meshRenderer.gameObject);
                     }
 
                     foreach (var warning in sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings)
                     {
                         var path = AssetDatabase.GetAssetPath(warning.renderer);
-                        WarningLineGUI(string.Format("Unsupported shader : {0}", warning.renderer.name),
+						WarningLineGUI(string.Format(LabelLocalization.getString(LanguageStringValue.UnsupportedShader), warning.renderer.name),
 							LabelLocalization.getString(LanguageStringValue.OnlyStandardShaderSupported), path);
                     }
 
                     foreach (var warning in sceneMeta.sceneWarningRecorder.InvalidTextureWarnings)
                     {
                         var path = AssetDatabase.GetAssetPath(warning.renderer);
-                        WarningLineGUI(string.Format("Invalid texture size : {0}", warning.renderer.name),
+						WarningLineGUI(string.Format(LabelLocalization.getString(LanguageStringValue.InvalidTextureSize), warning.renderer.name),
 							LabelLocalization.getString(LanguageStringValue.TextureSizeMustBe), path);
                     }
                 }
@@ -327,13 +327,13 @@ namespace Dcl
             EditorGUILayout.BeginVertical("box");
 
             var oriFoldout = EditorPrefs.GetBool("DclBoldOwner");
-            var foldout = EditorGUILayout.Foldout(oriFoldout, "Owner Info (optional)", true);
+			var foldout = EditorGUILayout.Foldout(oriFoldout, LabelLocalization.getString(LanguageStringValue.OwnerInfo), true);
             if (foldout)
             {
                 EditorGUI.indentLevel = 1;
-                sceneMeta.ethAddress = EditorGUILayout.TextField("Address", sceneMeta.ethAddress);
-                sceneMeta.contactName = EditorGUILayout.TextField("Name", sceneMeta.contactName);
-                sceneMeta.email = EditorGUILayout.TextField("Email", sceneMeta.email);
+				sceneMeta.ethAddress = EditorGUILayout.TextField(LabelLocalization.getString(LanguageStringValue.OwnerInfoAddress), sceneMeta.ethAddress);
+				sceneMeta.contactName = EditorGUILayout.TextField(LabelLocalization.getString(LanguageStringValue.OwnerInfoName), sceneMeta.contactName);
+				sceneMeta.email = EditorGUILayout.TextField(LabelLocalization.getString(LanguageStringValue.OwnerInfoEmail), sceneMeta.email);
                 EditorGUI.indentLevel = 0;
             }
 
@@ -346,7 +346,7 @@ namespace Dcl
         {
             EditorGUILayout.BeginVertical("box");
             
-            var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclExportForDCL", "Standard Export", true, null);
+			var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclExportForDCL", LabelLocalization.getString(LanguageStringValue.StandardExport), true, null);
             if (foldout)
             {
 				GUILayout.Label(LabelLocalization.getString(LanguageStringValue.DCLProjectPath), EditorStyles.boldLabel);
@@ -374,7 +374,7 @@ namespace Dcl
                 GUILayout.FlexibleSpace();
                 var oriColor = GUI.backgroundColor;
                 GUI.backgroundColor = Color.green;
-                if (GUILayout.Button("Export", GUILayout.Width(220), GUILayout.Height(32)))
+				if (GUILayout.Button(LabelLocalization.getString(LanguageStringValue.Export), GUILayout.Width(220), GUILayout.Height(32)))
                 {
                     Export();
                 }
@@ -387,38 +387,38 @@ namespace Dcl
 
                 GUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Init Project", GUILayout.Width(105)))
+				if (GUILayout.Button(LabelLocalization.getString(LanguageStringValue.InitProject), GUILayout.Width(105)))
                 {
                     if (Directory.Exists(exportPath))
                     {
-                        if (EditorUtility.DisplayDialog("Confirm to init DCL project?",
-                            string.Format("This will run 'dcl init' command in {0}. Are you sure?", exportPath), "Yes",
-                            "No"))
+						if (EditorUtility.DisplayDialog(LabelLocalization.getString(LanguageStringValue.ConfirmInitDCLProject),
+							string.Format(LabelLocalization.getString(LanguageStringValue.InitDCLProjectAreYouSure), exportPath), LabelLocalization.getString(LanguageStringValue.YES),
+							LabelLocalization.getString(LanguageStringValue.NO)))
                         {
                             DclCLI.DclInit(exportPath);
                         }
                     }
                     else
                     {
-                        ShowNotification(new GUIContent("You need to select a valid project folder!"));
+						ShowNotification(new GUIContent(LabelLocalization.getString(LanguageStringValue.SelectValidProjectFolder)));
                     }
                 }
 
-                if (GUILayout.Button("Run Project", GUILayout.Width(105)))
+				if (GUILayout.Button(LabelLocalization.getString(LanguageStringValue.RunProject), GUILayout.Width(105)))
                 {
                     if (Directory.Exists(exportPath))
                     {
-                        if (EditorUtility.DisplayDialog("Confirm to run DCL project?",
-                            string.Format("This will run 'dcl start' command in {0}. Are you sure?", exportPath), "Yes",
-                            "No"))
+						if (EditorUtility.DisplayDialog(LabelLocalization.getString(LanguageStringValue.ConfimRunDCLProject),
+							string.Format(LabelLocalization.getString(LanguageStringValue.RunDCLProjectAreYouSure), exportPath), LabelLocalization.getString(LanguageStringValue.YES),
+							LabelLocalization.getString(LanguageStringValue.NO)))
                         {
                             DclCLI.DclStart(exportPath);
-                            ShowNotification(new GUIContent("DCL is starting\nWait 10 seconds"));
+							ShowNotification(new GUIContent(LabelLocalization.getString(LanguageStringValue.DCLStartWait10Seconds)));
                         }
                     }
                     else
                     {
-                        ShowNotification(new GUIContent("You need to select a valid project folder!"));
+						ShowNotification(new GUIContent(LabelLocalization.getString(LanguageStringValue.SelectValidProjectFolder)));
                     }
                 }
 
@@ -435,7 +435,7 @@ namespace Dcl
         {
             EditorGUILayout.BeginVertical("box");
 
-            var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclExportForNow", "Export for Now.sh", true, null);
+			var foldout = EditorUtil.GUILayout.AutoSavedFoldout("DclExportForNow", LabelLocalization.getString(LanguageStringValue.ExportForNowSh), true, null);
             if (foldout)
             {
 				GUILayout.Label(LabelLocalization.getString(LanguageStringValue.DCLNowProjectPath), EditorStyles.boldLabel);
@@ -462,7 +462,7 @@ namespace Dcl
                 GUILayout.FlexibleSpace();
                 var oriColor = GUI.backgroundColor;
                 GUI.backgroundColor = Color.green;
-                if (GUILayout.Button("Export", GUILayout.Width(220), GUILayout.Height(32)))
+				if (GUILayout.Button(LabelLocalization.getString(LanguageStringValue.Export), GUILayout.Width(220), GUILayout.Height(32)))
                 {
                     Export();
 

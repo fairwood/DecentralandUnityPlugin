@@ -13,6 +13,39 @@ namespace Dcl
 		SelectDCLProjectPath,
 		OnlyStandardShaderSupported,
 		TextureSizeMustBe,
+		ParcelsCount,
+		Base,
+		Edit,
+		DCLExporter,
+		Statistics,
+		Refresh,
+		Triangles,
+		Entities,
+		Bodies,
+		Materials,
+		Textures,
+		Height,
+		OutofLandRange,
+		UnsupportedShader,
+		InvalidTextureSize,
+		ClickWarning,
+		OwnerInfo,
+		OwnerInfoAddress,
+		OwnerInfoName,
+		OwnerInfoEmail,
+		StandardExport,
+		Export,
+		InitProject,
+		ConfirmInitDCLProject,
+		InitDCLProjectAreYouSure,
+		YES,
+		NO,
+		SelectValidProjectFolder,
+		RunProject,
+		ConfimRunDCLProject,
+		RunDCLProjectAreYouSure,
+		DCLStartWait10Seconds,
+		ExportForNowSh,
 		LastType
 	}
 
@@ -24,7 +57,7 @@ namespace Dcl
             CN
         }
 
-		private static ELanguage Language = ELanguage.CN;
+		private static ELanguage Language = ELanguage.EN;
 		private static string[] languageString = null;
 		public static void loadLanguageStringFromFile(){
 			int length = (int)LanguageStringValue.LastType;
@@ -53,7 +86,7 @@ namespace Dcl
 		}
 
 		public static string getString(LanguageStringValue lsv){
-			if(languageString==null)
+			if(languageString==null) 
 			{
 				loadLanguageStringFromFile ();
 			}
