@@ -80,11 +80,6 @@ namespace Dcl
 			reader.Close ();
 		}
 
-		[MenuItem("EnumTest/enum2String", false)]
-		static void enumTest(){
-			Debug.Log (Language.ToString ()+(int)LanguageStringValue.SelectDCLProjectPath);
-		}
-
 		public static string getString(LanguageStringValue lsv){
 			if(languageString==null) 
 			{
