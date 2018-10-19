@@ -57,7 +57,7 @@ namespace Dcl
             CN
         }
 
-		private static ELanguage Language = ELanguage.EN;
+		public static ELanguage Language = ELanguage.EN;
 		private static string[] languageString = null;
 		public static void loadLanguageStringFromFile(){
 			int length = (int)LanguageStringValue.LastType;

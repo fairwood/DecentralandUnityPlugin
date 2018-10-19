@@ -9,6 +9,43 @@ using UnityEngine.SceneManagement;
 
 namespace Dcl
 {
+
+	public static class LanguageChoose
+	{
+		private const string menu_CN = "Decentraland/Language/中文";
+		private const string menu_EN = "Decentraland/Language/English";
+
+		private static void ClearChecked()
+		{
+			Menu.SetChecked(menu_CN, false);
+			Menu.SetChecked(menu_EN, false);
+		}
+
+		private static void chooseLanguage(LabelLocalization.ELanguage l){
+			LabelLocalization.Language = l;
+			LabelLocalization.loadLanguageStringFromFile ();
+		}
+
+		[MenuItem(menu_CN)]
+		private static void CN()
+		{
+			chooseLanguage(LabelLocalization.ELanguage.CN);
+
+			ClearChecked();
+			Menu.SetChecked(menu_CN, true);
+		}
+
+		[MenuItem(menu_EN)]
+		private static void EN()
+		{
+			chooseLanguage(LabelLocalization.ELanguage.EN);
+
+			ClearChecked();
+			Menu.SetChecked(menu_EN, true);
+		}
+
+	}
+
     public class DclExporter : EditorWindow
     {
         const int SPACE_SIZE = 5;
