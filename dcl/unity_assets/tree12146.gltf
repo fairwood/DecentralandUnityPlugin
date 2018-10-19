@@ -11,98 +11,107 @@
 			"bufferView": 2,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 17,
-			"max": [ 0.4258504, 0.448005, 0 ],
-			"min": [ -0.4258504, -0.448005, -1.270296 ],
+			"count": 1520,
+			"max": [ 5.531616, 8.681242, 3.279367 ],
+			"min": [ -4.241988, -0.003633, -3.092859 ],
 			"type": "VEC3"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 204,
+			"byteOffset": 18240,
 			"componentType": 5126,
-			"count": 17,
-			"max": [ 0.9481404, 0.9430683, 1 ],
-			"min": [ -0.9481404, -0.9430683, -0.3325991 ],
+			"count": 1520,
+			"max": [ 0.9997523, 0.9987864, 0.9996902 ],
+			"min": [ -0.9999765, -0.999952, -0.9994712 ],
 			"type": "VEC3"
 		},
 		{
 			"bufferView": 1,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 17,
-			"max": [ 1.024726, 1 ],
-			"min": [ 0, 0 ],
+			"count": 1520,
+			"max": [ 0.8825, 0.877 ],
+			"min": [ 0.0759, 0.1286 ],
 			"type": "VEC2"
 		},
 		{
 			"bufferView": 3,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 17,
-			"max": [ 1, 1, 0, 1 ],
-			"min": [ -1, -1, 0, 1 ],
+			"count": 1520,
+			"max": [ 0.9993999, 0.999993, 0.9990661, 1 ],
+			"min": [ -0.9978276, -0.993849, -0.9975298, 1 ],
 			"type": "VEC4"
 		},
 		{
 			"bufferView": 0,
 			"byteOffset": 0,
 			"componentType": 5123,
-			"count": 24,
-			"max": [ 16 ],
+			"count": 1524,
+			"max": [ 1519 ],
 			"min": [ 0 ],
 			"type": "SCALAR"
 		}
 	],
 	"buffers": [
 		{
-			"byteLength": 864,
-			"uri": "pyramid3_underbox.bin"
+			"byteLength": 76008,
+			"uri": "tree12146.bin"
 		}
 	],
 	"bufferViews": [
 		{
 			"buffer": 0,
-			"byteLength": 48,
+			"byteLength": 3048,
 			"target": 34963,
-			"byteOffset": 816
+			"byteOffset": 72960
 		},
 		{
 			"buffer": 0,
-			"byteLength": 136,
+			"byteLength": 12160,
 			"target": 34962,
 			"byteStride": 8,
 			"byteOffset": 0
 		},
 		{
 			"buffer": 0,
-			"byteLength": 408,
+			"byteLength": 36480,
 			"target": 34962,
 			"byteStride": 12,
-			"byteOffset": 136
+			"byteOffset": 12160
 		},
 		{
 			"buffer": 0,
-			"byteLength": 272,
+			"byteLength": 24320,
 			"target": 34962,
 			"byteStride": 16,
-			"byteOffset": 544
+			"byteOffset": 48640
+		}
+	],
+	"images": [
+		{
+			"uri": "Assets/Decentraland/Sample - 01/Models/Tree/textures/Tree_Green.jpg"
 		}
 	],
 	"materials": [
 		{
 			"pbrMetallicRoughness": {
-				"baseColorFactor": [0.3396226, 0.1938412, 0.1938412, 1],
-				"metallicFactor": 0.206,
-				"roughnessFactor": 0.186
+				"baseColorTexture" : {
+					"index" : 0,
+					"texCoord" : 0
+				},
+				"baseColorFactor": [1, 1, 1, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 0.5
 			},
 			"emissiveFactor": [0, 0, 0],
 			"doubleSided": false,
-			"name": "Rod"
+			"name": "Tree"
 		}
 	],
 	"meshes": [
 		{
-			"name": "mesh_Pyramid001_3270pyramid3_underbox",
+			"name": "mesh_default_2678tree",
 			"primitives": [
 				{
 					"attributes": {
@@ -126,9 +135,17 @@
 			]
 		},
 		{
-			"name": "node_pyramid3_underbox_12490",
+			"name": "node_tree",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9985,
+			"wrapS": 10497,
+			"wrapT": 10497
 		}
 	],
 	"scenes": [
@@ -139,5 +156,11 @@
 			]
 		}
 	],
-	"scene": 0
+	"scene": 0,
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		}
+	]
 }
