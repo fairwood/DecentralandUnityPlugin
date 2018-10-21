@@ -377,24 +377,28 @@ namespace Dcl{
 			//string meshPrefabPath = "Assets/Decentraland/Internal/" + meshName + ".asset";
 			Mesh mesh = null;//(Mesh)AssetDatabase.LoadAssetAtPath(meshPrefabPath, typeof(Mesh));
 			if(mesh==null){
+
+				int numVertices2 = numVertices + 1;
+
 				mesh=new Mesh();
 				mesh.name=meshName;
 				// can't access Camera.current
 				//newCone.transform.position = Camera.current.transform.position + Camera.current.transform.forward * 5.0f;
 				int multiplier=(outside?1:0)+(inside?1:0);
-				int offset=(outside&&inside?2*numVertices:0);
+				int offset=(outside&&inside?2*numVertices2:0);
 
 				bool bTopCap = isCylinder ? true : false;
 				bool bBottomCap = true;
 
-				Vector3[] vertices=new Vector3[2*multiplier*numVertices+(bTopCap ? (numVertices+1) : 0) + (bBottomCap ? (numVertices+1) : 0)]; // 0..n-1: top, n..2n-1: bottom
-				Vector3[] normals=new Vector3[2*multiplier*numVertices+(bTopCap ? (numVertices+1) : 0) + (bBottomCap ? (numVertices+1) : 0)];
-				Vector2[] uvs=new Vector2[2*multiplier*numVertices+(bTopCap ? (numVertices+1) : 0) + (bBottomCap ? (numVertices+1) : 0)];
+				Vector3[] vertices=new Vector3[2*multiplier*numVertices2+(bTopCap ? (numVertices+1) : 0) + (bBottomCap ? (numVertices+1) : 0)]; // 0..n-1: top, n..2n-1: bottom
+				Vector3[] normals=new Vector3[2*multiplier*numVertices2+(bTopCap ? (numVertices+1) : 0) + (bBottomCap ? (numVertices+1) : 0)];
+				Vector2[] uvs=new Vector2[2*multiplier*numVertices2+(bTopCap ? (numVertices+1) : 0) + (bBottomCap ? (numVertices+1) : 0)];
 				int[] tris;
 				float slope=Mathf.Atan((radiusBottom-radiusTop)/length); // (rad difference)/height
 				float slopeSin=Mathf.Sin(slope);
 				float slopeCos=Mathf.Cos(slope);
 				int i;
+
 
 				for(i=0;i<numVertices;i++){
 					float angle=2*Mathf.PI*i/numVertices;
@@ -404,11 +408,8 @@ namespace Dcl{
 					float angleHalfSin=Mathf.Sin(angleHalf);
 					float angleHalfCos=Mathf.Cos(angleHalf);
 
-					//vertices[i]=new Vector3(radiusTop*angleCos,radiusTop*angleSin,0);
-					//vertices[i+numVertices]=new Vector3(radiusBottom*angleCos,radiusBottom*angleSin,length);
-
 					vertices[i]=new Vector3(radiusTop*angleCos,length,radiusTop*angleSin)+offsetPos;
-					vertices[i+numVertices]=new Vector3(radiusBottom*angleCos,0,radiusBottom*angleSin)+offsetPos;
+					vertices[i+numVertices2]=new Vector3(radiusBottom*angleCos,0,radiusBottom*angleSin)+offsetPos;
 
 					if(radiusTop==0)
 						normals[i]=new Vector3(angleHalfCos*slopeCos,-slopeSin,angleHalfSin*slopeCos);
@@ -416,29 +417,37 @@ namespace Dcl{
 						normals[i]=new Vector3(angleCos*slopeCos,-slopeSin,angleSin*slopeCos);
 					
 					if(radiusBottom==0)
-						normals[i+numVertices]=new Vector3(angleHalfCos*slopeCos,-slopeSin,angleHalfSin*slopeCos);
+						normals[i+numVertices2]=new Vector3(angleHalfCos*slopeCos,-slopeSin,angleHalfSin*slopeCos);
 					else
-						normals[i+numVertices]=new Vector3(angleCos*slopeCos,-slopeSin,angleSin*slopeCos);
+						normals[i+numVertices2]=new Vector3(angleCos*slopeCos,-slopeSin,angleSin*slopeCos);
 
 					uvs[i]=new Vector2(1.0f-1.0f*i/numVertices,1);
-					uvs[i+numVertices]=new Vector2(1.0f-1.0f*i/numVertices,0);
+					uvs[i+numVertices2]=new Vector2(1.0f-1.0f*i/numVertices,0);
 
 					if(outside&&inside){
 						// vertices and uvs are identical on inside and outside, so just copy
-						vertices[i+2*numVertices]=vertices[i];
-						vertices[i+3*numVertices]=vertices[i+numVertices];
-						uvs[i+2*numVertices]=uvs[i];
-						uvs[i+3*numVertices]=uvs[i+numVertices];
+						vertices[i+2*numVertices2]=vertices[i];
+						vertices[i+3*numVertices2]=vertices[i+numVertices2];
+						uvs[i+2*numVertices2]=uvs[i];
+						uvs[i+3*numVertices2]=uvs[i+numVertices2];
 					}
 					if(inside){
 						// invert normals
 						normals[i+offset]=-normals[i];
-						normals[i+numVertices+offset]=-normals[i+numVertices];
+						normals[i+numVertices2+offset]=-normals[i+numVertices2];
 					}
 				}
 
-				int coverTopIndexStart = 2 * multiplier * numVertices;
-				int coverTopIndexEnd = 2*multiplier*numVertices+numVertices;
+				vertices [numVertices] = vertices [0];
+				vertices [numVertices + numVertices2] = vertices [0 + numVertices2];
+				uvs[numVertices] = new Vector2(1.0f-1.0f*numVertices/numVertices,1);
+				uvs[numVertices+numVertices2]=new Vector2(1.0f-1.0f*numVertices/numVertices,0);
+				normals [numVertices] = normals [0];
+				normals [numVertices + numVertices2] = normals [0 + numVertices2];
+
+
+				int coverTopIndexStart = 2 * multiplier * numVertices2;
+				int coverTopIndexEnd = 2*multiplier*numVertices2+numVertices;
 
 				if (bTopCap) {
 					for (i = 0; i < numVertices; i++) {
@@ -485,75 +494,79 @@ namespace Dcl{
 				int cnt=0;
 				if(radiusTop==0){
 					// top cone
-					tris=new int[numVertices*3*multiplier+((bTopCap ? 1 : 0) * numVertices*3) + ((bBottomCap ? 1 : 0) * numVertices*3)];
+					tris=new int[numVertices2*3*multiplier+((bTopCap ? 1 : 0) * numVertices*3) + ((bBottomCap ? 1 : 0) * numVertices*3)];
 					if(outside)
 						for(i=0;i<numVertices;i++){
-							tris[cnt++]=i+numVertices;
+							tris[cnt++]=i+numVertices2;
 							tris[cnt++]=i;
-							if(i==numVertices-1)
-								tris[cnt++]=numVertices;
-							else
-								tris[cnt++]=i+1+numVertices;
+							tris[cnt++]=i+1+numVertices2;
+//							if(i==numVertices-1)
+//								tris[cnt++]=numVertices;
+//							else
+//								tris[cnt++]=i+1+numVertices;
 						}
 					if(inside)
 						for(i=offset;i<numVertices+offset;i++){
 							tris[cnt++]=i;
-							tris[cnt++]=i+numVertices;
-							if(i==numVertices-1+offset)
-								tris[cnt++]=numVertices+offset;
-							else
-								tris[cnt++]=i+1+numVertices;
+							tris[cnt++]=i+numVertices2;
+							tris[cnt++]=i+1+numVertices2;
+//							if(i==numVertices-1+offset)
+//								tris[cnt++]=numVertices+offset;
+//							else
+//								tris[cnt++]=i+1+numVertices;
 						}
 				}else if(radiusBottom==0){
 					// bottom cone
-					tris=new int[numVertices*3*multiplier+((bTopCap ? 1 : 0) * numVertices*3) + ((bBottomCap ? 1 : 0) * numVertices*3)];
+					tris=new int[numVertices2*3*multiplier+((bTopCap ? 1 : 0) * numVertices*3) + ((bBottomCap ? 1 : 0) * numVertices*3)];
 					if(outside)
 						for(i=0;i<numVertices;i++){
 							tris[cnt++]=i;
-							if(i==numVertices-1)
-								tris[cnt++]=0;
-							else
-								tris[cnt++]=i+1;
-							tris[cnt++]=i+numVertices;
+							tris[cnt++]=i+1;
+//							if(i==numVertices-1)
+//								tris[cnt++]=0;
+//							else
+//								tris[cnt++]=i+1;
+							tris[cnt++]=i+numVertices2;
 						}
 					if(inside)
 						for(i=offset;i<numVertices+offset;i++){
-							if(i==numVertices-1+offset)
-								tris[cnt++]=offset;
-							else
-								tris[cnt++]=i+1;
+//							if(i==numVertices-1+offset)
+//								tris[cnt++]=offset;
+//							else
+//								tris[cnt++]=i+1;
+							tris[cnt++]=i+1;
 							tris[cnt++]=i;
-							tris[cnt++]=i+numVertices;
+							tris[cnt++]=i+numVertices2;
 						}
 				}else{
 					// truncated cone
-					tris=new int[numVertices*6*multiplier+ ((bTopCap ? 1 : 0) * numVertices*3) + ((bBottomCap ? 1 : 0) * numVertices*3)];
+					tris=new int[numVertices2*6*multiplier+ ((bTopCap ? 1 : 0) * numVertices*3) + ((bBottomCap ? 1 : 0) * numVertices*3)];
 					if(outside)
 						for(i=0;i<numVertices;i++){
 							int ip1=i+1;
-							if(ip1==numVertices)
-								ip1=0;
+//							if(ip1==numVertices)
+//								ip1=0;
 
 							tris[cnt++]=i;
 							tris[cnt++]=ip1;
-							tris[cnt++]=i+numVertices;
+							tris[cnt++]=i+numVertices2;
 
-							tris[cnt++]=ip1+numVertices;
-							tris[cnt++]=i+numVertices;
+							tris[cnt++]=ip1+numVertices2;
+							tris[cnt++]=i+numVertices2;
 							tris[cnt++]=ip1;
 						}
 					if(inside)
 						for(i=offset;i<numVertices+offset;i++){
 							int ip1=i+1;
-							if(ip1==numVertices+offset)
-								ip1=offset;
+//							if(ip1==numVertices+offset)
+//								ip1=offset;
 
 							tris[cnt++]=ip1;
 							tris[cnt++]=i;
-							tris[cnt++]=i+numVertices;
+							tris[cnt++]=i+numVertices2;
 
-							tris[cnt++]=i+numVertices;
-							tris[cnt++]=ip1+numVertices;
+							tris[cnt++]=i+numVertices2;
+							tris[cnt++]=ip1+numVertices2;
 							tris[cnt++]=ip1;
 						}
 
