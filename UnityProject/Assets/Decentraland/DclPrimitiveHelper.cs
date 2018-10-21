@@ -66,6 +66,7 @@ namespace Dcl
             bool putOnFocusPosition = true)
         {
             GameObject gameObject = new GameObject(type.ToString());
+			gameObject.AddComponent<MeshFilter>();
             if (putOnFocusPosition)
             {
                 gameObject.transform.position = SceneView.lastActiveSceneView.pivot;
@@ -81,7 +82,7 @@ namespace Dcl
             dclObj.withCollision = withCollider;
 			dclObj.dclPrimitiveType = type;
 
-			gameObject.AddComponent<MeshFilter>();
+
 			SetDclPrimitiveMesh (dclObj, dclObj.dclPrimitiveType);
 
             return gameObject;
