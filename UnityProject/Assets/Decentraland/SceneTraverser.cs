@@ -229,7 +229,7 @@ namespace Dcl
                             else
                             {
                                 //need to export this material
-                                if (!primitiveMaterialsToExport.Exists(m => m == material))
+								if (primitiveMaterialsToExport!=null && !primitiveMaterialsToExport.Exists(m => m == material))
                                 {
                                     primitiveMaterialsToExport.Add(material);
                                 }
