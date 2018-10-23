@@ -62,7 +62,7 @@ namespace Dcl
 		private static MessageSource s_messageSource = null;
 		private static string[] languageString = null;
 		public static void loadLanguageStringFromFile(){
-			s_messageSource = new MessageSource("Assets/Decentraland/Localization","language"); 
+			s_messageSource = new MessageSource("Assets/Decentraland/Editor/Localization","language"); 
 
 			int length = (int)LanguageStringValue.LastType;
 			languageString = new string[length];
