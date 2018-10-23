@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using Properties4Net;
 
 namespace Dcl
 {
@@ -55,29 +56,20 @@ namespace Dcl
         {
             EN,
             CN
-        }
+        } 
 
 		public static ELanguage Language = ELanguage.EN;
+		private static MessageSource s_messageSource = null;
 		private static string[] languageString = null;
 		public static void loadLanguageStringFromFile(){
+			s_messageSource = new MessageSource("Assets/Decentraland/Localization","language"); 
+
 			int length = (int)LanguageStringValue.LastType;
 			languageString = new string[length];
-			string path = "Assets/Localization/language.txt";
-			StreamReader reader = new StreamReader(path); 
-
-
-			while (!reader.EndOfStream && reader.ReadLine () != Language.ToString ()) {
-				
-			}
-
 			for (int i = 0; i < length; ++i) {
-				if (reader.EndOfStream) {
-					break;
-				}
-				languageString [i] = reader.ReadLine ();
+				LanguageStringValue l = (LanguageStringValue)i;
+				languageString [i] = s_messageSource.GetMessage(l.ToString(), null, Language.ToString());
 			}
-
-			reader.Close ();
 		}
 
 		public static string getString(LanguageStringValue lsv){
