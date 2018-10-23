@@ -124,7 +124,7 @@ namespace Dcl
             {
                 if (editParcelsMode)
                 {
-                    if (GUILayout.Button("Save"))
+                    if (GUILayout.Button(LabelLocalization.getString(LanguageStringValue.Save)))
                     {
                         CheckAndGetDclSceneMetaObject();
                         try
@@ -138,7 +138,10 @@ namespace Dcl
                         catch (Exception e)
                         {
                             Debug.LogError(e.Message);
-                            EditorUtility.DisplayDialog("Invalid Format", e.Message, "OK");
+                            EditorUtility.DisplayDialog(LabelLocalization.getString(LanguageStringValue.CoordinatesFormatError), 
+                                @"57,-11
+57,-12
+57,-13", "OK");
                         }
 
                         EditorUtility.SetDirty(sceneMeta);

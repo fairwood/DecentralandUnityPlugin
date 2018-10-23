@@ -17,6 +17,7 @@ namespace Dcl
 		ParcelsCount,
 		Base,
 		Edit,
+        Save,
 		DCLExporter,
 		Statistics,
 		Refresh,
@@ -47,6 +48,7 @@ namespace Dcl
 		RunDCLProjectAreYouSure,
 		DCLStartWait10Seconds,
 		ExportForNowSh,
+        CoordinatesFormatError,
 		LastType
 	}
 
