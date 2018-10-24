@@ -33,7 +33,6 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
           <text position={{x:-10,y:3.755,z:-4.999}} scale={{x:0.1846309,y:0.1846309,z:0.1846309}} rotation={{x:0,y:0,z:0}} value="DCL UNITY EXPORTER" width={53} height={5.3625} fontSize={912} color="#2C00BF"></text>
           <text position={{x:0,y:3.755,z:-4.999}} scale={{x:0.1846309,y:0.1846309,z:0.1846309}} rotation={{x:0,y:0,z:0}} value="DCL UNITY EXPORTER" width={53} height={5.3625} fontSize={912} color="#2C00BF"></text>
           <text position={{x:10,y:3.755,z:-4.999}} scale={{x:0.1846309,y:0.1846309,z:0.1846309}} rotation={{x:0,y:0,z:0}} value="DCL UNITY EXPORTER" width={53} height={5.3625} fontSize={912} color="#2C00BF"></text>
-          <plane position={{x:0,y:4.1,z:0}} scale={{x:30,y:10,z:1}} rotation={{x:270,y:0,z:0}} withCollisions={true}></plane>
         </entity>
         <entity position={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}></entity>
         <video position={{x:9.21,y:2.38,z:0.44}} rotation={{x:0,y:0,z:0}} scale={{x:1,y:1,z:1}} id="myVideo" width={4} src="xxxxx"></video>
@@ -87,6 +86,17 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
           <cylinder position={{x:2.148,y:0.479,z:0}} scale={{x:0.43202,y:0.4320199,z:0.4320199}} rotation={{x:13.88124,y:0,z:0}} withCollisions={true} material="#MatDemo"></cylinder>
           <cone position={{x:3.44,y:0.19,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:347.4469,y:0,z:0}} withCollisions={true} material="#MatDemo"></cone>
         </entity>
+        <entity position={{x:10.08,y:0,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:0,y:0,z:0}}>
+          <box position={{x:-2.091,y:0.867,z:-0.725}} scale={{x:0.7059714,y:0.14604,z:0.14604}} rotation={{x:45,y:0,z:0}} withCollisions={true}>
+            <text position={{x:0,y:0,z:-0.5050002}} scale={{x:0.07461976,y:0.3369948,z:0.1082158}} rotation={{x:0,y:0,z:0}} value="gltf-model" width={20.8} height={3.79186} fontSize={912} color="#20209C"></text>
+          </box>
+          <box position={{x:-0.606,y:1.8781,z:1.71}} scale={{x:0.5407659,y:0.14604,z:0.14604}} rotation={{x:45,y:0,z:0}} withCollisions={true}>
+            <text position={{x:0,y:0,z:-0.5050003}} scale={{x:0.0974161,y:0.3369948,z:0.1082158}} rotation={{x:0,y:0,z:0}} value="video" width={11.2} height={3.79186} fontSize={912} color="#20209C"></text>
+          </box>
+          <box position={{x:2.529,y:0,z:-1.265}} scale={{x:0.70597,y:0.14604,z:0.14604}} rotation={{x:45,y:0,z:0}} withCollisions={true}>
+            <text position={{x:0,y:0,z:-0.5050002}} scale={{x:0.07461976,y:0.3369948,z:0.1082158}} rotation={{x:0,y:0,z:0}} value="customized" width={24} height={3.79186} fontSize={912} color="#20209C"></text>
+          </box>
+        </entity>
         <entity position={{x:-3.41,y:0,z:-3.984}} scale={{x:1.3902,y:1.3902,z:1.3902}} rotation={{x:0,y:330.0001,z:0}}>
           <plane position={{x:0,y:1.065,z:0}} scale={{x:1,y:1,z:1}} rotation={{x:5.862269,y:0,z:0}} withCollisions={true} material="#Map"></plane>
           <box position={{x:-0.25,y:0.4,z:-0.03399992}} scale={{x:0.04000001,y:0.8256255,z:0.03999999}} rotation={{x:4.424723,y:-1.070407E-07,z:350.8755}} withCollisions={true}></box>
@@ -94,12 +104,36 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
           <box position={{x:0,y:0.392,z:0.205}} scale={{x:0.04,y:0.8888682,z:0.04}} rotation={{x:331.5615,y:0,z:0}} withCollisions={true}></box>
           <box position={{x:0,y:0.788,z:-0.004}} scale={{x:0.04000001,y:0.6386578,z:0.03999999}} rotation={{x:0,y:0,z:89.99983}} withCollisions={true}></box>
         </entity>
+        <entity position={{x:9.74,y:0,z:1.96}} scale={{x:0.66929,y:0.66929,z:0.66929}} rotation={{x:0,y:0,z:0}}>
+          <entity position={{x:-0.3299999,y:1.55,z:-0.96}} scale={{x:0.26215,y:0.26215,z:0.26215}} rotation={{x:0,y:180,z:0}}>
+            <entity position={{x:-21.69661,y:21.91057,z:34.66195}} scale={{x:0.9999999,y:0.9999999,z:1}} rotation={{x:26.21716,y:147.9982,z:0.000775616}}></entity>
+            <gltf-model position={{x:0.169058,y:-4.459234,z:-3.515694}} scale={{x:0.1541671,y:0.1541671,z:0.1541671}} rotation={{x:270,y:0,z:0}} src="./unity_assets/Cube1290622.gltf"></gltf-model>
+            <gltf-model position={{x:12.11426,y:5.309812,z:-3.49059}} scale={{x:0.1367972,y:0.1367972,z:0.1367972}} rotation={{x:270,y:328.5754,z:0}} src="./unity_assets/Cube_0001290624.gltf"></gltf-model>
+            <gltf-model position={{x:0.2170952,y:-0.5116696,z:0.5035708}} scale={{x:1,y:1,z:1}} rotation={{x:270,y:0,z:0}} src="./unity_assets/Cube_0011290626.gltf"></gltf-model>
+            <gltf-model position={{x:0.1646543,y:5.259673,z:-5.59996}} scale={{x:0.1243247,y:0.1243247,z:0.1243247}} rotation={{x:270,y:0,z:0}} src="./unity_assets/Cube_0021290628.gltf"></gltf-model>
+            <gltf-model position={{x:10.1875,y:-0.1889177,z:-11.27131}} scale={{x:2.081236,y:2.081236,z:2.081236}} rotation={{x:270,y:0,z:0}} src="./unity_assets/Cube_0051290634.gltf"></gltf-model>
+            <gltf-model position={{x:-2.714492,y:-1.024216,z:-5.571743}} scale={{x:0.1946046,y:0.1946046,z:0.1946046}} rotation={{x:270,y:0,z:0}} src="./unity_assets/Cube_0071290638.gltf"></gltf-model>
+            <gltf-model position={{x:-3.949322,y:4.926924,z:-1.458153}} scale={{x:0.1817786,y:0.1817786,z:0.1817786}} rotation={{x:270,y:71.13519,z:0}} src="./unity_assets/Cube_0081290640.gltf"></gltf-model>
+            <gltf-model position={{x:0.2170952,y:-0.5116696,z:0.5035708}} scale={{x:1,y:1,z:1}} rotation={{x:270,y:0,z:0}} src="./unity_assets/Cube_0091290642.gltf"></gltf-model>
+            <gltf-model position={{x:-7.849312,y:8.45981,z:-4.598763}} scale={{x:2.751107,y:2.751107,z:2.751106}} rotation={{x:270,y:218.9466,z:0}} src="./unity_assets/Cube_0111290646.gltf"></gltf-model>
+            <gltf-model position={{x:-7.849312,y:8.45981,z:-4.598763}} scale={{x:2.751107,y:2.751107,z:2.751106}} rotation={{x:270,y:218.9466,z:0}} src="./unity_assets/Cube_0121290648.gltf"></gltf-model>
+            <gltf-model position={{x:12.11426,y:5.309812,z:-3.49059}} scale={{x:0.1367972,y:0.1367972,z:0.1367972}} rotation={{x:270,y:328.5754,z:0}} src="./unity_assets/Cube_0131290650.gltf"></gltf-model>
+            <gltf-model position={{x:0.1646543,y:5.259673,z:-5.59996}} scale={{x:0.1243247,y:0.1243247,z:0.1243247}} rotation={{x:270,y:0,z:0}} src="./unity_assets/Cube_0191290656.gltf"></gltf-model>
+            <gltf-model position={{x:-2.820696,y:8.664126,z:-5.094779}} scale={{x:0.2064836,y:0.2064836,z:0.2064836}} rotation={{x:23.96987,y:357.3994,z:90}} src="./unity_assets/Cylinder_0021290658.gltf"></gltf-model>
+          </entity>
+          <box position={{x:-0.5799999,y:0.194,z:-7.292}} scale={{x:3.7196,y:0.68649,z:4.47296}} rotation={{x:339.8728,y:0,z:0}} withCollisions={true} material="#Floor"></box>
+          <cylinder position={{x:-0.51,y:-4.8,z:-1.76}} scale={{x:4.052388,y:6.094869,z:4.052388}} rotation={{x:0,y:0,z:0}} withCollisions={true} material="#Floor"></cylinder>
+          <video position={{x:-0.341,y:3.66,z:0.297}} rotation={{x:0,y:0,z:0}} scale={{x:0.99,y:0.99,z:0.99}} width={1.98} height={1.08} src="scene_in_scene.mp4" play={true} volume={20}></video>
+        </entity>
+        <text position={{x:9.534,y:1.287,z:2.516}} scale={{x:0.05583001,y:0.05583001,z:0.05583001}} rotation={{x:0,y:180,z:0}} value="https://sketchfab.com/models/691
+45aa6647a42849487b6c3404f5075" width={74} height={10.88203} fontSize={912} color="#000000"></text>
         <material id="BlueLight" albedoColor="#000000" alpha={1} emissiveColor="#2C00BF" metallic={0} roughness={0.5}/>
         <material id="Logo" albedoColor="#000000" alpha={1} emisiveTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/fairwood_logo.jpg" emissiveColor="#FFFFFF" metallic={0} roughness={0.5}/>
         <material id="Rod" albedoColor="#654E13" alpha={1} emissiveColor="#000000" metallic={1} roughness={0.331}/>
         <material id="Tape" albedoColor="#5E579E" alpha={0.2784314} emissiveColor="#000000" metallic={0} roughness={0.5}/>
         <material id="MatDemo" albedoColor="#FFFFFF" alpha={1} albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" hasAlpha={false} bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={0} roughness={0.794}/>
         <material id="Map" albedoColor="#FFFFFF" alpha={1} albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/dcl_map.png" hasAlpha={false} emissiveColor="#000000" metallic={0} roughness={0.5}/>
+        <material id="Floor" albedoColor="#CCCCCC" alpha={1} albedoTexture="./unity_assets/Assets/Decentraland/Sample - 02/source/Floor.jpg" hasAlpha={false} emissiveColor="#000000" metallic={0} roughness={1}/>
       </scene>
     )
   }
