@@ -251,7 +251,25 @@ namespace Dcl
                         //Statistics
                         if (statistics != null)
                         {
-                            statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+							switch (dclObject.dclPrimitiveType) {
+							case DclPrimitiveType.box:
+								statistics.triangleCount += 12;
+								break;
+							case DclPrimitiveType.sphere:
+								statistics.triangleCount += 4624;
+								break;
+							case DclPrimitiveType.plane:
+								statistics.triangleCount += 4;
+								break;
+							case DclPrimitiveType.cylinder:
+								statistics.triangleCount += 144;
+								break;
+							case DclPrimitiveType.cone:
+								statistics.triangleCount += 108;
+								break;
+							}
+
+							statistics.bodyCount += 1;
                         }
                     }
                     else
