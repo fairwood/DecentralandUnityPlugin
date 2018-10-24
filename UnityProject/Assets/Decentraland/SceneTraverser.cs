@@ -175,10 +175,13 @@ namespace Dcl
                 {
                     extraProperties.AppendFormat(" scale={{{0}}}", Vector3ToJSONString(tra.localScale));
                 }
-                foreach (var propertyPair in customNode.propertyPairs)
-                {
-                    extraProperties.AppendFormat(" {0}={1}", propertyPair.name, propertyPair.value);
-                }
+
+				if(customNode.propertyPairs!=null){
+					foreach (var propertyPair in customNode.propertyPairs)
+					{
+						extraProperties.AppendFormat(" {0}={1}", propertyPair.name, propertyPair.value);
+					}
+				}
             }
             else
             {

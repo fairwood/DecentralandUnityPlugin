@@ -186,6 +186,41 @@ namespace Dcl
             }
         }
 
+		private static Texture2D _video;
+		public static Texture2D Video
+		{
+			get
+			{
+				if (!_video)
+				{
+					var internalFolder = FileUtil.FindFolder("Decentraland/Internal");
+					if (internalFolder.EndsWith("/"))
+						internalFolder = internalFolder.Remove(internalFolder.LastIndexOf("/"), 1);
+					_video = (Texture2D)AssetDatabase.LoadAssetAtPath(
+						string.Format("{0}/Icons/video.png", internalFolder), typeof(Texture2D));
+				}
+				return _video;
+			}
+		}
+
+		private static Sprite _videoPanel;
+		public static Sprite VideoPanel
+		{
+			get
+			{
+				
+				if (!_videoPanel)
+				{
+					var internalFolder = FileUtil.FindFolder("Decentraland/Internal");
+					if (internalFolder.EndsWith("/"))
+						internalFolder = internalFolder.Remove(internalFolder.LastIndexOf("/"), 1);
+					_videoPanel = (Sprite)AssetDatabase.LoadAssetAtPath(
+						string.Format("{0}/Images/video_panel.png", internalFolder), typeof(Sprite));
+				}
+				return _videoPanel;
+			}
+		}
+
         #endregion
     }
 }

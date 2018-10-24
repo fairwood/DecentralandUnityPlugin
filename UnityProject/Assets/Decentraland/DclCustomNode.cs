@@ -31,6 +31,47 @@ namespace Dcl
 
 #endif
 
+#if UNITY_EDITOR
+
+		[MenuItem("GameObject/DCL Object/Video", false, -90)]
+		static void CreateVideo()
+		{
+			GameObject gameObject = new GameObject("Video");
+			gameObject.transform.position = SceneView.lastActiveSceneView.pivot;
+
+
+			SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer> ();
+			spriteRenderer.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Decentraland/Internal/Images/video_panel.png");//DclEditorSkin.VideoPanel;
+
+			DclCustomNode node = gameObject.AddComponent<DclCustomNode>();
+			node.position = node.rotation = node.scale = true;
+			node.nodeName = "video";
+
+			node.propertyPairs = new List<XmlPropertyPair> ();
+			XmlPropertyPair pair;
+			pair.name = "width";
+			pair.value = "{1.98}";
+			node.propertyPairs.Add (pair);
+
+			pair.name = "height";
+			pair.value = "{1.08}";
+			node.propertyPairs.Add (pair);
+
+			pair.name = "src";
+			pair.value = "";
+			node.propertyPairs.Add (pair);
+
+			pair.name = "play";
+			pair.value = "{true}";
+			node.propertyPairs.Add (pair);
+
+			pair.name = "volume";
+			pair.value = "{20}";
+			node.propertyPairs.Add (pair);
+		}
+
+#endif
+
     }
 
     [Serializable]

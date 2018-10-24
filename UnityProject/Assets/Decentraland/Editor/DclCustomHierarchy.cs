@@ -47,38 +47,46 @@ public class DclCustomHierarchy
             {
                 switch (nodeType)
                 {
-                    case EDclNodeType.entity:
-                        tex = DclEditorSkin.Entity;
-                        break;
-                    case EDclNodeType.box:
-                        tex = DclEditorSkin.Cube;
-                        break;
-                    case EDclNodeType.sphere:
-                        tex = DclEditorSkin.Sphere;
-                        break;
-                    case EDclNodeType.plane:
-                        tex = DclEditorSkin.Quad;
-                        break;
-                    case EDclNodeType.cylinder:
-                        tex = DclEditorSkin.Cylinder;
-                        break;
-                    case EDclNodeType.cone:
-                        tex = DclEditorSkin.Cone;
-                        break;
-                    case EDclNodeType.circle:
-                        tex = DclEditorSkin.Sphere;
-                        break;
-                    case EDclNodeType.text:
-                        tex = DclEditorSkin.Text;
-                        break;
-                    case EDclNodeType.gltf:
-                        tex = DclEditorSkin.Mesh;
-                        break;
-                    case EDclNodeType.CustomNode:
-                        tex = DclEditorSkin.CustomNode;
-                        break;
-                    default:
-                        break;
+                case EDclNodeType.entity:
+                    tex = DclEditorSkin.Entity;
+                    break;
+                case EDclNodeType.box:
+                    tex = DclEditorSkin.Cube;
+                    break;
+                case EDclNodeType.sphere:
+                    tex = DclEditorSkin.Sphere;
+                    break;
+                case EDclNodeType.plane:
+                    tex = DclEditorSkin.Quad;
+                    break;
+                case EDclNodeType.cylinder:
+                    tex = DclEditorSkin.Cylinder;
+                    break;
+                case EDclNodeType.cone:
+                    tex = DclEditorSkin.Cone;
+                    break;
+                case EDclNodeType.circle:
+                    tex = DclEditorSkin.Sphere;
+                    break;
+                case EDclNodeType.text:
+                    tex = DclEditorSkin.Text;
+                    break;
+                case EDclNodeType.gltf:
+                    tex = DclEditorSkin.Mesh;
+                    break;
+				case EDclNodeType.CustomNode:
+					{
+						DclCustomNode node = go.GetComponent<DclCustomNode> ();
+						if (node.nodeName == "video") {
+							tex = DclEditorSkin.Video;
+						} else {
+							tex = DclEditorSkin.CustomNode;
+						}
+						
+					}
+                break;
+                default:
+                    break;
                 }
             }
             else
