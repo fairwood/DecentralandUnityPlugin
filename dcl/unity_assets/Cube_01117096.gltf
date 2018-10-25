@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.3f1",
+		"generator": "Unity 2018.2.2f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -11,86 +11,86 @@
 			"bufferView": 2,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 726,
-			"max": [ 1.014489, 1.725544, 0.780069 ],
-			"min": [ -0.88031, -0.457858, -0.860875 ],
+			"count": 4,
+			"max": [ 1.11122, 0.8512073, 1.067045 ],
+			"min": [ -1.180536, 0.8416429, -0.1470779 ],
 			"type": "VEC3"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 8712,
+			"byteOffset": 48,
 			"componentType": 5126,
-			"count": 726,
-			"max": [ 1, 1, 1 ],
-			"min": [ -1, -1, -1 ],
+			"count": 4,
+			"max": [ 0.004173337, 0.9999913, 0 ],
+			"min": [ 0.004173337, 0.9999913, 0 ],
 			"type": "VEC3"
 		},
 		{
 			"bufferView": 1,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 726,
-			"max": [ 0.9847, 0.9847 ],
-			"min": [ 0.0153, 0.0153 ],
+			"count": 4,
+			"max": [ 0.9999762, 0.9979439 ],
+			"min": [ 2.37595E-05, -0.000171214 ],
 			"type": "VEC2"
 		},
 		{
 			"bufferView": 3,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 726,
-			"max": [ 1, 1, 1, 1 ],
-			"min": [ -1, -1, -1, 1 ],
+			"count": 4,
+			"max": [ 0.9999913, -0.004173337, 0.0002762981, 1 ],
+			"min": [ 0.9999913, -0.004173338, 0.0002762476, 1 ],
 			"type": "VEC4"
 		},
 		{
 			"bufferView": 0,
 			"byteOffset": 0,
 			"componentType": 5123,
-			"count": 1074,
-			"max": [ 725 ],
+			"count": 6,
+			"max": [ 3 ],
 			"min": [ 0 ],
 			"type": "SCALAR"
 		}
 	],
 	"buffers": [
 		{
-			"byteLength": 36996,
-			"uri": "gazebo13130.bin"
+			"byteLength": 204,
+			"uri": "Cube_01117096.bin"
 		}
 	],
 	"bufferViews": [
 		{
 			"buffer": 0,
-			"byteLength": 2148,
+			"byteLength": 12,
 			"target": 34963,
-			"byteOffset": 34848
+			"byteOffset": 192
 		},
 		{
 			"buffer": 0,
-			"byteLength": 5808,
+			"byteLength": 32,
 			"target": 34962,
 			"byteStride": 8,
 			"byteOffset": 0
 		},
 		{
 			"buffer": 0,
-			"byteLength": 17424,
+			"byteLength": 96,
 			"target": 34962,
 			"byteStride": 12,
-			"byteOffset": 5808
+			"byteOffset": 32
 		},
 		{
 			"buffer": 0,
-			"byteLength": 11616,
+			"byteLength": 64,
 			"target": 34962,
 			"byteStride": 16,
-			"byteOffset": 23232
+			"byteOffset": 128
 		}
 	],
 	"images": [
 		{
-			"uri": "Assets/Decentraland/Sample - 03/gazebo/PUSHILIN_gazebo.jpg"
+			"uri": "Assets/Decentraland/Sample - 02/source/Left_Scn.jpg"
 		}
 	],
 	"materials": [
@@ -106,12 +106,12 @@
 			},
 			"emissiveFactor": [0, 0, 0],
 			"doubleSided": false,
-			"name": "None"
+			"name": "Left_Scn"
 		}
 	],
 	"meshes": [
 		{
-			"name": "mesh_default_11800gazebo",
+			"name": "mesh_Cube_011_3530Cube_011",
 			"primitives": [
 				{
 					"attributes": {
@@ -135,7 +135,7 @@
 			]
 		},
 		{
-			"name": "node_gazebo",
+			"name": "node_Cube_011",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}

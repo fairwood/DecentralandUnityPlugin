@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.3f1",
+		"generator": "Unity 2018.2.2f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -29,7 +29,7 @@
 	"buffers": [
 		{
 			"byteLength": 0,
-			"uri": "Cube1290622.bin"
+			"uri": "Cube_00717740.bin"
 		}
 	],
 	"materials": [
@@ -46,7 +46,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Cube_12060Cube",
+			"name": "mesh_Cube_007_3522Cube_007",
 			"primitives": [
 				{
 					"attributes": {
@@ -67,7 +67,7 @@
 			]
 		},
 		{
-			"name": "node_Cube",
+			"name": "node_Cube_007",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}

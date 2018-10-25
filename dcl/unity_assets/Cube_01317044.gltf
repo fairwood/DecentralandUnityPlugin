@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.3f1",
+		"generator": "Unity 2018.2.2f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -12,8 +12,8 @@
 			"byteOffset": 0,
 			"componentType": 5126,
 			"count": 4,
-			"max": [ 28.34207, -6.180957, -7.77513 ],
-			"min": [ -29.69797, -6.247138, -38.52334 ],
+			"max": [ -9.530638, -22.16312, -1.5676 ],
+			"min": [ -55.61968, -22.38292, -25.98463 ],
 			"type": "VEC3"
 		},
 		{
@@ -21,8 +21,8 @@
 			"byteOffset": 48,
 			"componentType": 5126,
 			"count": 4,
-			"max": [ -0.001140177, -0.9999994, 0 ],
-			"min": [ -0.001140177, -0.9999994, 0 ],
+			"max": [ 0.004768788, -0.9999887, 0 ],
+			"min": [ 0.004768788, -0.9999887, 0 ],
 			"type": "VEC3"
 		},
 		{
@@ -30,8 +30,8 @@
 			"byteOffset": 0,
 			"componentType": 5126,
 			"count": 4,
-			"max": [ 0.9999272, 0.9985188 ],
-			"min": [ 7.27749E-05, 7.27749E-05 ],
+			"max": [ 0.999903, 0.9978612 ],
+			"min": [ 9.70524E-05, 9.70524E-05 ],
 			"type": "VEC2"
 		},
 		{
@@ -39,8 +39,8 @@
 			"byteOffset": 0,
 			"componentType": 5126,
 			"count": 4,
-			"max": [ -0.9999994, 0.001140177, 0, 1 ],
-			"min": [ -0.9999994, 0.001140177, 0, 1 ],
+			"max": [ -0.9999887, -0.004768788, 0, 1 ],
+			"min": [ -0.9999887, -0.004768788, 0, 1 ],
 			"type": "VEC4"
 		},
 		{
@@ -56,7 +56,7 @@
 	"buffers": [
 		{
 			"byteLength": 204,
-			"uri": "Cube_0021290628.bin"
+			"uri": "Cube_01317044.bin"
 		}
 	],
 	"bufferViews": [
@@ -90,7 +90,7 @@
 	],
 	"images": [
 		{
-			"uri": "Assets/Decentraland/Sample - 02/source/Middle_Scn.jpg"
+			"uri": "Assets/Decentraland/Sample - 02/source/Right_Scn.jpg"
 		}
 	],
 	"materials": [
@@ -106,12 +106,12 @@
 			},
 			"emissiveFactor": [0, 0, 0],
 			"doubleSided": false,
-			"name": "Middle_Scn"
+			"name": "Right_Scn"
 		}
 	],
 	"meshes": [
 		{
-			"name": "mesh_Cube_002_12066Cube_002",
+			"name": "mesh_Cube_013_3534Cube_013",
 			"primitives": [
 				{
 					"attributes": {
@@ -135,7 +135,7 @@
 			]
 		},
 		{
-			"name": "node_Cube_002",
+			"name": "node_Cube_013",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}
