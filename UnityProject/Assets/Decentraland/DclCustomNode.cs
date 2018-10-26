@@ -12,12 +12,25 @@ namespace Dcl
     [AddComponentMenu("DclCustomNode", 1)]
     public class DclCustomNode : MonoBehaviour
     {
+		[HideInInspector]
         public bool position;
+		[HideInInspector]
         public bool rotation;
+		[HideInInspector]
         public bool scale;
 
+		[HideInInspector]
         public string nodeName;
+		[HideInInspector]
         public List<XmlPropertyPair> propertyPairs;
+
+		public void setProperty(string name, string value){
+			for (int i = 0; i < propertyPairs.Count; ++i) {
+				if (propertyPairs [i].name == name) {
+					propertyPairs [i].value = value;
+				}
+			}
+		}
         
 #if UNITY_EDITOR
         
@@ -42,32 +55,41 @@ namespace Dcl
 
 			SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer> ();
 			spriteRenderer.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Decentraland/Internal/Images/video_panel.png");//DclEditorSkin.VideoPanel;
+			spriteRenderer.drawMode = SpriteDrawMode.Sliced;
+			spriteRenderer.size = new Vector2 (1.28f, 0.64f);
 
 			DclCustomNode node = gameObject.AddComponent<DclCustomNode>();
 			node.position = node.rotation = node.scale = true;
 			node.nodeName = "video";
 
 			node.propertyPairs = new List<XmlPropertyPair> ();
-			XmlPropertyPair pair;
+
+			XmlPropertyPair pair = new XmlPropertyPair();
 			pair.name = "width";
 			pair.value = "{1.98}";
 			node.propertyPairs.Add (pair);
 
+			pair = new XmlPropertyPair();
 			pair.name = "height";
 			pair.value = "{1.08}";
 			node.propertyPairs.Add (pair);
 
+			pair = new XmlPropertyPair();
 			pair.name = "src";
 			pair.value = "";
 			node.propertyPairs.Add (pair);
 
+			pair = new XmlPropertyPair();
 			pair.name = "play";
 			pair.value = "{true}";
 			node.propertyPairs.Add (pair);
 
+			pair = new XmlPropertyPair();
 			pair.name = "volume";
 			pair.value = "{20}";
 			node.propertyPairs.Add (pair);
+
+			gameObject.AddComponent<DclVideo>();
 		}
 
 #endif
@@ -75,7 +97,7 @@ namespace Dcl
     }
 
     [Serializable]
-    public struct XmlPropertyPair
+	public class XmlPropertyPair
     {
         public string name;
         public string value;
