@@ -10,7 +10,7 @@ namespace Dcl
 
 		public float width = 1.98f;
 		public float height = 1.08f;
-		public string videoPath;
+		public string src;
 		public bool play = true;
 		public float volume = 20f;
 
@@ -39,7 +39,7 @@ namespace Dcl
 			}
 			node.setProperty ("width", "{" + width + "}");
 			node.setProperty ("height", "{" + height + "}");
-			node.setProperty ("src", "\"" + videoPath + "\"");
+			node.setProperty ("src", "\"" + src + "\"");
 			node.setProperty ("play", "{" + (play ? "true" : "false") + "}");
 			node.setProperty ("volume", "{" + volume + "}");
 

@@ -1,0 +1,155 @@
+{
+	"asset": {
+		"generator": "Unity 2018.2.3f1",
+		"extras": {
+			"exporterVersion" : "2.2.1"
+		},
+		"version": "2.0"
+	},
+	"accessors": [
+		{
+			"bufferView": 1,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 4281,
+			"max": [ 3.62092, 1.249689, 0.9840821 ],
+			"min": [ -3.103937, -2.023045, -1.658146 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 51372,
+			"componentType": 5126,
+			"count": 4281,
+			"max": [ 0.9975055, 0.998904, 1 ],
+			"min": [ -0.9995368, -0.9994813, -0.9998426 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 4281,
+			"max": [ 1, 0, 0, 1 ],
+			"min": [ 1, 0, 0, 1 ],
+			"type": "VEC4"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 0,
+			"componentType": 5123,
+			"count": 6426,
+			"max": [ 3205 ],
+			"min": [ 0 ],
+			"type": "SCALAR"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 12852,
+			"componentType": 5123,
+			"count": 2322,
+			"max": [ 4280 ],
+			"min": [ 1585 ],
+			"type": "SCALAR"
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 188736,
+			"uri": "Cube_00811990.bin"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 17496,
+			"target": 34963,
+			"byteOffset": 171240
+		},
+		{
+			"buffer": 0,
+			"byteLength": 102744,
+			"target": 34962,
+			"byteStride": 12,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 68496,
+			"target": 34962,
+			"byteStride": 16,
+			"byteOffset": 102744
+		}
+	],
+	"materials": [
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.05344529, 0.05344529, 0.05344529, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 1
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "Mouse1"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.7968979, 0.7468106, 0.8, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 1
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "Mouse2"
+		}
+	],
+	"meshes": [
+		{
+			"name": "mesh_Cube_008_11888Cube_008",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TANGENT": 2
+					},
+					"indices": 3,
+					"material": 0,
+					"mode": 4
+				},
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TANGENT": 2
+					},
+					"indices": 4,
+					"material": 1,
+					"mode": 4
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"name": "UnityGlTF_root",
+			"children": [
+				1
+			]
+		},
+		{
+			"name": "node_Cube_008",
+			"mesh": 0,
+			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+		}
+	],
+	"scenes": [
+		{
+			"name":"defaultScene",
+			"nodes": [
+				0
+			]
+		}
+	],
+	"scene": 0
+}

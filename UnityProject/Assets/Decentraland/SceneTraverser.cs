@@ -141,6 +141,7 @@ namespace Dcl
             if (!tra.gameObject.activeInHierarchy) return;
 
             //TODO: Hide empty
+            if (tra.gameObject.GetComponent<DclSceneMeta>()) return;
 
             if (statistics != null)
             {
@@ -349,8 +350,8 @@ namespace Dcl
                     if (rdrr)
                     {
 						
-						var width = rdrr.bounds.size.x*2 / tra.lossyScale.x;//rdrr.bounds.extents.x*2;
-						var height = rdrr.bounds.size.y*2 / tra.lossyScale.y;//rdrr.bounds.extents.y * 2;
+						var width = Math.Min(32, rdrr.bounds.size.x*2 / tra.lossyScale.x);//rdrr.bounds.extents.x*2;
+						var height = Math.Min(32, rdrr.bounds.size.y*2 / tra.lossyScale.y);//rdrr.bounds.extents.y * 2;
 
                         extraProperties.AppendFormat(" width={{{0}}}", width);
                         extraProperties.AppendFormat(" height={{{0}}}", height);

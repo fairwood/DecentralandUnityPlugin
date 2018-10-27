@@ -12,16 +12,14 @@ namespace Dcl
     [AddComponentMenu("DclCustomNode", 1)]
     public class DclCustomNode : MonoBehaviour
     {
-		[HideInInspector]
         public bool position;
-		[HideInInspector]
-        public bool rotation;
-		[HideInInspector]
-        public bool scale;
 
-		[HideInInspector]
+        public bool rotation;
+
+        public bool scale;
+        
         public string nodeName;
-		[HideInInspector]
+
         public List<XmlPropertyPair> propertyPairs;
 
 		public void setProperty(string name, string value){
@@ -46,7 +44,7 @@ namespace Dcl
 
 #if UNITY_EDITOR
 
-		[MenuItem("GameObject/DCL Object/(trial)Video", false, -90)]
+		[MenuItem("GameObject/DCL Object/Video (trial)", false, -90)]
 		static void CreateVideo()
 		{
 			GameObject gameObject = new GameObject("Video");
