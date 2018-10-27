@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.3f1",
+		"generator": "Unity 2018.2.2f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -12,8 +12,8 @@
 			"byteOffset": 0,
 			"componentType": 5126,
 			"count": 1347,
-			"max": [ 1.144766, 1.12457, 1.335793 ],
-			"min": [ -1.215793, 0.4298564, -0.2120437 ],
+			"max": [ -8.834359, -13.913, 3.837148 ],
+			"min": [ -56.30862, -27.78782, -27.29115 ],
 			"type": "VEC3"
 		},
 		{
@@ -21,8 +21,8 @@
 			"byteOffset": 16164,
 			"componentType": 5126,
 			"count": 1347,
-			"max": [ 1, 1, 1 ],
-			"min": [ -1, -0.9999913, -1 ],
+			"max": [ 0.9999887, 0.9999887, 1 ],
+			"min": [ -0.9999887, -0.9999601, -1 ],
 			"type": "VEC3"
 		},
 		{
@@ -38,25 +38,25 @@
 			"bufferView": 0,
 			"byteOffset": 0,
 			"componentType": 5123,
-			"count": 54,
-			"max": [ 35 ],
+			"count": 3024,
+			"max": [ 1310 ],
 			"min": [ 0 ],
 			"type": "SCALAR"
 		},
 		{
 			"bufferView": 0,
-			"byteOffset": 108,
+			"byteOffset": 6048,
 			"componentType": 5123,
-			"count": 3024,
+			"count": 54,
 			"max": [ 1346 ],
-			"min": [ 36 ],
+			"min": [ 1311 ],
 			"type": "SCALAR"
 		}
 	],
 	"buffers": [
 		{
 			"byteLength": 60036,
-			"uri": "Cube_01212018.bin"
+			"uri": "Cube_00014670.bin"
 		}
 	],
 	"bufferViews": [
@@ -84,16 +84,6 @@
 	"materials": [
 		{
 			"pbrMetallicRoughness": {
-				"baseColorFactor": [0.05344529, 0.05344529, 0.05344529, 1],
-				"metallicFactor": 0,
-				"roughnessFactor": 1
-			},
-			"emissiveFactor": [0, 0, 0],
-			"doubleSided": false,
-			"name": "Mouse1"
-		},
-		{
-			"pbrMetallicRoughness": {
 				"baseColorFactor": [0.2804448, 0.2804448, 0.2804448, 1],
 				"metallicFactor": 0,
 				"roughnessFactor": 1
@@ -101,11 +91,21 @@
 			"emissiveFactor": [0, 0, 0],
 			"doubleSided": false,
 			"name": "Gray"
+		},
+		{
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [0.05344529, 0.05344529, 0.05344529, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 1
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "Mouse1"
 		}
 	],
 	"meshes": [
 		{
-			"name": "mesh_Cube_012_11896Cube_012",
+			"name": "mesh_Cube_000_3514Cube_000",
 			"primitives": [
 				{
 					"attributes": {
@@ -138,7 +138,7 @@
 			]
 		},
 		{
-			"name": "node_Cube_012",
+			"name": "node_Cube_000",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}

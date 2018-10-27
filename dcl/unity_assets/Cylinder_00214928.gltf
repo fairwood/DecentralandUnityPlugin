@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.3f1",
+		"generator": "Unity 2018.2.2f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -56,7 +56,7 @@
 	"buffers": [
 		{
 			"byteLength": 69816,
-			"uri": "Cylinder_00212676.bin"
+			"uri": "Cylinder_00214928.bin"
 		}
 	],
 	"bufferViews": [
@@ -105,7 +105,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Cylinder_002_11906Cylinder_002",
+			"name": "mesh_Cylinder_002_3548Cylinder_002",
 			"primitives": [
 				{
 					"attributes": {

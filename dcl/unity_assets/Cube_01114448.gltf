@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.3f1",
+		"generator": "Unity 2018.2.2f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -56,7 +56,7 @@
 	"buffers": [
 		{
 			"byteLength": 204,
-			"uri": "Cube_01112148.bin"
+			"uri": "Cube_01114448.bin"
 		}
 	],
 	"bufferViews": [
@@ -111,7 +111,7 @@
 	],
 	"meshes": [
 		{
-			"name": "mesh_Cube_011_11894Cube_011",
+			"name": "mesh_Cube_011_3536Cube_011",
 			"primitives": [
 				{
 					"attributes": {
