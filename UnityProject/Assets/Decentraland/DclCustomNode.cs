@@ -46,7 +46,7 @@ namespace Dcl
 
 #if UNITY_EDITOR
 
-		[MenuItem("GameObject/DCL Object/Video", false, -90)]
+		[MenuItem("GameObject/DCL Object/(trial)Video", false, -90)]
 		static void CreateVideo()
 		{
 			GameObject gameObject = new GameObject("Video");
