@@ -1,5 +1,7 @@
 # Quick Guide
 
+![](./docs/exportergui.png)
+
 Follow these steps to know how this tool works:
 
 1. Install Unity
@@ -20,7 +22,7 @@ Follow these steps to know how this tool works:
 
 [Unity 5.x\2017\2018 or higher](https://store.unity.com/download)
 
-## 2. Create an Empty Unity project
+## 2. Create an empty Unity project
 
 Run Unity and click 'New'.
 
@@ -34,29 +36,29 @@ Drag it into Unity and open the exporter window.
 
 ![](./docs/extract_plugin.gif)
 
-## 4. Open Sample Scene
+## 4. Open the sample scene
 
+![](./docs/open_sample_scene.gif)
 
+## 5. Select an folder to export
 
+![](./docs/select_export_path.png)
 
+## 6. Export
 
+Click ```Export``` button.
 
+![](./docs/export_button.png)
 
+It is done when you see "Export Complete" in the console.
 
+![](./docs/export_complete.png)
 
+Go to the target folder, you will find your DCL project.
 
+## 7. Preview & Publish
 
-
-
-
-
-
-
-
-
-
-
-## 2 Workflows to Choose
+You have 2 ways to preview and publish.
 
 ### 1. To Now.sh
 
@@ -64,24 +66,27 @@ Drag it into Unity and open the exporter window.
 
 Need to install:
 
-- Unity
-
-- DCL Unity Exporter Plugin
-
 - Now.sh
 
-Follow [Export to Now.sh](./docs/ExportToNow.md) to get started.********
+Follow [Export to Now.sh](./docs/ExportToNow.md).
 
 ### 2. As A Complete DCL Project
 
 **Recommended for professional developers.**
 
-If you are going to preview the scene on your computer, or deploy the scene to IPFS, you should go this way, follow this article*******.
+If you are going to preview the scene on your computer, or deploy the scene to IPFS, you should go this way.
+
+Need to install:
+
+- Node.js
+
+- Decentraland SDK
+
+You can follow the [DCL official document](https://docs.decentraland.org/getting-started/installation-guide/) to setup the Decentraland SDK.
 
 
 
-
-
+# More about Decentraland Unity Plugin
 
 ## Introduction: What can you do
 
@@ -89,13 +94,13 @@ If you are going to preview the scene on your computer, or deploy the scene to I
 
 * Box
 
-* Sphere (UV is not correct yet)
+* Sphere
 
 * Plane
 
 * Cylinder
 
-* Cone (UV is not correct yet)
+* Cone
 
 * TextMesh (custom font is not supported)
 
@@ -109,7 +114,7 @@ If you are going to preview the scene on your computer, or deploy the scene to I
 
 **Note**: Non-scene assets (e.g. models, materials, textures) should not have same names though duplicated names are available in different folders.
 
-### 2. Help you check whether you obey the scene limitation
+### 2. Check whether you obey the scene limitation
 
 ![](./docs/statsgui.png)
 
@@ -117,59 +122,19 @@ All potential errors will be warned right in Unity.
 
 ### 3. Create & preview a local scene
 
-If you don't want to use command line tools.
+You can initialize an new dcl project and run a project right in Unity, if you have setup DCL SDK.
 
 ![](./docs/exportgui.png)
 
-### 4. Edit the land info
-
-e.g. Parcel coordinates, ETH address, Owner's name & email
-
-
-## Installation Guide
-
-You should prepare these tools on your own:
-
-1. [dcl SDK](https://docs.decentraland.org/documentation/installation-guide/)
-
-1. [Unity 5.x\2017\2018 or higher](https://store.unity.com/download)
-
-Then, download the Exporter which is inside a Unity Package. [Download the Exporter](https://github.com/fairwood/DecentralandUnityPlugin/blob/master/downloads/DecentralandUnityExporter.unitypackage)
-
-
-## Exporter Guide
-
-### Open the exporter and create a Unity scene
-
-First, create a Unity project, better empty.
-
-Then drag the .unitypackage file into Unity or use "Import Assets.." in Unity. That will extract all assets into your Unity project.
-
-After a while, you should see a new tab in the menu bar like below.
-
-![](./docs/exporter_in_menu.png)
-
-Click the "Scene Exporter" will open the exporter.
-
-**Note:** an auto-generated GameObject called ".dcl" will be created in the hierarchy. Don't edit it.
-
-You can create a new scene or open the sample scene:
-
-![Exporter UI](./docs/samplescene.jpg)
-
-The exporter looks like this:
-
-![Exporter UI](./docs/exportergui.png)
-
-### Setup node.js environment for Unity (Mac Only)
-
-On Mac, you need to run a script to let the ```Init Project``` and ```Start Project``` functions work. Just double-click the ```set_path.command``` file either in Unity or in Finder.
+**On Mac**, however, you need to run a script to let the ```Init Project``` and ```Start Project``` functions work. Just double-click the ```set_path.command``` file either in Unity or in Finder.
 
 ![Set Path on Mac](./docs/mac_set_path.png)
 
 A terminal window will open saying the process is completed. Close it.
 
-### Input land infomation
+### 4. Edit land info
+
+e.g. Parcel coordinates, ETH address, Owner's name & email
 
 Edit your parcels' coordinates in this format:
 ```
@@ -177,52 +142,32 @@ Edit your parcels' coordinates in this format:
 12,-22
 13,-21
 13,-22
-...
 ```
 
 **The first line will be the "base" parcel and set as the center in your scene.**
 
 You can also fill up the Owner Info part if you want to publish the scene.
 
-### Create shapes
+### Create Decentraland shapes and nodes
 
 You must use the specific GameObjects to refer to the DCL primitives. To create a DCL primitive, you need to go to the following menu.
 
 ![](./docs/dclprimitives_in_menu.png)
 
-If you want to convert a lot of Unity primitives into DCL primitives, there is a 'Convert' function in Decentraland tab in the menubar.
 
-*Why don't we use Unity primitves? Because the primitives between Unity and DCL have a little difference. For example, the Unity Cube and the DCL Box have different UV map, that will make your scene look different in two platforms.*
-
-Then, build your world as you like.
-
-You can use models from outer model files (Unity does not support importing glTF, but we can export things as glTF). However, only the Unity Standard Shader is supported to export. That is enough to make a nice scene.
-
-Most properties of the Standard Material can be well exported, but things might still look a bit different in DCL. We will improve the consistency all the time.
+*Why don't we use Unity primitves? Because the primitives between Unity and DCL are different. For example, the Unity Cube and the DCL Box have different UV map, that will make your scene look different in two platforms.*
 
 ### Important notice about non-primitives
 
 The exporter traverses the whole scene. When it finds a non-primitive model, it will pack the model all the model's children and export one gltf file. That means, GameObjects under a non-primitive model will not generate their own node, even if they are primitives themselves. Instead, their data will be contained in the parent's gltf file.
 
-### Before export
+### Check what kinds of nodes will be exported
 
-Before export, you should check the statistics part. That shows some important indexes with their limitations. If something is wrong, you will see bright yellow warnings.
-
-![](./docs/statsgui.png)
-
-Then, you can also go through the hierarchy view where will tell you what type of node will be generated from each GameObject.
+ you can also go through the hierarchy view where will tell you what type of node will be generated from each GameObject.
 
 ![](./docs/hierarchy-node-icon.png)
 
-**Input or select the path of the folder to export files.**
-
-![](./docs/exportgui.png)
-
-**If you have not initialized a DCL project in the selected folder, you might want to create one. Just click the ```Init Project``` button.** This has the same effect as executing 'dcl init' in command line tool.
-
-(If you are on Mac and the button does not work, go check [Setup node.js environment for Unity](https://github.com/fairwood/DecentralandUnityPlugin#setup-nodejs-environment-for-unity-mac-only))
-
-### Export
+### What are exported
 
 2 files and 1 folder will be exported and all old files will be overridden:
 
@@ -231,10 +176,6 @@ Then, you can also go through the hierarchy view where will tell you what type o
 * scene.json
 
 * unity_assets/(.gltf and textures)
-
-Click "Export" button to export. If success, a log will be shown in Unity console.
-
-Finally, you can click 'Run Project' to see it in the browser (need to wait some seconds).
 
 *If you want to publish the scene to IPFS, you should do it in the command line.*
 
@@ -254,8 +195,6 @@ Ari Meilich
 
 Matias Bargas
 
-Chris Chapman
-
 Jayson Hu
 
 Diff
@@ -270,7 +209,6 @@ Diff
 
 [@neil3d/Unity-glTF-Exporter](https://github.com/neil3d/Unity-glTF-Exporter)
 
-
 # Donations
 
 #### ETH/MANA/LAND/ERC20...
@@ -280,7 +218,6 @@ Diff
 #### BTC
 
 1JEFCP4hqa3Gd7aQ5unWoLP6S6mD17K9HQ
-
 
 ### [Mac set up tutorial](./docs/mac_setup_tutorial.md)
 In this tutorial,you can learn how to set PATH and do interaction with Terminal Application.
