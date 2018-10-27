@@ -35,7 +35,7 @@ namespace Dcl
 			switch (primitiveType) {
 			case DclPrimitiveType.cone:
 				{
-					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCone (50, 0f, 0.5f, 1f, 0f, true, false);
+					meshFilter.sharedMesh = Dcl.DclPrimitiveMeshBuilder.BuildCone (50, 0f, 1f, 2f, 0f, true, false);
 				}
 				break;
 			case DclPrimitiveType.cylinder:

@@ -608,7 +608,7 @@ namespace Dcl{
 
 		static public Mesh BuildCone(int numVertices, float radiusTop, float radiusBottom, float length,
 			float openingAngle, bool outside, bool inside){
-			return BuildConeOrCylinder (numVertices, radiusTop, radiusBottom, length, openingAngle, outside, inside, false);
+			return BuildConeOrCylinder (numVertices, radiusTop, radiusBottom, length, openingAngle, outside, inside, false, new Vector3(0f, -length/2, 0f));
 		}
 	
 		static public Mesh BuildCylinder(int numVertices, float radiusTop, float radiusBottom, float length,
