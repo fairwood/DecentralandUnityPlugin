@@ -545,17 +545,7 @@ namespace Dcl
         private static string ToHexString(Color color)
         {
             var color256 = (Color32)color;
-            string R = Convert.ToString(color256.r, 16);
-            if (R == "0")
-                R = "00";
-            string G = Convert.ToString(color256.g, 16);
-            if (G == "0")
-                G = "00";
-            string B = Convert.ToString(color256.b, 16);
-            if (B == "0")
-                B = "00";
-            string HexColor = "#" + R + G + B;
-            return HexColor.ToUpper();
+            return String.Format("#{0:X2}{1:X2}{2:X2}", color256.r, color256.g, color256.b);
         }
 
         public static string ParcelToString(ParcelCoordinates parcel)
