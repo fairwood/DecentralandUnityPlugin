@@ -120,7 +120,7 @@ export default class UnityScene extends DCL.ScriptableScene<any, IState> {
         <material id="Rod" albedoColor="#654E13" alpha={1} emissiveColor="#000000" metallic={1} roughness={0.331}/>
         <material id="Tape" albedoColor="#5E579E" alpha={0.2784314} emissiveColor="#000000" metallic={0} roughness={0.5}/>
         <material id="DemoMat" albedoColor="#FFFFFF" alpha={1} albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/colormap.png" hasAlpha={false} emissiveColor="#000000" metallic={0} roughness={0.07999998}/>
-        <material id="Metal" albedoColor="#676767" alpha={1} bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={1} roughness={0.43}/>
+        <material id="Metal" albedoColor="#FFDD38" alpha={1} bumpTexture="./unity_assets/Assets/Decentraland/Sample - 01/Materials/bump.jpg" emissiveColor="#000000" metallic={1} roughness={0.43}/>
         <material id="Floor" albedoColor="#CCCCCC" alpha={1} albedoTexture="./unity_assets/Assets/Decentraland/Sample - 01/Gamer/Floor.jpg" hasAlpha={false} emissiveColor="#000000" metallic={0} roughness={1}/>
       </scene>
     )

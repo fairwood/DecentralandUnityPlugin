@@ -1,6 +1,6 @@
 {
 	"asset": {
-		"generator": "Unity 2018.2.2f1",
+		"generator": "Unity 2018.2.3f1",
 		"extras": {
 			"exporterVersion" : "2.2.1"
 		},
@@ -11,86 +11,86 @@
 			"bufferView": 2,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 1827,
-			"max": [ 13.6376, 7.204862, 0.4418259 ],
-			"min": [ -13.6376, -7.537484, -5.298335 ],
+			"count": 4,
+			"max": [ -9.530638, -22.16312, -1.5676 ],
+			"min": [ -55.61968, -22.38292, -25.98463 ],
 			"type": "VEC3"
 		},
 		{
 			"bufferView": 2,
-			"byteOffset": 21924,
+			"byteOffset": 48,
 			"componentType": 5126,
-			"count": 1827,
-			"max": [ 0.9999244, 1, 1 ],
-			"min": [ -0.9999954, -1, -1 ],
+			"count": 4,
+			"max": [ 0.004768788, -0.9999887, 0 ],
+			"min": [ 0.004768788, -0.9999887, 0 ],
 			"type": "VEC3"
 		},
 		{
 			"bufferView": 1,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 1827,
-			"max": [ 4.775183, 8.491631 ],
-			"min": [ -6.673832, -9.521857 ],
+			"count": 4,
+			"max": [ 0.999903, 0.9978612 ],
+			"min": [ 9.70524E-05, 9.70524E-05 ],
 			"type": "VEC2"
 		},
 		{
 			"bufferView": 3,
 			"byteOffset": 0,
 			"componentType": 5126,
-			"count": 1827,
-			"max": [ 0.999985, 0.9992203, 1, 1 ],
-			"min": [ -0.9999701, -0.9999647, -1, 1 ],
+			"count": 4,
+			"max": [ -0.9999887, -0.004768788, 0, 1 ],
+			"min": [ -0.9999887, -0.004768788, 0, 1 ],
 			"type": "VEC4"
 		},
 		{
 			"bufferView": 0,
 			"byteOffset": 0,
 			"componentType": 5123,
-			"count": 4920,
-			"max": [ 1826 ],
+			"count": 6,
+			"max": [ 3 ],
 			"min": [ 0 ],
 			"type": "SCALAR"
 		}
 	],
 	"buffers": [
 		{
-			"byteLength": 97536,
-			"uri": "Cube_00117642.bin"
+			"byteLength": 204,
+			"uri": "Cube_01312096.bin"
 		}
 	],
 	"bufferViews": [
 		{
 			"buffer": 0,
-			"byteLength": 9840,
+			"byteLength": 12,
 			"target": 34963,
-			"byteOffset": 87696
+			"byteOffset": 192
 		},
 		{
 			"buffer": 0,
-			"byteLength": 14616,
+			"byteLength": 32,
 			"target": 34962,
 			"byteStride": 8,
 			"byteOffset": 0
 		},
 		{
 			"buffer": 0,
-			"byteLength": 43848,
+			"byteLength": 96,
 			"target": 34962,
 			"byteStride": 12,
-			"byteOffset": 14616
+			"byteOffset": 32
 		},
 		{
 			"buffer": 0,
-			"byteLength": 29232,
+			"byteLength": 64,
 			"target": 34962,
 			"byteStride": 16,
-			"byteOffset": 58464
+			"byteOffset": 128
 		}
 	],
 	"images": [
 		{
-			"uri": "Assets/Decentraland/Sample - 02/source/Desk_Wood1.jpg"
+			"uri": "Assets/Decentraland/Sample - 01/Gamer/Right_Scn.jpg"
 		}
 	],
 	"materials": [
@@ -106,12 +106,12 @@
 			},
 			"emissiveFactor": [0, 0, 0],
 			"doubleSided": false,
-			"name": "Desk_Wood1"
+			"name": "Right_Scn"
 		}
 	],
 	"meshes": [
 		{
-			"name": "mesh_Cube_001_3510Cube_001",
+			"name": "mesh_Cube_013_11898Cube_013",
 			"primitives": [
 				{
 					"attributes": {
@@ -135,7 +135,7 @@
 			]
 		},
 		{
-			"name": "node_Cube_001",
+			"name": "node_Cube_013",
 			"mesh": 0,
 			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
 		}
