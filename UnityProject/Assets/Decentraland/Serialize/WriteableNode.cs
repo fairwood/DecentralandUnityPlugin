@@ -4,18 +4,18 @@ using System.Collections.Generic;
 /// <summary>
 /// 节点抽象类
 /// 写入顺序:
-/// 1.PreWrite
+/// 1.BeforeChildren
 /// 2.WriteChildren 
 ///   2.1 BeforeChild
 ///   2.2 Child.Write
 ///   2.3 AfterChild
-/// 3.PostWrite
+/// 3.AfterChildren
 /// </summary>
 public abstract class WriteableNode
 {
-	void PreWrite(StreamWriter stream) { }
+	void BeforeChildren(StreamWriter stream) { }
 
-	void PostWrite(StreamWriter stream) { }
+	void AfterChildren(StreamWriter stream) { }
 
 	void BeforeChild(StreamWriter stream, WriteableNode child) { }
 
@@ -29,7 +29,7 @@ public abstract class WriteableNode
 	/// <param name="stream"></param>
 	public void Write(StreamWriter stream)
 	{
-		PreWrite(stream);
+		BeforeChildren(stream);
 
 		List<WriteableNode> children = Children();
 
@@ -42,6 +42,6 @@ public abstract class WriteableNode
 			AfterChild(stream,node);
 	
 		}
-		PostWrite(stream);
+		AfterChildren(stream);
 	}
 }
