@@ -79,6 +79,57 @@ namespace Dcl
 			return name;
 		}
 
+		public static void TraverseAllSceneNewSdk(StringBuilder exportStr)
+		{
+			var rootGameObjects = new List<GameObject>();
+			for (int i = 0; i < SceneManager.sceneCount; i++)
+			{
+				var roots = SceneManager.GetSceneAt(i).GetRootGameObjects();
+				rootGameObjects.AddRange(roots);
+			}
+
+			//====== Start Traversing ======
+			DclExportNode.Init();
+			foreach (var rootGO in rootGameObjects)
+			{
+				//RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
+				DclExportNode.RecursivelyTraverseUnityNode(rootGO.transform, exportStr, null);
+			}
+			Debug.Log (exportStr.ToString ());
+//			return;
+//
+//			foreach (var material in primitiveMaterialsToExport)
+//			{
+//				var materialXml = xmlBuilder != null ? new StringBuilder() : null;
+//				TraverseMaterial(material, materialXml, warningRecorder);
+//
+//				//Append materials
+//				if (xmlBuilder != null)
+//				{
+//					xmlBuilder.AppendIndent(indentUnit, 4);
+//					xmlBuilder.Append(materialXml).Append("\n");
+//				}
+//			}
+//
+//			//Check textures
+//			if (warningRecorder != null)
+//			{
+//				foreach (var texture in primitiveTexturesToExport)
+//				{
+//					CheckTextureValidity(texture, warningRecorder);
+//				}
+//			}
+//
+//			statistics.materialCount += primitiveMaterialsToExport.Count; //TODO: include glTF's materials
+//			statistics.textureCount += primitiveTexturesToExport.Count; //TODO: include glTF's textures
+//
+//			if (xmlBuilder != null)
+//			{
+//				xmlBuilder.AppendIndent(indentUnit, 3);
+//				xmlBuilder.Append("</scene>");
+//			}
+		}
+
         public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             var rootGameObjects = new List<GameObject>();

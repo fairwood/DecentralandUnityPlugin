@@ -1,27 +1,30 @@
 {
   "display": {
-    "title": "USample"
+    "title": "interactive-text",
+    "favicon": "favicon_asset"
   },
-  "owner": "{ETH_ADDRESS}",
   "contact": {
     "name": "{CONTACT_NAME}",
     "email": "{CONTACT_EMAIL}"
   },
+  "owner": "{ETH_ADDRESS}",
   "scene": {
     "parcels": [
-{PARCELS}
+      {PARCELS}
     ],
     "base": {BASE}
   },
   "communications": {
     "type": "webrtc",
-    "signalling": "https://rendezvous.decentraland.org"
+    "signalling": "https://signalling-01.decentraland.org"
   },
   "policy": {
+    "contentRating": "E",
     "fly": true,
     "voiceEnabled": true,
     "blacklist": [],
-    "teleportPosition": "0,0,0"
+    "teleportPosition": ""
   },
-  "main": "scene.js"
+  "main": "bin/game.js",
+  "tags": []
 }

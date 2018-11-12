@@ -672,6 +672,10 @@ namespace Dcl
 
             Directory.CreateDirectory(unityAssetsFolderPath);
 
+			StringBuilder exportStr = new StringBuilder ();
+			SceneTraverser.TraverseAllSceneNewSdk (exportStr);
+			File.WriteAllText(Path.Combine(exportPath, "src/game.ts"), exportStr.ToString());
+
 
             var meshesToExport = new List<GameObject>();
             var sceneXmlBuilder = new StringBuilder();
@@ -705,14 +709,17 @@ namespace Dcl
                 {
                     //built-in asset
                     var bytes = ((Texture2D) texture).EncodeToPNG();
-                    File.WriteAllBytes(Path.Combine(unityAssetsFolderPath, texture.name + ".png"), bytes);
+					string str = Path.Combine (unityAssetsFolderPath, texture.name + ".png");
+					File.WriteAllBytes(str.Replace(" ", string.Empty), bytes);
                 }
                 else
                 {
                     var path = Application.dataPath; //<path to project folder>/Assets
                     path = path.Remove(path.Length - 6, 6) + relPath;
                     var toPath = unityAssetsFolderPath + relPath;
-                    var directoryPath = Path.GetDirectoryName(toPath);
+					//replace space by zcy
+					//toPath = toPath.Replace (" ", string.Empty);
+					var directoryPath = Path.GetDirectoryName(toPath);
                     if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                     File.Copy(path, toPath, true);
                 }

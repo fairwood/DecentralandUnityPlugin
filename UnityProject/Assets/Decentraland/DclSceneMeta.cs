@@ -22,6 +22,8 @@ namespace Dcl
         public SceneWarningRecorder sceneWarningRecorder = new SceneWarningRecorder();
 		public Material m_GroundMaterial;
 
+		public Vector3 parcelPosOffset = new Vector3(5f, 0f, 5f);
+
         private void Awake()
         {
             sceneToGlTFWiz = GetComponent<SceneToGlTFWiz>();
@@ -39,6 +41,7 @@ namespace Dcl
                 foreach (var parcel in parcels)
                 {
                     var pos = new Vector3((parcel.x - baseParcel.x) * 10, 0, (parcel.y - baseParcel.y) * 10);
+					pos += parcelPosOffset;
                     //Gizmos.DrawWireCube(pos, new Vector3(10, 0f, 10));
                     //Gizmos.DrawCube(pos, new Vector3(10, 0f, 10));
                     //Gizmos.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos);
