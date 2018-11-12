@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 /// <summary>
 /// 抽象Writer
 /// 使用方法：
@@ -7,23 +8,28 @@
 /// </summary>
 public  abstract class AbsWriter
 {
-	private StreamWriter stream;
+
+	private Stream stream;
 
 	public AbsWriter(Stream stream)
 	{
-		this.stream = new StreamWriter(stream, System.Text.Encoding.UTF8);
+		this.stream = stream;
 	}
 
-	public void PreWrite(StreamWriter stream) { }
+	public virtual void PreWrite(StreamWriter stream) { }
 
-	public void PostWrite(StreamWriter stream) { }
+	public virtual void PostWrite(StreamWriter stream) { }
 
-	public void Write(WriteableNode node)
+	public virtual void Write(WriteableNode node)
 	{
-		PreWrite(stream);
-		node.Write(stream);
-		PostWrite(stream);
-		stream.Flush();
+
+		using (StreamWriter writer = new StreamWriter(stream, UTF8Encoding.UTF8))
+		{
+			PreWrite(writer);
+			node.Write(writer);
+			PostWrite(writer);
+			stream.Flush();
+		}	
 	}
 
 }

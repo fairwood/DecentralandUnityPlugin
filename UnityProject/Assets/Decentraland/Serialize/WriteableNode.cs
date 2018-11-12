@@ -13,15 +13,15 @@ using System.Collections.Generic;
 /// </summary>
 public abstract class WriteableNode
 {
-	void BeforeChildren(StreamWriter stream) { }
+	public virtual void BeforeChildren(StreamWriter stream) { }
 
-	void AfterChildren(StreamWriter stream) { }
+	public virtual void AfterChildren(StreamWriter stream) { }
 
-	void BeforeChild(StreamWriter stream, WriteableNode child) { }
+	public virtual void BeforeChild(StreamWriter stream, WriteableNode child) { }
 
 	public abstract List<WriteableNode> Children();
 
-	void AfterChild(StreamWriter stream, WriteableNode child) { }
+	public virtual void AfterChild(StreamWriter stream, WriteableNode child) { }
 
 	/// <summary>
 	/// 建造者模式
