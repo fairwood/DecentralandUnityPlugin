@@ -73,13 +73,15 @@ namespace Dcl{
 			dict_ExportCode.Add ("set rotation", "{0}.get(Transform).rotation.set({1}, {2}, {3})\n");
 			dict_ExportCode.Add ("set scale", "{0}.get(Transform).scale.set({1}, {2}, {3})\n");
 			dict_ExportCode.Add ("set shape", "{0}.set(new {1}())\n");
+			dict_ExportCode.Add ("set GLTFshape", "{0}.set(new GLTFShape(\"{1}\"))\n");
 			dict_ExportCode.Add ("set parent", "{0}.parent = {1}\n");
 			dict_ExportCode.Add ("new material", "const {0} = new Material()\n");
 			dict_ExportCode.Add ("set material albedoColor", "{0}.albedoColor = \"{1}\"\n");
 			dict_ExportCode.Add ("set material metallic", "{0}.metallic = {1}\n");
 			dict_ExportCode.Add ("set material roughness", "{0}.roughness = {1}\n");
 			dict_ExportCode.Add ("set material albedoTexture", "{0}.albedoTexture = \"{1}\"\n");
-
+			dict_ExportCode.Add ("set material albedoTexture aplha true", "{0}.hasAlpha = true\n");
+			dict_ExportCode.Add ("set material bumptexture", "{0}.bumpTexture = \"{1}\"\n");
 			dict_ExportCode.Add ("set material", "{0}.set({1})\n");
 
 			//childEntity.parent = parentEntity
@@ -107,6 +109,15 @@ namespace Dcl{
 						var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
 						if (albedoTex) {
 							exportStr.AppendFormat (dict_ExportCode ["set material albedoTexture"], materialName, GetTextureRelativePath(albedoTex));
+							bool b = !(material.IsKeywordEnabled ("_ALPHATEST_ON")==false && material.IsKeywordEnabled ("_ALPHABLEND_ON")==false && material.IsKeywordEnabled ("_ALPHAPREMULTIPLY_ON")==false);
+
+							if (b) {
+								exportStr.AppendFormat (dict_ExportCode ["set material albedoTexture aplha true"], materialName);
+							}
+						}
+						var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
+						if (bumpTexture) {
+							exportStr.AppendFormat (dict_ExportCode ["set material bumptexture"], materialName, GetTextureRelativePath(bumpTexture));
 						}
 					} 
 					exportStr.AppendFormat (dict_ExportCode ["set material"], entityName, materialName);
@@ -122,12 +133,19 @@ namespace Dcl{
 //			myMaterial.albedoTexture = "materials/wood.png"
 //			myMaterial.bumpTexture = "materials/woodBump.png"
 
+//			myMaterial.hasAlpha = true
+
 		}
 
 		public static void exportShape(Transform tra, string entityName, StringBuilder exportStr){
+			if ( !(tra.GetComponent<MeshFilter> () && tra.GetComponent<MeshRenderer> ()) ) {
+				return;
+			}
+
 			var dclObject = tra.GetComponent<DclObject>();
+
+			string shapeName=null;
 			if (dclObject != null) {
-				string shapeName=null;
 				switch (dclObject.dclPrimitiveType) {
 				case DclPrimitiveType.box:
 					shapeName = "BoxShape";
@@ -145,18 +163,18 @@ namespace Dcl{
 					shapeName = "ConeShape";
 					break;
 				}
-
-				if (shapeName != null) {
-					exportStr.AppendFormat (dict_ExportCode ["set shape"], entityName, shapeName);
-				} else {
-					//gltf
-				}
-
-				if (tra.GetComponent<MeshFilter> () && tra.GetComponent<MeshRenderer> ()) {
-					exportMaterial (tra, entityName, exportStr);
-				}
-
 			}
+
+			if (shapeName != null) {
+				//Primitive
+				exportStr.AppendFormat (dict_ExportCode ["set shape"], entityName, shapeName);
+				exportMaterial (tra, entityName, exportStr);
+			}else{
+				//gltf
+				string gltfPath = string.Format ("./unity_assets/{0}.gltf", SceneTraverser.CalcName (tra.gameObject));
+				exportStr.AppendFormat (dict_ExportCode ["set GLTFshape"], entityName, gltfPath);
+			}
+
 		}
 
 		public static void RecursivelyTraverseUnityNode(Transform tra, StringBuilder exportStr, string parentEntityName){

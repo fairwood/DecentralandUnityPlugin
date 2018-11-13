@@ -705,7 +705,8 @@ namespace Dcl
             foreach (var texture in primitiveTexturesToExport)
             {
                 var relPath = AssetDatabase.GetAssetPath(texture);
-                if (string.IsNullOrEmpty(relPath))
+				//if (string.IsNullOrEmpty(relPath) || relPath.Contains("builtin"))
+				if (string.IsNullOrEmpty(relPath))
                 {
                     //built-in asset
                     var bytes = ((Texture2D) texture).EncodeToPNG();
