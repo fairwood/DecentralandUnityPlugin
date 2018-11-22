@@ -1,29 +1,7 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "es2017",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "sourceMap": true,
-    "moduleResolution": "node",
-    "declaration": false,
-    "strictFunctionTypes": true,
-    "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true,
-    "alwaysStrict": true,
-    "allowSyntheticDefaultImports": false,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "newLine": "LF",
-    "stripInternal": true,
-    "baseUrl": ".",
-    "strict": true,
-    "jsx": "react",
-    "jsxFactory": "DCL.createElement",
-    "removeComments": true,
-    "outDir": ".",
-    "pretty": true,
-    "lib": ["es2017", "dom"]
+    "outFile": "./bin/game.js"
   },
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"],
+  "extends": "./node_modules/decentraland-ecs/types/tsconfig.json"
 }

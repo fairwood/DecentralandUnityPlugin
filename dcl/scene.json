@@ -1,28 +1,30 @@
 {
   "display": {
-    "title": "USample"
+    "title": "interactive-text",
+    "favicon": "favicon_asset"
   },
-  "owner": "0x1a38ac06099D648Bb14418D61956133a3d0E1f1C",
   "contact": {
-    "name": "",
+    "name": "king of the bongo",
     "email": ""
   },
+  "owner": "",
   "scene": {
     "parcels": [
-      "57,-11",
-      "58,-11"
+      "0,0"
     ],
-    "base": "57,-11"
+    "base": "0,0"
   },
   "communications": {
     "type": "webrtc",
-    "signalling": "https://rendezvous.decentraland.org"
+    "signalling": "https://signalling-01.decentraland.org"
   },
   "policy": {
+    "contentRating": "E",
     "fly": true,
     "voiceEnabled": true,
     "blacklist": [],
-    "teleportPosition": "0,0,0"
+    "teleportPosition": ""
   },
-  "main": "scene.js"
+  "main": "bin/game.js",
+  "tags": []
 }
