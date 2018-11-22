@@ -674,6 +674,11 @@ namespace Dcl
 
 			StringBuilder exportStr = new StringBuilder ();
 			SceneTraverser.TraverseAllSceneNewSdk (exportStr);
+            
+            if (!Directory.Exists(Path.Combine(exportPath, "src"))){
+                Directory.CreateDirectory(Path.Combine(exportPath, "src"));
+            } 
+            
 			File.WriteAllText(Path.Combine(exportPath, "src/game.ts"), exportStr.ToString());
 
 
