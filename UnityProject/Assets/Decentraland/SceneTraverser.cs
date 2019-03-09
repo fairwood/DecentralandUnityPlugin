@@ -666,7 +666,7 @@ namespace Dcl
                 }
                 if (emisiveTexture)
                 {
-                    xml.AppendFormat(" emisiveTexture=\"{0}\"", GetTextureRelativePath(emisiveTexture));
+                    xml.AppendFormat(" emissiveTexture=\"{0}\"", GetTextureRelativePath(emisiveTexture));
                 }
                 xml.AppendFormat(" emissiveColor=\"{0}\"", ToHexString(material.GetColor("_EmissionColor")));
                 xml.AppendFormat(" metallic={{{0}}}", material.GetFloat("_Metallic"));

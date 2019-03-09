@@ -683,18 +683,19 @@ namespace Dcl
 
 
             var meshesToExport = new List<GameObject>();
-            var sceneXmlBuilder = new StringBuilder();
+            //var sceneXmlBuilder = new StringBuilder();
             var statistics = new SceneStatistics();
 
-            SceneTraverser.TraverseAllScene(sceneXmlBuilder, meshesToExport, statistics, null);
+            SceneTraverser.TraverseAllScene(null, meshesToExport, statistics, null);
 
-            var sceneXml = sceneXmlBuilder.ToString();
+            //var sceneXml = sceneXmlBuilder.ToString();
 
-            //scene.tsx
-            var fileTxt = GetSceneTsxFileTemplate();
-            fileTxt = fileTxt.Replace("{XML}", sceneXml);
-            var filePath = Path.Combine(exportPath, "scene.tsx");
-            File.WriteAllText(filePath, fileTxt);
+            ////scene.tsx
+            //var fileTxt = GetSceneTsxFileTemplate();
+            //fileTxt = fileTxt.Replace("{XML}", sceneXml);
+            //var filePath = Path.Combine(exportPath, "scene.tsx");
+            //File.WriteAllText(filePath, fileTxt);
+
             //glTF in unity_asset
             foreach (var go in meshesToExport)
             {
@@ -732,19 +733,21 @@ namespace Dcl
             }
 
             //scene.json
-            fileTxt = GetSceneJsonFileTemplate();
-            fileTxt = fileTxt.Replace("{ETH_ADDRESS}", sceneMeta.ethAddress);
-            fileTxt = fileTxt.Replace("{CONTACT_NAME}", sceneMeta.contactName);
-            fileTxt = fileTxt.Replace("{CONTACT_EMAIL}", sceneMeta.email);
-            var parcelsString = GetParcelsString();
-            fileTxt = fileTxt.Replace("{PARCELS}", parcelsString);
-            if (sceneMeta.parcels.Count > 0)
             {
-                fileTxt = fileTxt.Replace("{BASE}", ParcelToString(sceneMeta.parcels[0]));
-            }
+                var fileTxt = GetSceneJsonFileTemplate();
+                fileTxt = fileTxt.Replace("{ETH_ADDRESS}", sceneMeta.ethAddress);
+                fileTxt = fileTxt.Replace("{CONTACT_NAME}", sceneMeta.contactName);
+                fileTxt = fileTxt.Replace("{CONTACT_EMAIL}", sceneMeta.email);
+                var parcelsString = GetParcelsString();
+                fileTxt = fileTxt.Replace("{PARCELS}", parcelsString);
+                if (sceneMeta.parcels.Count > 0)
+                {
+                    fileTxt = fileTxt.Replace("{BASE}", ParcelToString(sceneMeta.parcels[0]));
+                }
 
-            filePath = Path.Combine(exportPath, "scene.json");
-            File.WriteAllText(filePath, fileTxt);
+                var filePath = Path.Combine(exportPath, "scene.json");
+                File.WriteAllText(filePath, fileTxt);
+            }
 
             Debug.Log("===Export Complete===");
         }

@@ -10,7 +10,7 @@
   "owner": "{ETH_ADDRESS}",
   "scene": {
     "parcels": [
-      {PARCELS}
+{PARCELS}
     ],
     "base": {BASE}
   },

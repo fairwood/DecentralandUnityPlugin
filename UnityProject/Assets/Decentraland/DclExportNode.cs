@@ -40,10 +40,9 @@ namespace Dcl{
 		static Dictionary<string, string> dict_ExportCode = null;
 		static List<Material> exportMaterialList = null;
 
-		private static string ToHexString(Color color)
+		private static string ToJsColorCtor(Color color)
 		{
-			var color256 = (Color32)color;
-			return String.Format("#{0:X2}{1:X2}{2:X2}", color256.r, color256.g, color256.b);
+			return String.Format("new Color3({0}, {1}, {2})", color.r, color.g, color.b);
 		}
 
 		public static string GetTextureRelativePath(Texture texture)
@@ -68,19 +67,21 @@ namespace Dcl{
 		public static void Init(){
 			dict_ExportCode = new Dictionary<string, string>();
 			dict_ExportCode.Add ("new entity", "const {0} = new Entity()\n");
+			dict_ExportCode.Add ("new entity with name", "const {0} = new Entity() //{1}\n");
 			dict_ExportCode.Add ("add entity", "engine.addEntity({0})\n");
 			dict_ExportCode.Add ("set transform", "{0}.set(new Transform({{ position: new Vector3({1}, {2}, {3}) }}))\n");
-			dict_ExportCode.Add ("set rotation", "{0}.get(Transform).rotation.set({1}, {2}, {3})\n");
+			dict_ExportCode.Add ("set rotation", "{0}.get(Transform).rotation.set({1}, {2}, {3}, {4})\n");
 			dict_ExportCode.Add ("set scale", "{0}.get(Transform).scale.set({1}, {2}, {3})\n");
 			dict_ExportCode.Add ("set shape", "{0}.set(new {1}())\n");
 			dict_ExportCode.Add ("set GLTFshape", "{0}.set(new GLTFShape(\"{1}\"))\n");
-			dict_ExportCode.Add ("set parent", "{0}.parent = {1}\n");
+			dict_ExportCode.Add ("set parent", "{0}.setParent({1})\n");
 			dict_ExportCode.Add ("new material", "const {0} = new Material()\n");
-			dict_ExportCode.Add ("set material albedoColor", "{0}.albedoColor = \"{1}\"\n");
+			dict_ExportCode.Add ("set material albedoColor", "{0}.albedoColor = {1}\n");
 			dict_ExportCode.Add ("set material metallic", "{0}.metallic = {1}\n");
 			dict_ExportCode.Add ("set material roughness", "{0}.roughness = {1}\n");
 			dict_ExportCode.Add ("set material albedoTexture", "{0}.albedoTexture = \"{1}\"\n");
-			dict_ExportCode.Add ("set material albedoTexture aplha true", "{0}.hasAlpha = true\n");
+			dict_ExportCode.Add ("set material albedoTexture alpha true", "{0}.hasAlpha = true\n");
+			dict_ExportCode.Add ("set material alpha", "{0}.alpha = {1}\n");
 			dict_ExportCode.Add ("set material bumptexture", "{0}.bumpTexture = \"{1}\"\n");
 			dict_ExportCode.Add ("set material", "{0}.set({1})\n");
 
@@ -89,7 +90,9 @@ namespace Dcl{
 			exportMaterialList = new List<Material> ();
 		}
 
-
+	    private const string SetMaterialEmissiveColor = "{0}.emissiveColor = {1}\n";
+	    private const string SetMaterialEmissiveIntensity= "{0}.emissiveIntensity = {1}\n";
+	    private const string SetMaterialEmissiveTexture = "{0}.emissiveTexture = \"{1}\"\n";
 
 		public static void exportMaterial(Transform tra, string entityName, StringBuilder exportStr){
 		
@@ -103,23 +106,39 @@ namespace Dcl{
 						exportMaterialList.Add(material);
 
 						exportStr.AppendFormat (dict_ExportCode ["new material"], materialName);
-						exportStr.AppendFormat (dict_ExportCode ["set material albedoColor"], materialName, ToHexString(material.color));
+						exportStr.AppendFormat (dict_ExportCode ["set material albedoColor"], materialName, ToJsColorCtor(material.color));
 						exportStr.AppendFormat (dict_ExportCode ["set material metallic"], materialName, material.GetFloat("_Metallic"));
 						exportStr.AppendFormat (dict_ExportCode ["set material roughness"], materialName, 1 - material.GetFloat("_Glossiness"));
 						var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
 						if (albedoTex) {
 							exportStr.AppendFormat (dict_ExportCode ["set material albedoTexture"], materialName, GetTextureRelativePath(albedoTex));
-							bool b = !(material.IsKeywordEnabled ("_ALPHATEST_ON")==false && material.IsKeywordEnabled ("_ALPHABLEND_ON")==false && material.IsKeywordEnabled ("_ALPHAPREMULTIPLY_ON")==false);
-
-							if (b) {
-								exportStr.AppendFormat (dict_ExportCode ["set material albedoTexture aplha true"], materialName);
-							}
+							
 						}
-						var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
+
+					    bool b = material.IsKeywordEnabled("_ALPHATEST_ON") || material.IsKeywordEnabled("_ALPHABLEND_ON") || material.IsKeywordEnabled("_ALPHAPREMULTIPLY_ON");
+					    if (b)
+					    {
+					        exportStr.AppendFormat(dict_ExportCode["set material albedoTexture alpha true"], materialName);
+					        exportStr.AppendFormat(dict_ExportCode["set material alpha"], materialName, material.color.a);
+					    }
+
+                        var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
 						if (bumpTexture) {
 							exportStr.AppendFormat (dict_ExportCode ["set material bumptexture"], materialName, GetTextureRelativePath(bumpTexture));
 						}
-					} 
+
+					    if (material.IsKeywordEnabled("_EMISSION"))
+					    {
+					        exportStr.AppendFormat(SetMaterialEmissiveColor, materialName, ToJsColorCtor(material.GetColor("_EmissionColor")));
+//					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
+
+					        var emissiveTexture = material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null;
+					        if (emissiveTexture)
+					        {
+					            exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName, GetTextureRelativePath(emissiveTexture));
+					        }
+                        }
+                    } 
 					exportStr.AppendFormat (dict_ExportCode ["set material"], entityName, materialName);
 
 				}
@@ -185,23 +204,23 @@ namespace Dcl{
 			GameObject obj = tra.gameObject;
 			var position = tra.localPosition;
 			var scale = tra.localScale;
-			var eulerAngles = tra.localEulerAngles;
+			var rotation = tra.localRotation;
 
 
 			string entityName = "entity" + Mathf.Abs(obj.GetInstanceID ());
 			entityName = entityName.Replace (" ", string.Empty);
-			exportStr.AppendFormat (dict_ExportCode ["new entity"], entityName);
+			exportStr.AppendFormat (dict_ExportCode ["new entity with name"], entityName, tra.name);
 			if (parentEntityName != null) {
 				exportStr.AppendFormat (dict_ExportCode ["set parent"], entityName, parentEntityName);
 			}
 			exportStr.AppendFormat (dict_ExportCode ["add entity"], entityName);
 			exportStr.AppendFormat (dict_ExportCode ["set transform"], entityName, position.x, position.y, position.z);
-			exportStr.AppendFormat (dict_ExportCode ["set rotation"], entityName, eulerAngles.x, eulerAngles.y, eulerAngles.z);
+			exportStr.AppendFormat (dict_ExportCode ["set rotation"], entityName, rotation.x, rotation.y, rotation.z, rotation.w);
 			exportStr.AppendFormat (dict_ExportCode ["set scale"], entityName, scale.x, scale.y, scale.z);
 			//exportStr.AppendFormat (dict_ExportCode ["set shape"], entityName, "BoxShape");
 			exportShape(tra, entityName, exportStr);
 
-
+		    exportStr.Append('\n');
 
 			foreach (Transform child in tra)
 			{

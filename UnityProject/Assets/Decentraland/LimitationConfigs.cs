@@ -7,15 +7,15 @@ namespace Dcl
 
         public static long GetMaxTriangles(int n)
         {
-            return (long)Math.Floor(Math.Log(n + 1, 2) * 10000);
+            return n * 10000;
         }
         public static long GetMaxEnities(int n)
         {
-            return (long)Math.Floor(Math.Log(n + 1, 2) * 200);
+            return n * 200;
         }
         public static long GetMaxBodies(int n)
         {
-            return (long)Math.Floor(Math.Log(n + 1, 2) * 300);
+            return n * 300;
         }
         public static long GetMaxMaterials(int n)
         {
