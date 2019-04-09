@@ -94,6 +94,8 @@ namespace Dcl{
 	    private const string SetMaterialEmissiveIntensity= "{0}.emissiveIntensity = {1}\n";
 	    private const string SetMaterialEmissiveTexture = "{0}.emissiveTexture = \"{1}\"\n";
 
+	    private const string SetTextShape = "{0}.set(new TextShape())\n";
+
 		public static void exportMaterial(Transform tra, string entityName, StringBuilder exportStr){
 		
 			var rdrr = tra.GetComponent<MeshRenderer>();
@@ -156,7 +158,7 @@ namespace Dcl{
 
 		}
 
-		public static void exportShape(Transform tra, string entityName, StringBuilder exportStr){
+		static void ExportShape(Transform tra, string entityName, StringBuilder exportStr){
 			if ( !(tra.GetComponent<MeshFilter> () && tra.GetComponent<MeshRenderer> ()) ) {
 				return;
 			}
@@ -164,7 +166,7 @@ namespace Dcl{
 			var dclObject = tra.GetComponent<DclObject>();
 
 			string shapeName=null;
-			if (dclObject != null) {
+			if (dclObject) {
 				switch (dclObject.dclPrimitiveType) {
 				case DclPrimitiveType.box:
 					shapeName = "BoxShape";
@@ -194,9 +196,86 @@ namespace Dcl{
 				exportStr.AppendFormat (dict_ExportCode ["set GLTFshape"], entityName, gltfPath);
 			}
 
+		    if (dclObject && dclObject.withCollision)
+		    {
+		        exportStr.AppendFormat("{0}.get({1}).withCollisions = true\n", entityName, shapeName);
+		    }
+		    if (dclObject && !dclObject.visible)
+		    {
+		        exportStr.AppendFormat("{0}.get(Shape).visible = false\n", entityName);
+		    }
+
 		}
 
-		public static void RecursivelyTraverseUnityNode(Transform tra, StringBuilder exportStr, string parentEntityName){
+	    static void ExportText(Transform tra, string entityName, StringBuilder exportStr)
+	    {
+	        if (!(tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()))
+	        {
+	            return;
+	        }
+
+	        exportStr.AppendFormat("{0}.set(new TextShape())\n", entityName);
+
+            var tm = tra.GetComponent<TextMesh>();
+	        var str = System.Text.RegularExpressions.Regex.Escape(tm.text);
+            exportStr.AppendFormat("{0}.get(TextShape).value = \"{1}\"\n", entityName, str);
+            //scale *= tm.fontSize * 0.5f;
+            //exportStr.AppendFormat(" fontS=\"{0}\"", 100);
+            var color = ToJsColorCtor(tm.color);
+	        exportStr.AppendFormat("{0}.get(TextShape).color = {1}\n", entityName, color);
+
+            var rdrr = tra.GetComponent<MeshRenderer>();
+            if (rdrr)
+            {
+
+                var width = Math.Min(32, rdrr.bounds.size.x * 2 / tra.lossyScale.x);//rdrr.bounds.extents.x*2;
+                var height = Math.Min(32, rdrr.bounds.size.y * 2 / tra.lossyScale.y);//rdrr.bounds.extents.y * 2;
+
+                exportStr.AppendFormat("{0}.get(TextShape).width = {1}\n", entityName, width);
+                exportStr.AppendFormat("{0}.get(TextShape).height = {1}\n", entityName, height);
+            }
+
+            var fontSize = tm.fontSize == 0 ? 13f * 38f : tm.fontSize * 38f;
+	        exportStr.AppendFormat("{0}.get(TextShape).fontSize = {1}\n", entityName, fontSize);
+
+            switch (tm.anchor)
+            {
+                case TextAnchor.UpperLeft:
+                    exportStr.AppendFormat("{0}.get(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                    exportStr.AppendFormat("{0}.get(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                    break;
+                case TextAnchor.UpperCenter:
+                    exportStr.AppendFormat("{0}.get(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                    break;
+                case TextAnchor.UpperRight:
+                    exportStr.AppendFormat("{0}.get(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                    exportStr.AppendFormat("{0}.get(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                    break;
+                case TextAnchor.MiddleLeft:
+                    exportStr.AppendFormat("{0}.get(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                    break;
+                case TextAnchor.MiddleCenter:
+
+                    break;
+                case TextAnchor.MiddleRight:
+                    exportStr.AppendFormat("{0}.get(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                    break;
+                case TextAnchor.LowerLeft:
+                    exportStr.AppendFormat("{0}.get(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                    exportStr.AppendFormat("{0}.get(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                    break;
+                case TextAnchor.LowerCenter:
+                    exportStr.AppendFormat("{0}.get(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                    break;
+                case TextAnchor.LowerRight:
+                    exportStr.AppendFormat("{0}.get(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                    exportStr.AppendFormat("{0}.get(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                    break;
+            }
+
+        }
+
+        public static void RecursivelyTraverseUnityNode(Transform tra, StringBuilder exportStr, string parentEntityName){
 			if (!tra.gameObject.activeInHierarchy) return;
 			//TODO: Hide empty
 			if (tra.gameObject.GetComponent<DclSceneMeta>()) return;
@@ -218,9 +297,10 @@ namespace Dcl{
 			exportStr.AppendFormat (dict_ExportCode ["set rotation"], entityName, rotation.x, rotation.y, rotation.z, rotation.w);
 			exportStr.AppendFormat (dict_ExportCode ["set scale"], entityName, scale.x, scale.y, scale.z);
 			//exportStr.AppendFormat (dict_ExportCode ["set shape"], entityName, "BoxShape");
-			exportShape(tra, entityName, exportStr);
+			ExportShape(tra, entityName, exportStr);
+            ExportText(tra, entityName, exportStr);
 
-		    exportStr.Append('\n');
+            exportStr.Append('\n');
 
 			foreach (Transform child in tra)
 			{
