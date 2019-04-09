@@ -280,8 +280,7 @@ namespace Dcl
                 var warningCount = sceneMeta.sceneWarningRecorder.OutOfLandWarnings.Count +
                                    sceneMeta.sceneWarningRecorder.UnsupportedShaderWarnings.Count +
                                    sceneMeta.sceneWarningRecorder.InvalidTextureWarnings.Count;
-
-                //            GUILayout.Label(string.Format("Warnings({0})", warningCount));
+                
                 if (warningCount > 0)
                 {
 					GUILayout.Label(LabelLocalization.getString(LanguageStringValue.ClickWarning), EditorStyles.centeredGreyMiniLabel);
@@ -672,29 +671,18 @@ namespace Dcl
 
             Directory.CreateDirectory(unityAssetsFolderPath);
 
-			StringBuilder exportStr = new StringBuilder ();
-			SceneTraverser.TraverseAllSceneNewSdk (exportStr);
-            
+
             if (!Directory.Exists(Path.Combine(exportPath, "src"))){
                 Directory.CreateDirectory(Path.Combine(exportPath, "src"));
             } 
             
-			File.WriteAllText(Path.Combine(exportPath, "src/game.ts"), exportStr.ToString());
-
-
             var meshesToExport = new List<GameObject>();
-            //var sceneXmlBuilder = new StringBuilder();
             var statistics = new SceneStatistics();
 
-            SceneTraverser.TraverseAllScene(null, meshesToExport, statistics, null);
-
-            //var sceneXml = sceneXmlBuilder.ToString();
-
-            ////scene.tsx
-            //var fileTxt = GetSceneTsxFileTemplate();
-            //fileTxt = fileTxt.Replace("{XML}", sceneXml);
-            //var filePath = Path.Combine(exportPath, "scene.tsx");
-            //File.WriteAllText(filePath, fileTxt);
+            StringBuilder exportStr = new StringBuilder();
+            SceneTraverser.TraverseAllScene(exportStr, meshesToExport, statistics, null);
+            
+            File.WriteAllText(Path.Combine(exportPath, "src/game.ts"), exportStr.ToString());
 
             //glTF in unity_asset
             foreach (var go in meshesToExport)

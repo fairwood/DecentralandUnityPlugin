@@ -79,58 +79,7 @@ namespace Dcl
 			return name;
 		}
 
-		public static void TraverseAllSceneNewSdk(StringBuilder exportStr)
-		{
-			var rootGameObjects = new List<GameObject>();
-			for (int i = 0; i < SceneManager.sceneCount; i++)
-			{
-				var roots = SceneManager.GetSceneAt(i).GetRootGameObjects();
-				rootGameObjects.AddRange(roots);
-			}
-
-			//====== Start Traversing ======
-			DclExportNode.Init();
-			foreach (var rootGO in rootGameObjects)
-			{
-				//RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
-				DclExportNode.RecursivelyTraverseUnityNode(rootGO.transform, exportStr, null);
-			}
-			Debug.Log (exportStr.ToString ());
-//			return;
-//
-//			foreach (var material in primitiveMaterialsToExport)
-//			{
-//				var materialXml = xmlBuilder != null ? new StringBuilder() : null;
-//				TraverseMaterial(material, materialXml, warningRecorder);
-//
-//				//Append materials
-//				if (xmlBuilder != null)
-//				{
-//					xmlBuilder.AppendIndent(indentUnit, 4);
-//					xmlBuilder.Append(materialXml).Append("\n");
-//				}
-//			}
-//
-//			//Check textures
-//			if (warningRecorder != null)
-//			{
-//				foreach (var texture in primitiveTexturesToExport)
-//				{
-//					CheckTextureValidity(texture, warningRecorder);
-//				}
-//			}
-//
-//			statistics.materialCount += primitiveMaterialsToExport.Count; //TODO: include glTF's materials
-//			statistics.textureCount += primitiveTexturesToExport.Count; //TODO: include glTF's textures
-//
-//			if (xmlBuilder != null)
-//			{
-//				xmlBuilder.AppendIndent(indentUnit, 3);
-//				xmlBuilder.Append("</scene>");
-//			}
-		}
-
-        public static void TraverseAllScene(StringBuilder xmlBuilder, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+        public static void TraverseAllScene(StringBuilder exportStr, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             var rootGameObjects = new List<GameObject>();
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -139,52 +88,24 @@ namespace Dcl
                 rootGameObjects.AddRange(roots);
             }
 
-            if (xmlBuilder != null)
-            {
-                xmlBuilder.AppendIndent(indentUnit, 3);
-                xmlBuilder.AppendFormat("<scene position={{{0}}}>\n", Vector3ToJSONString(new Vector3(5, 0, 5)));
-            }
-
             _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
             primitiveMaterialsToExport = new List<Material>();
             primitiveTexturesToExport = new List<Texture>();
             GameObjectToNodeTypeDict.Clear();
-
+            
             //====== Start Traversing ======
+            DclExportNode.Init();
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
+                //RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
+                DclExportNode.RecursivelyTraverseUnityNode(rootGO.transform, exportStr, meshesToExport, null);
             }
+
             foreach (var material in primitiveMaterialsToExport)
             {
-                var materialXml = xmlBuilder != null ? new StringBuilder() : null;
-                TraverseMaterial(material, materialXml, warningRecorder);
-                
-                //Append materials
-                if (xmlBuilder != null)
-                {
-                    xmlBuilder.AppendIndent(indentUnit, 4);
-                    xmlBuilder.Append(materialXml).Append("\n");
-                }
+                TraverseMaterial(material, warningRecorder);
             }
 
-            //Check textures
-            if (warningRecorder != null)
-            {
-                foreach (var texture in primitiveTexturesToExport)
-                {
-                    CheckTextureValidity(texture, warningRecorder);
-                }
-            }
-
-            statistics.materialCount += primitiveMaterialsToExport.Count; //TODO: include glTF's materials
-            statistics.textureCount += primitiveTexturesToExport.Count; //TODO: include glTF's textures
-            
-            if (xmlBuilder != null)
-            {
-                xmlBuilder.AppendIndent(indentUnit, 3);
-                xmlBuilder.Append("</scene>");
-            }
         }
 
         public static void RecursivelyTraverseTransform(Transform tra, StringBuilder xmlBuilder, List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder, Dictionary<GameObject, EDclNodeType> gameObjectToNodeTypeDict)
@@ -608,8 +529,7 @@ namespace Dcl
         /// 
         /// </summary>
         /// <param name="material"></param>
-        /// <param name="xml">Will append an xml line like <material id="mat01" emissiveColor = "#AA00FF"/></param>
-        public static void TraverseMaterial(Material material, StringBuilder xml, SceneWarningRecorder warningRecorder)
+        public static void TraverseMaterial(Material material, SceneWarningRecorder warningRecorder)
         {
             //Check is it a Unity Standard Material
             if (material.shader.name != "Standard")
@@ -617,10 +537,10 @@ namespace Dcl
                 warningRecorder.UnsupportedShaderWarnings.Add(new SceneWarningRecorder.UnsupportedShader(material));
             }
 
-			var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
-			var refractionTexture = material.HasProperty("_MetallicGlossMap") ? material.GetTexture("_MetallicGlossMap") : null;
-			var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
-			var emisiveTexture = material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null;
+            var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
+            var refractionTexture = material.HasProperty("_MetallicGlossMap") ? material.GetTexture("_MetallicGlossMap") : null;
+            var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
+            var emisiveTexture = material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null;
 
             if (albedoTex)
             {
@@ -637,42 +557,6 @@ namespace Dcl
             if (emisiveTexture)
             {
                 primitiveTexturesToExport.Add(emisiveTexture);
-            }
-
-            if (xml != null)
-            {
-                xml.Append("<material");
-                xml.AppendFormat(" id=\"{0}\"", material.name);
-                xml.AppendFormat(" albedoColor=\"{0}\"", ToHexString(material.color));
-				xml.AppendFormat(" alpha={{{0}}}", material.color.a);
-                if (albedoTex)
-                {
-                    xml.AppendFormat(" albedoTexture=\"{0}\"", GetTextureRelativePath(albedoTex));
-					bool b = !(material.IsKeywordEnabled ("_ALPHATEST_ON")==false && material.IsKeywordEnabled ("_ALPHABLEND_ON")==false && material.IsKeywordEnabled ("_ALPHAPREMULTIPLY_ON")==false);
-
-					if (b) {
-						xml.Append (" hasAlpha={true}");
-					}else{
-						xml.Append (" hasAlpha={false}");
-					}
-                }
-                if (refractionTexture)
-                {
-					xml.AppendFormat(" refractionTexture=\"{0}\"", GetTextureRelativePath(refractionTexture));
-                }
-                if (bumpTexture)
-                {
-                    xml.AppendFormat(" bumpTexture=\"{0}\"", GetTextureRelativePath(bumpTexture));
-                }
-                if (emisiveTexture)
-                {
-                    xml.AppendFormat(" emissiveTexture=\"{0}\"", GetTextureRelativePath(emisiveTexture));
-                }
-                xml.AppendFormat(" emissiveColor=\"{0}\"", ToHexString(material.GetColor("_EmissionColor")));
-                xml.AppendFormat(" metallic={{{0}}}", material.GetFloat("_Metallic"));
-                xml.AppendFormat(" roughness={{{0}}}", 1 - material.GetFloat("_Glossiness"));
-
-                xml.Append("/>");
             }
         }
 
