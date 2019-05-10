@@ -29,7 +29,7 @@ namespace Dcl
 
         const string indentUnit = "  ";
 
-        private static List<Material> primitiveMaterialsToExport;
+        public static List<Material> primitiveMaterialsToExport;
         public static List<Texture> primitiveTexturesToExport;
 
         private static DclSceneMeta _sceneMeta;
