@@ -36,48 +36,6 @@ namespace Dcl
 
         public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
 
-		public static string CalcName(Object _object){
-			string name = "";
-			PrefabType t = PrefabUtility.GetPrefabType (_object);
-			switch (t) {
-			case PrefabType.PrefabInstance:
-			case PrefabType.ModelPrefabInstance:
-				{
-					PropertyModification[] pm = PrefabUtility.GetPropertyModifications (_object);
-
-					bool change = false;
-					foreach (var v in pm) {
-						if( !(v.propertyPath=="m_LocalPosition.x" ||
-							v.propertyPath=="m_LocalPosition.y" ||
-							v.propertyPath=="m_LocalPosition.z" ||
-							v.propertyPath=="m_LocalRotation.x" ||
-							v.propertyPath=="m_LocalRotation.y" ||
-							v.propertyPath=="m_LocalRotation.z" ||
-							v.propertyPath=="m_LocalRotation.w" ||
-							v.propertyPath=="m_RootOrder" ||
-							v.propertyPath=="m_Name") ){
-
-							change = true;
-							break;
-							//Debug.Log (v.propertyPath);
-						}
-					}
-
-					if (change == true) {
-						name = _object.name + Mathf.Abs(_object.GetInstanceID ());
-					} else {
-						Object o = PrefabUtility.GetCorrespondingObjectFromSource (_object);
-						name = o.name + Mathf.Abs(o.GetInstanceID ());
-					}
-				}
-				break;
-			default:
-				name = _object.name + Mathf.Abs(_object.GetInstanceID ());
-				break;
-			}
-
-			return name;
-		}
 
         public static void TraverseAllScene(StringBuilder exportStr, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
@@ -94,11 +52,9 @@ namespace Dcl
             GameObjectToNodeTypeDict.Clear();
             
             //====== Start Traversing ======
-            DclExportNode.Init();
             foreach (var rootGO in rootGameObjects)
             {
-                //RecursivelyTraverseTransform(rootGO.transform, xmlBuilder, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
-                DclExportNode.RecursivelyTraverseUnityNode(rootGO.transform, exportStr, meshesToExport, null);
+                RecursivelyTraverseTransform(rootGO.transform, exportStr, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
             }
 
             foreach (var material in primitiveMaterialsToExport)
@@ -108,374 +64,501 @@ namespace Dcl
 
         }
 
-        public static void RecursivelyTraverseTransform(Transform tra, StringBuilder xmlBuilder, List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder, Dictionary<GameObject, EDclNodeType> gameObjectToNodeTypeDict)
+        public static void RecursivelyTraverseTransform(Transform tra,
+            StringBuilder exportStr,
+            List<GameObject> meshesToExport,
+            int indentLevel,
+            SceneStatistics statistics,
+            SceneWarningRecorder warningRecorder,
+            Dictionary<GameObject, EDclNodeType> gameObjectToNodeTypeDict)
         {
             if (!tra.gameObject.activeInHierarchy) return;
-
-            //TODO: Hide empty
-            if (tra.gameObject.GetComponent<DclSceneMeta>()) return;
+            if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
 
             if (statistics != null)
             {
                 statistics.entityCount += 1;
             }
+            
+            var position = tra.localPosition;
+            var scale = tra.localScale;
+            var rotation = tra.localRotation;
+
+            var entityName = GetIdentityName(tra.gameObject);
+
+            if (exportStr != null)
+            {
+                exportStr.AppendFormat(NewEntityWithName, entityName, tra.name);
+
+                //set parent
+                if (tra.parent)
+                {
+                    exportStr.AppendFormat(SetParent, entityName, GetIdentityName(tra.parent.gameObject));
+                }
+
+                //Entity
+                exportStr.AppendFormat(AddEntity, entityName);
+                //Transform
+                exportStr.AppendFormat(SetTransform, entityName, position.x, position.y,                    position.z);
+                exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z,                    rotation.w);
+                exportStr.AppendFormat(SetScale, entityName, scale.x, scale.y, scale.z);
+
+                TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
+
+                TraverseText(tra, entityName, exportStr);
+
+                exportStr.Append('\n');
+            }
+
+
+            
 
             string nodeName = null;
             var nodeType = EDclNodeType._none;
-            var position = tra.localPosition;
-            var scale = tra.localScale;
-            var eulerAngles = tra.localEulerAngles;
-            string pColor = null; //<...  color="#4A4A4A" ...>
-            string pMaterial = null; //<... material="#mat01" ...>
-            var extraProperties = new StringBuilder(); //TODO: can be omitted if xmlBuilder == null
 
             var dclObject = tra.GetComponent<DclObject>();
+
+            //        if (tra.GetComponent<DclCustomNode>())
+            //        {
+            //            var customNode = tra.GetComponent<DclCustomNode>();
+            //            nodeName = customNode.nodeName;
+            //            nodeType = EDclNodeType.CustomNode;
+
+            //if(customNode.propertyPairs!=null){
+            //	foreach (var propertyPair in customNode.propertyPairs)
+            //	{
+            //		extraProperties.AppendFormat(" {0}={1}", propertyPair.name, propertyPair.value);
+            //	}
+            //}
+            //        }
+            //        else
+            //        {
             
-            if (tra.GetComponent<DclCustomNode>())
+
+            if (tra.GetComponent<MeshRenderer>())
             {
-                var customNode = tra.GetComponent<DclCustomNode>();
-                nodeName = customNode.nodeName;
-                nodeType = EDclNodeType.CustomNode;
-                if (customNode.position)
+                var meshRenderer = tra.GetComponent<MeshRenderer>();
+
+                //Statistics
+                if (statistics != null)
                 {
-                    extraProperties.AppendFormat(" position={{{0}}}", Vector3ToJSONString(tra.localPosition));
-                }
-                if (customNode.rotation)
-                {
-                    extraProperties.AppendFormat(" rotation={{{0}}}", Vector3ToJSONString(tra.eulerAngles));
-                }
-                if (customNode.scale)
-                {
-                    extraProperties.AppendFormat(" scale={{{0}}}", Vector3ToJSONString(tra.localScale));
+                    var curHeight = meshRenderer.bounds.max.y;
+                    if (curHeight > statistics.maxHeight) statistics.maxHeight = curHeight;
                 }
 
-				if(customNode.propertyPairs!=null){
-					foreach (var propertyPair in customNode.propertyPairs)
-					{
-						extraProperties.AppendFormat(" {0}={1}", propertyPair.name, propertyPair.value);
-					}
-				}
-            }
-            else
-            {
-
-				if (tra.GetComponent<MeshFilter>() && tra.GetComponent<MeshRenderer>()) //Primitives & glTF
+                //Warnings
+                if (warningRecorder != null)
                 {
-					if (dclObject) {
-						switch (dclObject.dclPrimitiveType) {
-						case DclPrimitiveType.box:
-							nodeName = "box";
-							nodeType = EDclNodeType.box;
-							break;
-						case DclPrimitiveType.sphere:
-							nodeName = "sphere";
-							nodeType = EDclNodeType.sphere;
-							break;
-						case DclPrimitiveType.plane:
-							nodeName = "plane";
-							nodeType = EDclNodeType.plane;
-							break;
-						case DclPrimitiveType.cylinder:
-							nodeName = "cylinder";
-							nodeType = EDclNodeType.cylinder;
-							break;
-						case DclPrimitiveType.cone:
-							nodeName = "cone";
-							nodeType = EDclNodeType.cone;
-							break;
-						}
-					}
-                    var meshFilter = tra.GetComponent<MeshFilter>();
-
-                    if (nodeName != null)
+                    //OutOfLand
+                    if (_sceneMeta)
                     {
-                        //Primitive
-
-                        //read color/mat
-                        var rdrr = tra.GetComponent<MeshRenderer>();
-                        if (rdrr && rdrr.sharedMaterial)
+                        var isOutOfLand = false;
+                        var startParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.min);
+                        var endParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.max);
+                        for (int x = startParcel.x; x <= endParcel.x; x++)
                         {
-                            var material = rdrr.sharedMaterial;
-                            if (material == PrimitiveHelper.GetDefaultMaterial())
+                            for (int y = startParcel.y; y <= endParcel.y; y++)
                             {
-                                //not use material
-                                //                                var matColor = rdrr.sharedMaterial.color;
-                                //                                pColor = ToHexString(matColor);
-                            }
-                            else
-                            {
-                                //need to export this material
-								if (primitiveMaterialsToExport!=null && !primitiveMaterialsToExport.Exists(m => m == material))
+                                if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
                                 {
-                                    primitiveMaterialsToExport.Add(material);
+                                    warningRecorder.OutOfLandWarnings.Add(
+                                        new SceneWarningRecorder.OutOfLand(meshRenderer));
+                                    isOutOfLand = true;
+                                    break;
                                 }
-
-                                pMaterial = string.Format("#{0}", material.name);
                             }
 
-                        }
-
-                        //withCollisions
-                        if (dclObject)
-                        {
-							if(dclObject.dclPrimitiveType!=DclPrimitiveType.other)
-                            {
-                                if (dclObject.withCollision == true) extraProperties.Append(" withCollisions={true}");
-                            }
-                        }
-
-                        //Statistics
-                        if (statistics != null)
-                        {
-							switch (dclObject.dclPrimitiveType) {
-							case DclPrimitiveType.box:
-								statistics.triangleCount += 12;
-								break;
-							case DclPrimitiveType.sphere:
-								statistics.triangleCount += 4624;
-								break;
-							case DclPrimitiveType.plane:
-								statistics.triangleCount += 4;
-								break;
-							case DclPrimitiveType.cylinder:
-								statistics.triangleCount += 144;
-								break;
-							case DclPrimitiveType.cone:
-								statistics.triangleCount += 108;
-								break;
-							}
-
-							statistics.bodyCount += 1;
+                            if (isOutOfLand) break;
                         }
                     }
-                    else
-                    {
-                        //GLTF
-
-                        //export as a glTF model
-                        if (meshesToExport != null)
-                        {
-                            meshesToExport.Add(tra.gameObject);
-                        }
-
-                        nodeName = "gltf-model";
-                        nodeType = EDclNodeType.gltf;
-                        // TODO: delete postion info (by alking)
-                        // position = Vector3.zero;
-                        // eulerAngles = Vector3.zero;
-                        // scale = Vector3.zero;
-
-						//if tra is a prefab and do not get any change. use the prefab's name
-
-                        //extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", tra.name);
-						extraProperties.AppendFormat(" src=\"./unity_assets/{0}.gltf\"", CalcName(tra.gameObject));
-
-                        //Statistics
-                        if (statistics != null)
-                        {
-                            statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
-                            statistics.bodyCount += 1;
-                        }
-
-						if (statistics != null) {
-							Mesh m = meshFilter.sharedMesh;
-
-							Renderer mr = tra.GetComponent<MeshRenderer> ();
-							if (mr == null) {
-								mr = tra.GetComponent<SkinnedMeshRenderer> ();
-							}
-
-							var sm = mr.sharedMaterials;
-							for (int i = 0; i < sm.Length; ++i) 
-							{
-								Material ma = sm [i];
-								if (ma != null) 
-								{
-									statistics.materialCount += 1;
-									Shader shader = ma.shader;
-									for(int j=0; j<ShaderUtil.GetPropertyCount(shader); j++)
-									{
-										if (ShaderUtil.GetPropertyType (shader, j) == ShaderUtil.ShaderPropertyType.TexEnv) 
-										{
-											Texture texture = ma.GetTexture (ShaderUtil.GetPropertyName (shader, j));
-											if (texture != null) {statistics.textureCount += 1;}
-										}
-									}
-								}
-							}
-
-						}
-
-                    }
-                }
-                else if (tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()) //TextMesh
-                {
-
-                    nodeName = "text";
-                    nodeType = EDclNodeType.text;
-                    var tm = tra.GetComponent<TextMesh>();
-                    extraProperties.AppendFormat(" value=\"{0}\"", tm.text);
-                    //scale *= tm.fontSize * 0.5f;
-                    //extraProperties.AppendFormat(" fontS=\"{0}\"", 100);
-                    pColor = ToHexString(tm.color);
-                    var rdrr = tra.GetComponent<MeshRenderer>();
-                    if (rdrr)
-                    {
-						
-						var width = Math.Min(32, rdrr.bounds.size.x*2 / tra.lossyScale.x);//rdrr.bounds.extents.x*2;
-						var height = Math.Min(32, rdrr.bounds.size.y*2 / tra.lossyScale.y);//rdrr.bounds.extents.y * 2;
-
-                        extraProperties.AppendFormat(" width={{{0}}}", width);
-                        extraProperties.AppendFormat(" height={{{0}}}", height);
-                    }
-					extraProperties.AppendFormat(" fontSize={{{0}}}", tm.fontSize==0 ? 13f*38f : tm.fontSize*38f);
-
-					switch (tm.anchor) {
-					case TextAnchor.UpperLeft:
-						extraProperties.AppendFormat(" hAlign=\"right\"");
-						extraProperties.AppendFormat(" vAlign=\"bottom\"");
-						break;
-					case TextAnchor.UpperCenter:
-						extraProperties.AppendFormat(" vAlign=\"bottom\"");
-						break;
-					case TextAnchor.UpperRight:
-						extraProperties.AppendFormat(" hAlign=\"left\"");
-						extraProperties.AppendFormat(" vAlign=\"bottom\"");
-						break;
-					case TextAnchor.MiddleLeft:
-						extraProperties.AppendFormat(" hAlign=\"right\"");
-						break;
-					case TextAnchor.MiddleCenter:
-						
-						break;
-					case TextAnchor.MiddleRight:
-						extraProperties.AppendFormat(" hAlign=\"left\"");
-						break;
-					case TextAnchor.LowerLeft:
-						extraProperties.AppendFormat(" hAlign=\"right\"");
-						extraProperties.AppendFormat(" vAlign=\"top\"");
-						break;
-					case TextAnchor.LowerCenter:
-						extraProperties.AppendFormat(" vAlign=\"top\"");
-						break;
-					case TextAnchor.LowerRight:
-						extraProperties.AppendFormat(" hAlign=\"left\"");
-						extraProperties.AppendFormat(" vAlign=\"top\"");
-						break;
-					}
-
-                }
-
-                if (tra.GetComponent<MeshRenderer>())
-                {
-                    var meshRenderer = tra.GetComponent<MeshRenderer>();
-
-                    //Statistics
-                    if (statistics != null)
-                    {
-                        var curHeight = meshRenderer.bounds.max.y;
-                        if (curHeight > statistics.maxHeight) statistics.maxHeight = curHeight;
-                    }
-
-                    //Warnings
-                    if (warningRecorder != null)
-                    {
-                        //OutOfLand
-                        if (_sceneMeta)
-                        {
-                            var isOutOfLand = false;
-                            var startParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.min);
-                            var endParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.max);
-                            for (int x = startParcel.x; x <= endParcel.x; x++)
-                            {
-                                for (int y = startParcel.y; y <= endParcel.y; y++)
-                                {
-                                    if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
-                                    {
-                                        warningRecorder.OutOfLandWarnings.Add(
-                                            new SceneWarningRecorder.OutOfLand(meshRenderer));
-                                        isOutOfLand = true;
-                                        break;
-                                    }
-                                }
-
-                                if (isOutOfLand) break;
-                            }
-                        }
-                    }
-                }
-
-                if (nodeName == null)
-                {
-                    nodeName = "entity";
-                    nodeType = EDclNodeType.entity;
-                }
-
-                if (pColor != null)
-                {
-                    extraProperties.AppendFormat(" color=\"{0}\"", pColor);
-                }
-
-                if (pMaterial != null)
-                {
-                    extraProperties.AppendFormat(" material=\"{0}\"", pMaterial);
-                }
-
-                if (dclObject)
-                {
-                    if (dclObject.visible != true) extraProperties.Append(" visible={false}");
                 }
             }
-
-            StringBuilder xmlNode = null;
-            StringBuilder xmlNodeTail = null;
-            StringBuilder childrenXmlBuilder = null;
-            if (xmlBuilder != null)
+            
+            if (dclObject)
             {
-                xmlNode = new StringBuilder();
-                xmlNode.AppendIndent(indentUnit, indentLevel);
-                if (nodeType == EDclNodeType.CustomNode)
-                {
-                    xmlNode.AppendFormat("<{0}{1}>", nodeName, extraProperties);
-                }
-                else
-                {
-                    xmlNode.AppendFormat("<{0} position={{{1}}} scale={{{2}}} rotation={{{3}}}{4}>", nodeName,
-                        Vector3ToJSONString(position), Vector3ToJSONString(scale), Vector3ToJSONString(eulerAngles),
-                        extraProperties);
-                }
-
-                xmlNodeTail = new StringBuilder().AppendFormat("</{0}>\n", nodeName);
-                childrenXmlBuilder = new StringBuilder();
+                //TODO： if (dclObject.visible != true) extraProperties.Append(" visible={false}");
             }
-
+            
             if (gameObjectToNodeTypeDict != null) gameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
-
+            
             if (nodeType != EDclNodeType.gltf) //gltf node will force to pack all its children, so should not traverse into it again.
             {
                 foreach (Transform child in tra)
                 {
-                    RecursivelyTraverseTransform(child, childrenXmlBuilder, meshesToExport, indentLevel + 1, statistics,
+                    RecursivelyTraverseTransform(child, exportStr, meshesToExport, indentLevel + 1, statistics,
                         warningRecorder, gameObjectToNodeTypeDict);
                 }
-            }
-
-            if (xmlBuilder != null)
-            {
-                if (childrenXmlBuilder.Length > 0)
-                {
-                    xmlNode.Append("\n");
-                    xmlNode.Append(childrenXmlBuilder);
-                    xmlNode.AppendIndent(indentUnit, indentLevel);
-                }
-                xmlNode.Append(xmlNodeTail);
-                xmlBuilder.Append(xmlNode);
             }
         }
 
 
         #region Utils
 
+        public static string ToJsColorCtor(Color color)
+        {
+            return string.Format("new Color3({0}, {1}, {2})", color.r, color.g, color.b);
+        }
+
+        public static string GetIdentityName(GameObject go)
+        {
+            string entityName = "entity" + Mathf.Abs(go.GetInstanceID());
+            entityName = entityName.Replace(" ", string.Empty);
+            return entityName;
+        }
+
+        public static string CalcName(Object _object)
+        {
+            string name = "";
+            PrefabType t = PrefabUtility.GetPrefabType(_object);
+            switch (t)
+            {
+                case PrefabType.PrefabInstance:
+                case PrefabType.ModelPrefabInstance:
+                    {
+                        PropertyModification[] pm = PrefabUtility.GetPropertyModifications(_object);
+
+                        bool change = false;
+                        foreach (var v in pm)
+                        {
+                            if (!(v.propertyPath == "m_LocalPosition.x" ||
+                                v.propertyPath == "m_LocalPosition.y" ||
+                                v.propertyPath == "m_LocalPosition.z" ||
+                                v.propertyPath == "m_LocalRotation.x" ||
+                                v.propertyPath == "m_LocalRotation.y" ||
+                                v.propertyPath == "m_LocalRotation.z" ||
+                                v.propertyPath == "m_LocalRotation.w" ||
+                                v.propertyPath == "m_RootOrder" ||
+                                v.propertyPath == "m_Name"))
+                            {
+
+                                change = true;
+                                break;
+                                //Debug.Log (v.propertyPath);
+                            }
+                        }
+
+                        if (change == true)
+                        {
+                            name = _object.name + Mathf.Abs(_object.GetInstanceID());
+                        }
+                        else
+                        {
+                            Object o = PrefabUtility.GetCorrespondingObjectFromSource(_object);
+                            name = o.name + Mathf.Abs(o.GetInstanceID());
+                        }
+                    }
+                    break;
+                default:
+                    name = _object.name + Mathf.Abs(_object.GetInstanceID());
+                    break;
+            }
+
+            return name;
+        }
+
+        public static string GetTextureRelativePath(Texture texture)
+        {
+            var relPath = AssetDatabase.GetAssetPath(texture);
+            if (string.IsNullOrEmpty(relPath))
+            {
+                //TODO: this is a built-in asset
+                relPath = texture.name + ".png";
+            }
+            else
+            {
+
+            }
+
+            string str = "./unity_assets/" + relPath;
+            return str;
+            //replace space by zcy
+            //return str.Replace (" ", string.Empty);
+        }
+
+        private const string NewEntity = "const {0} = new Entity()\n";
+        private const string NewEntityWithName = "const {0} = new Entity() //{1}\n";
+        private const string AddEntity = "engine.addEntity({0})\n";
+        private const string SetTransform = "{0}.addComponent(new Transform({{ position: new Vector3({1}, {2}, {3}) }}))\n";
+        private const string SetRotation = "{0}.getComponent(Transform).rotation.set({1}, {2}, {3}, {4})\n";
+        private const string SetScale = "{0}.getComponent(Transform).scale.set({1}, {2}, {3})\n";
+        private const string SetShape = "{0}.addComponent(new {1}())\n";
+        private const string SetGLTFshape = "{0}.addComponent(new GLTFShape(\"{1}\"))\n";
+        private const string SetParent = "{0}.setParent({1})\n";
+        private const string NewMaterial = "const {0} = new Material()\n";
+        private const string SetMaterial = "{0}.addComponent({1})\n";
+        private const string SetMaterialAlbedoColor = "{0}.albedoColor = {1}\n";
+        private const string SetMaterialMetallic = "{0}.metallic = {1}\n";
+        private const string SetMaterialRoughness = "{0}.roughness = {1}\n";
+        private const string SetMaterialAlbedoTexture = "{0}.albedoTexture = new Texture(\"{1}\")\n";
+        private const string SetMaterialAlbedoTextureHasAlpha = "{0}.hasAlpha = true\n";
+        private const string SetMaterialAlpha = "{0}.alpha = {1}\n";
+        private const string SetMaterialBumptexture = "{0}.bumpTexture = new Texture(\"{1}\")\n";
+        private const string SetMaterialEmissiveColor = "{0}.emissiveColor = {1}\n";
+        private const string SetMaterialRefractionTexture = "{0}.refractionTexture = new Texture(\"{1}\")\n";
+        private const string SetMaterialEmissiveIntensity = "{0}.emissiveIntensity = {1}\n";
+        private const string SetMaterialEmissiveTexture = "{0}.emissiveTexture = new Texture(\"{1}\")\n";
+
+        public static void TraverseMaterial(Transform tra, string entityName, StringBuilder exportStr, SceneStatistics statistics)
+        {
+
+            var rdrr = tra.GetComponent<MeshRenderer>();
+            if (rdrr && rdrr.sharedMaterial)
+            {
+                var material = rdrr.sharedMaterial;
+                if (material != PrimitiveHelper.GetDefaultMaterial())
+                {
+                    string materialName = "material" + Mathf.Abs(material.GetInstanceID());
+                    Debug.Log(material.name);
+                    if (!primitiveMaterialsToExport.Contains(material))
+                    {
+                        primitiveMaterialsToExport.Add(material);
+
+                        exportStr.AppendFormat(NewMaterial, materialName);
+                        exportStr.AppendFormat(SetMaterialAlbedoColor, materialName, ToJsColorCtor(material.color));
+                        exportStr.AppendFormat(SetMaterialMetallic, materialName, material.GetFloat("_Metallic"));
+                        exportStr.AppendFormat(SetMaterialRoughness, materialName, 1 - material.GetFloat("_Glossiness"));
+                        var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
+                        if (albedoTex)
+                        {
+                            exportStr.AppendFormat(SetMaterialAlbedoTexture, materialName, GetTextureRelativePath(albedoTex));
+                        }
+
+                        bool b = material.IsKeywordEnabled("_ALPHATEST_ON") ||
+                                 material.IsKeywordEnabled("_ALPHABLEND_ON") ||
+                                 material.IsKeywordEnabled("_ALPHAPREMULTIPLY_ON");
+                        if (b)
+                        {
+                            exportStr.AppendFormat(SetMaterialAlbedoTextureHasAlpha, materialName);
+                            exportStr.AppendFormat(SetMaterialAlpha, materialName, material.color.a);
+                        }
+
+                        var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
+                        if (bumpTexture)
+                        {
+                            exportStr.AppendFormat(SetMaterialBumptexture, materialName, GetTextureRelativePath(bumpTexture));
+                        }
+
+                        var refractionTexture = material.HasProperty("_MetallicGlossMap")
+                            ? material.GetTexture("_MetallicGlossMap")
+                            : null;
+                        if (refractionTexture)
+                        {
+                            exportStr.AppendFormat(SetMaterialRefractionTexture, materialName, GetTextureRelativePath(refractionTexture));
+                        }
+
+                        Texture emissiveTexture = null;
+                        if (material.IsKeywordEnabled("_EMISSION"))
+                        {
+                            exportStr.AppendFormat(SetMaterialEmissiveColor, materialName, ToJsColorCtor(material.GetColor("_EmissionColor")));
+                            //					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
+
+                            emissiveTexture = material.HasProperty("_EmissionMap")
+                                ? material.GetTexture("_EmissionMap")
+                                : null;
+                            if (emissiveTexture)
+                            {
+                                exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName, GetTextureRelativePath(emissiveTexture));
+                            }
+                        }
+
+                        if (albedoTex)
+                        {
+                            SceneTraverser.primitiveTexturesToExport.Add(albedoTex);
+                        }
+
+                        if (refractionTexture)
+                        {
+                            SceneTraverser.primitiveTexturesToExport.Add(refractionTexture);
+                        }
+
+                        if (bumpTexture)
+                        {
+                            SceneTraverser.primitiveTexturesToExport.Add(bumpTexture);
+                        }
+
+                        if (emissiveTexture)
+                        {
+                            SceneTraverser.primitiveTexturesToExport.Add(emissiveTexture);
+                        }
+                    }
+
+                    exportStr.AppendFormat(SetMaterial, entityName, materialName);
+
+                    if (statistics != null) statistics.materialCount += 1;
+                }
+            }
+            //const myMaterial = new Material()
+            //myMaterial.albedoColor = "#FF0000"
+            //myMaterial.metallic = 0.9
+            //myMaterial.roughness = 0.1
+            //myEntity.addComponent(myMaterial)
+            //myMaterial.albedoTexture = new Texture("materials/wood.png")
+            //myMaterial.bumpTexture = new Texture"materials/woodBump.png")
+            //myMaterial.hasAlpha = true
+
+        }
+
+        public static void TraverseShape(Transform tra, string entityName, StringBuilder exportStr, List<GameObject> meshesToExport, SceneStatistics statistics)
+        {
+            var meshFilter = tra.GetComponent<MeshFilter>();
+            if (!(meshFilter && tra.GetComponent<MeshRenderer>()))
+            {
+                return;
+            }
+
+            var dclObject = tra.GetComponent<DclObject>();
+
+            string shapeName = null;
+            if (dclObject)
+            {
+                switch (dclObject.dclPrimitiveType)
+                {
+                    case DclPrimitiveType.box:
+                        shapeName = "BoxShape";
+                        break;
+                    case DclPrimitiveType.sphere:
+                        shapeName = "SphereShape";
+                        break;
+                    case DclPrimitiveType.plane:
+                        shapeName = "PlaneShape";
+                        break;
+                    case DclPrimitiveType.cylinder:
+                        shapeName = "CylinderShape";
+                        break;
+                    case DclPrimitiveType.cone:
+                        shapeName = "ConeShape";
+                        break;
+                }
+                
+                //Statistics
+                if (statistics != null)
+                {
+                    switch (dclObject.dclPrimitiveType)
+                    {
+                        case DclPrimitiveType.box:
+                            statistics.triangleCount += 12;
+                            break;
+                        case DclPrimitiveType.sphere:
+                            statistics.triangleCount += 4624;
+                            break;
+                        case DclPrimitiveType.plane:
+                            statistics.triangleCount += 4;
+                            break;
+                        case DclPrimitiveType.cylinder:
+                            statistics.triangleCount += 144;
+                            break;
+                        case DclPrimitiveType.cone:
+                            statistics.triangleCount += 108;
+                            break;
+                    }
+                    statistics.bodyCount += 1;
+                }
+            }
+
+            if (shapeName != null)
+            {
+                //Primitive
+                exportStr.AppendFormat(SetShape, entityName, shapeName);
+                TraverseMaterial(tra, entityName, exportStr, statistics);
+            }
+            else
+            {
+                //gltf
+                string gltfPath = string.Format("./unity_assets/{0}.gltf", CalcName(tra.gameObject));
+                exportStr.AppendFormat(SetGLTFshape, entityName, gltfPath);
+
+
+                //export as a glTF model
+                if (meshesToExport != null)
+                {
+                    meshesToExport.Add(tra.gameObject);
+                }
+            }
+
+            if (dclObject && dclObject.withCollision)
+            {
+                exportStr.AppendFormat("{0}.getComponent({1}).withCollisions = true\n", entityName, shapeName);
+            }
+
+            if (dclObject && !dclObject.visible)
+            {
+                exportStr.AppendFormat("{0}.getComponent(Shape).visible = false\n", entityName);
+            }
+
+            if (statistics != null)
+            {
+                statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+                statistics.bodyCount += 1;
+            }
+        }
+
+        public static void TraverseText(Transform tra, string entityName, StringBuilder exportStr)
+        {
+            if (!(tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()))
+            {
+                return;
+            }
+
+            exportStr.AppendFormat("{0}.addComponent(new TextShape())\n", entityName);
+
+            var tm = tra.GetComponent<TextMesh>();
+            var str = System.Text.RegularExpressions.Regex.Escape(tm.text);
+            exportStr.AppendFormat("{0}.getComponent(TextShape).value = \"{1}\"\n", entityName, str);
+            //scale *= tm.fontSize * 0.5f;
+            //exportStr.AppendFormat(" fontS=\"{0}\"", 100);
+            var color = ToJsColorCtor(tm.color);
+            exportStr.AppendFormat("{0}.getComponent(TextShape).color = {1}\n", entityName, color);
+
+            var rdrr = tra.GetComponent<MeshRenderer>();
+            if (rdrr)
+            {
+
+                var width = Math.Min(32, rdrr.bounds.size.x * 2 / tra.lossyScale.x); //rdrr.bounds.extents.x*2;
+                var height = Math.Min(32, rdrr.bounds.size.y * 2 / tra.lossyScale.y); //rdrr.bounds.extents.y * 2;
+
+                exportStr.AppendFormat("{0}.getComponent(TextShape).width = {1}\n", entityName, width);
+                exportStr.AppendFormat("{0}.getComponent(TextShape).height = {1}\n", entityName, height);
+            }
+
+            var fontSize = tm.fontSize == 0 ? 13f * 38f : tm.fontSize * 38f;
+            exportStr.AppendFormat("{0}.getComponent(TextShape).fontSize = {1}\n", entityName, fontSize);
+
+            switch (tm.anchor)
+            {
+                case TextAnchor.UpperLeft:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                    break;
+                case TextAnchor.UpperCenter:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                    break;
+                case TextAnchor.UpperRight:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                    break;
+                case TextAnchor.MiddleLeft:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                    break;
+                case TextAnchor.MiddleCenter:
+
+                    break;
+                case TextAnchor.MiddleRight:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                    break;
+                case TextAnchor.LowerLeft:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                    break;
+                case TextAnchor.LowerCenter:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                    break;
+                case TextAnchor.LowerRight:
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                    break;
+            }
+
+        }
 
         public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
         {
@@ -585,22 +668,7 @@ namespace Dcl
 
             return false;
         }
-
-        public static string GetTextureRelativePath(Texture texture)
-        {
-            var relPath = AssetDatabase.GetAssetPath(texture);
-            if (string.IsNullOrEmpty(relPath))
-            {
-                //TODO: this is a built-in asset
-                relPath = texture.name + ".png";
-            }
-            else
-            {
-                
-            }
-            return "./unity_assets/" + relPath;
-        }
-
+        
         #endregion
     }
 }
