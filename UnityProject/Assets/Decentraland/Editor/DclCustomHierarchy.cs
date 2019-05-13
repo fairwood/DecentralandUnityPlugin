@@ -43,59 +43,59 @@ public class DclCustomHierarchy
         Texture2D tex = null;
         if (go)
         {
-            if (SceneTraverser.GameObjectToNodeTypeDict.TryGetValue(go, out nodeType))
+            var dclObject = go.GetComponent<DclObject>();
+            if (dclObject)
             {
-                switch (nodeType)
+                nodeType = dclObject.dclNodeType;
+                switch (dclObject.dclNodeType)
                 {
-                case EDclNodeType.entity:
-                    tex = DclEditorSkin.Entity;
-                    break;
-                case EDclNodeType.box:
-                    tex = DclEditorSkin.Cube;
-                    break;
-                case EDclNodeType.sphere:
-                    tex = DclEditorSkin.Sphere;
-                    break;
-                case EDclNodeType.plane:
-                    tex = DclEditorSkin.Quad;
-                    break;
-                case EDclNodeType.cylinder:
-                    tex = DclEditorSkin.Cylinder;
-                    break;
-                case EDclNodeType.cone:
-                    tex = DclEditorSkin.Cone;
-                    break;
-                case EDclNodeType.circle:
-                    tex = DclEditorSkin.Sphere;
-                    break;
-                case EDclNodeType.text:
-                    tex = DclEditorSkin.Text;
-                    break;
-                case EDclNodeType.gltf:
-                    tex = DclEditorSkin.Mesh;
-                    break;
-				case EDclNodeType.CustomNode:
-					{
-						DclCustomNode node = go.GetComponent<DclCustomNode> ();
-						if (node.nodeName == "video") {
-							tex = DclEditorSkin.Video;
-						} else {
-							tex = DclEditorSkin.CustomNode;
-						}
-						
-					}
-                break;
-                default:
-                    break;
+                    case EDclNodeType.entity:
+                        tex = DclEditorSkin.Entity;
+                        break;
+                    case EDclNodeType.box:
+                        tex = DclEditorSkin.Cube;
+                        break;
+                    case EDclNodeType.sphere:
+                        tex = DclEditorSkin.Sphere;
+                        break;
+                    case EDclNodeType.plane:
+                        tex = DclEditorSkin.Quad;
+                        break;
+                    case EDclNodeType.cylinder:
+                        tex = DclEditorSkin.Cylinder;
+                        break;
+                    case EDclNodeType.cone:
+                        tex = DclEditorSkin.Cone;
+                        break;
+                    case EDclNodeType.circle:
+                        tex = DclEditorSkin.Sphere;
+                        break;
+                    case EDclNodeType.text:
+                        tex = DclEditorSkin.Text;
+                        break;
+                    case EDclNodeType.gltf:
+                        tex = DclEditorSkin.Mesh;
+                        break;
+                    case EDclNodeType.CustomNode:
+                        {
+                            DclCustomNode node = go.GetComponent<DclCustomNode>();
+                            if (node.nodeName == "video")
+                            {
+                                tex = DclEditorSkin.Video;
+                            }
+                            else
+                            {
+                                tex = DclEditorSkin.CustomNode;
+                            }
+                        }
+                        break;
+                    case EDclNodeType.ChildOfGLTF:
+                        tex = DclEditorSkin.FollowUp;
+                        break;
                 }
             }
             else
             {
-                if (IsChildOfGLTF(go.transform))
-                {
-                    nodeType = EDclNodeType.ChildOfGLTF;
-                    tex = DclEditorSkin.FollowUp;
-                }
             }
         }
 
@@ -109,10 +109,10 @@ public class DclCustomHierarchy
     {
         var parent = t.parent;
         if (!parent) return false;
-        EDclNodeType nodeType = EDclNodeType._none;
-        if (SceneTraverser.GameObjectToNodeTypeDict.TryGetValue(parent.gameObject, out nodeType))
+        var dclObject = t.GetComponent<DclObject>();
+        if (dclObject)
         {
-            if (nodeType == EDclNodeType.gltf) return true;
+            if (dclObject.dclNodeType == EDclNodeType.gltf) return true;
             return false;
         }
         else
@@ -126,23 +126,23 @@ public class DclCustomHierarchy
         switch (nodeType)
         {
             case EDclNodeType.entity:
-                return "<entity>";
+                return "Empty Entity";
             case EDclNodeType.box:
-                return "<box>";
+                return "BoxShape";
             case EDclNodeType.sphere:
-                return "<sphere>";
+                return "SphereShape";
             case EDclNodeType.plane:
-                return "<plane>";
+                return "PlaneShape";
             case EDclNodeType.cylinder:
-                return "<cylinder>";
+                return "CylinderShape";
             case EDclNodeType.cone:
-                return "<cone>";
+                return "ConeShape";
             case EDclNodeType.circle:
-                return "<circle>";
+                return "CircleShape";
             case EDclNodeType.text:
-                return "<text>";
+                return "TextShape";
             case EDclNodeType.gltf:
-                return "<gltf-model>";
+                return "GLTFShape";
             case EDclNodeType.ChildOfGLTF:
                 return "will be contained in its parent's gltf file";
             case EDclNodeType.CustomNode:

@@ -18,9 +18,11 @@ namespace Dcl
 		public DclPrimitiveType dclPrimitiveType { 
 			get{return m_primitiveType;} 
 			set{m_primitiveType = value;}
-		} 
+		}
 
-		public void Start(){
+        public EDclNodeType dclNodeType; //for Hierarchy icon
+        
+        public void Start(){
 
 		}
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.496413, b: 0.5748175, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -121,6 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 21764282}
+  - component: {fileID: 21764283}
   m_Layer: 0
   m_Name: Area1
   m_TagString: Untagged
@@ -151,6 +152,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &21764283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 21764281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!43 &33042516
 Mesh:
   m_ObjectHideFlags: 0
@@ -428,6 +444,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &70208277
 TextMesh:
   serializedVersion: 3
@@ -536,6 +553,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 4
+  dclNodeType: 5
 --- !u!23 &100249690
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -735,6 +753,7 @@ GameObject:
   m_Component:
   - component: {fileID: 170076735}
   - component: {fileID: 170076734}
+  - component: {fileID: 170076736}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -792,6 +811,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &170076736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 170076733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &180922614
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,6 +837,7 @@ GameObject:
   - component: {fileID: 180922615}
   - component: {fileID: 180922617}
   - component: {fileID: 180922616}
+  - component: {fileID: 180922618}
   m_Layer: 0
   m_Name: Cube_012
   m_TagString: Untagged
@@ -869,6 +904,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 180922614}
   m_Mesh: {fileID: 4300010, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &180922618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 180922614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!1 &183257017
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,6 +964,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &183257020
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1150,6 +1201,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 3
+  dclNodeType: 3
 --- !u!23 &215197578
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1207,6 +1259,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1094978847}
+  - component: {fileID: 218043535}
   m_Layer: 0
   m_Name: Gamer_Setup
   m_TagString: Untagged
@@ -1214,6 +1267,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &218043535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 218043534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &224235869
 GameObject:
   m_ObjectHideFlags: 0
@@ -1266,6 +1334,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 4
+  dclNodeType: 5
 --- !u!23 &224235873
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1346,6 +1415,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 5
+  dclNodeType: 6
 --- !u!23 &232206957
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1747,6 +1817,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &268351133
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1834,6 +1905,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &271214473
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1921,6 +1993,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &278935587
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1974,6 +2047,7 @@ GameObject:
   - component: {fileID: 337083226}
   - component: {fileID: 337083228}
   - component: {fileID: 337083227}
+  - component: {fileID: 337083229}
   m_Layer: 0
   m_Name: Cube_013
   m_TagString: Untagged
@@ -2039,6 +2113,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 337083225}
   m_Mesh: {fileID: 4300024, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &337083229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 337083225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!1 &341038158
 GameObject:
   m_ObjectHideFlags: 0
@@ -2089,7 +2178,7 @@ MonoBehaviour:
   contactName: 
   email: 
   sceneToGlTFWiz: {fileID: 341038161}
-  m_GroundMaterial: {fileID: 1922574100}
+  m_GroundMaterial: {fileID: 1103280442}
   parcelPosOffset: {x: 5, y: 0, z: 5}
 --- !u!114 &341038161
 MonoBehaviour:
@@ -2458,6 +2547,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &370278669
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2545,6 +2635,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &413180286
 TextMesh:
   serializedVersion: 3
@@ -2646,6 +2737,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &436991837
 TextMesh:
   serializedVersion: 3
@@ -2868,6 +2960,7 @@ GameObject:
   - component: {fileID: 489536084}
   - component: {fileID: 489536086}
   - component: {fileID: 489536085}
+  - component: {fileID: 489536087}
   m_Layer: 0
   m_Name: Cube_011
   m_TagString: Untagged
@@ -2933,6 +3026,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 489536083}
   m_Mesh: {fileID: 4300022, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &489536087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 489536083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!1 &512287225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2941,6 +3049,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 512287226}
+  - component: {fileID: 512287227}
   m_Layer: 0
   m_Name: Area0
   m_TagString: Untagged
@@ -2974,6 +3083,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &512287227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 512287225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &527584179
 GameObject:
   m_ObjectHideFlags: 0
@@ -3019,6 +3143,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &527584182
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3071,6 +3196,7 @@ GameObject:
   - component: {fileID: 534669905}
   - component: {fileID: 534669904}
   - component: {fileID: 534669903}
+  - component: {fileID: 534669906}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -3138,6 +3264,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &534669906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 534669902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!43 &553951082
 Mesh:
   m_ObjectHideFlags: 0
@@ -3338,6 +3479,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &576357769
 TextMesh:
   serializedVersion: 3
@@ -3440,6 +3582,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &578206037
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3514,6 +3657,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &581046474
 TextMesh:
   serializedVersion: 3
@@ -3749,6 +3893,7 @@ GameObject:
   - component: {fileID: 589741052}
   - component: {fileID: 589741054}
   - component: {fileID: 589741053}
+  - component: {fileID: 589741055}
   m_Layer: 0
   m_Name: Cube_005
   m_TagString: Untagged
@@ -3817,6 +3962,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 589741051}
   m_Mesh: {fileID: 4300000, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &589741055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 589741051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!43 &605679683
 Mesh:
   m_ObjectHideFlags: 0
@@ -4017,6 +4177,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &605761196
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4104,6 +4265,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &625078610
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4192,6 +4354,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &628953017
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4242,6 +4405,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 662096968}
+  - component: {fileID: 662096969}
   m_Layer: 0
   m_Name: Frame
   m_TagString: Untagged
@@ -4270,6 +4434,21 @@ Transform:
   m_Father: {fileID: 512287226}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &662096969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 662096967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &676770521
 GameObject:
   m_ObjectHideFlags: 0
@@ -4278,6 +4457,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 676770522}
+  - component: {fileID: 676770523}
   m_Layer: 0
   m_Name: Map Board
   m_TagString: Untagged
@@ -4303,6 +4483,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: -30.000002, z: 0}
+--- !u!114 &676770523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 676770521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &714571596
 GameObject:
   m_ObjectHideFlags: 0
@@ -4348,6 +4543,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &714571599
 TextMesh:
   serializedVersion: 3
@@ -4456,6 +4652,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &717983544
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4543,6 +4740,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &745369430
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4624,6 +4822,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &748441535
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4728,6 +4927,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &761548856
 GameObject:
   m_ObjectHideFlags: 0
@@ -4773,6 +4973,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &761548859
 TextMesh:
   serializedVersion: 3
@@ -4837,6 +5038,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 827398183}
+  - component: {fileID: 827398184}
   m_Layer: 0
   m_Name: Front desk
   m_TagString: Untagged
@@ -4860,6 +5062,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &827398184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 827398182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &842285835
 GameObject:
   m_ObjectHideFlags: 0
@@ -4905,6 +5122,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &842285838
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4992,6 +5210,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &867937130
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5234,6 +5453,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &883433160
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5308,6 +5528,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1005888730
 TextMesh:
   serializedVersion: 3
@@ -5698,6 +5919,7 @@ GameObject:
   - component: {fileID: 1086886571}
   - component: {fileID: 1086886573}
   - component: {fileID: 1086886572}
+  - component: {fileID: 1086886574}
   m_Layer: 0
   m_Name: Cube_000
   m_TagString: Untagged
@@ -5764,6 +5986,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1086886570}
   m_Mesh: {fileID: 4300018, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &1086886574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1086886570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!4 &1094978847
 Transform:
   m_ObjectHideFlags: 0
@@ -5789,6 +6026,80 @@ Transform:
   m_Father: {fileID: 21764282}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!21 &1103280442
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Standard
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1105714785
 GameObject:
   m_ObjectHideFlags: 0
@@ -5800,6 +6111,7 @@ GameObject:
   - component: {fileID: 1105714786}
   - component: {fileID: 1105714788}
   - component: {fileID: 1105714787}
+  - component: {fileID: 1105714789}
   m_Layer: 0
   m_Name: Cube_019
   m_TagString: Untagged
@@ -5869,6 +6181,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1105714785}
   m_Mesh: {fileID: 4300016, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &1105714789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1105714785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!1 &1107108797
 GameObject:
   m_ObjectHideFlags: 0
@@ -5908,6 +6235,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1107108800
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6001,6 +6329,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1121729349
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6089,6 +6418,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1131599651
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6176,6 +6506,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1134491723
 TextMesh:
   serializedVersion: 3
@@ -6277,6 +6608,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1150385697
 TextMesh:
   serializedVersion: 3
@@ -6534,6 +6866,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1232167291
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6621,6 +6954,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1244527680
 TextMesh:
   serializedVersion: 3
@@ -6722,6 +7056,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1250568633
 TextMesh:
   serializedVersion: 3
@@ -6830,6 +7165,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 4
+  dclNodeType: 5
 --- !u!23 &1268126197
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6910,6 +7246,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1310476030
 TextMesh:
   serializedVersion: 3
@@ -6977,6 +7314,7 @@ GameObject:
   - component: {fileID: 1319159150}
   - component: {fileID: 1319159152}
   - component: {fileID: 1319159151}
+  - component: {fileID: 1319159153}
   m_Layer: 0
   m_Name: Cube_002
   m_TagString: Untagged
@@ -7042,6 +7380,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1319159149}
   m_Mesh: {fileID: 4300020, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &1319159153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1319159149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!1 &1393512029
 GameObject:
   m_ObjectHideFlags: 0
@@ -7143,6 +7496,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &1433208031
 GameObject:
   m_ObjectHideFlags: 0
@@ -7189,6 +7543,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1433208034
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7431,6 +7786,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1575439834
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7518,6 +7874,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1587391908
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7606,6 +7963,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1589907197
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7693,6 +8051,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1608008179
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7780,6 +8139,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1627712395
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7944,6 +8304,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1664263618
 TextMesh:
   serializedVersion: 3
@@ -8045,6 +8406,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1667320503
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8133,6 +8495,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1731657568
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8220,6 +8583,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1738203987
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8273,13 +8637,14 @@ GameObject:
   - component: {fileID: 1740511630}
   - component: {fileID: 1740511632}
   - component: {fileID: 1740511631}
+  - component: {fileID: 1740511633}
   m_Layer: 0
   m_Name: Cylinder_002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1740511630
 Transform:
   m_ObjectHideFlags: 0
@@ -8339,6 +8704,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1740511629}
   m_Mesh: {fileID: 4300008, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &1740511633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1740511629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!1 &1759464159
 GameObject:
   m_ObjectHideFlags: 0
@@ -8350,6 +8730,7 @@ GameObject:
   - component: {fileID: 1759464160}
   - component: {fileID: 1759464162}
   - component: {fileID: 1759464161}
+  - component: {fileID: 1759464163}
   m_Layer: 0
   m_Name: Cube_001
   m_TagString: Untagged
@@ -8415,6 +8796,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1759464159}
   m_Mesh: {fileID: 4300030, guid: be25393f2ee116144a90a426b4716d07, type: 3}
+--- !u!114 &1759464163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1759464159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 9
 --- !u!1 &1769353333
 GameObject:
   m_ObjectHideFlags: 0
@@ -8454,6 +8850,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 4
+  dclNodeType: 5
 --- !u!23 &1769353336
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8547,6 +8944,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!102 &1814583421
 TextMesh:
   serializedVersion: 3
@@ -8642,6 +9040,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1815049479
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8735,6 +9134,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1822820991
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8829,6 +9229,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 4
+  dclNodeType: 5
 --- !u!23 &1823869462
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8909,6 +9310,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1845798835
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9022,6 +9424,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 6
+  dclNodeType: 1
 --- !u!114 &1848055993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9238,6 +9641,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1903931123
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9280,80 +9684,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1903931120}
   m_Mesh: {fileID: 1059599666}
---- !u!21 &1922574100
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Standard
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _BumpMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailAlbedoMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailMask:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DetailNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _EmissionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _BumpScale: 1
-    - _Cutoff: 0.5
-    - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.5
-    - _GlossyReflections: 1
-    - _Metallic: 0
-    - _Mode: 0
-    - _OcclusionStrength: 1
-    - _Parallax: 0.02
-    - _SmoothnessTextureChannel: 0
-    - _SpecularHighlights: 1
-    - _SrcBlend: 1
-    - _UVSec: 0
-    - _ZWrite: 1
-    m_Colors:
-    - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1957112585
 GameObject:
   m_ObjectHideFlags: 0
@@ -9400,6 +9730,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &1957112588
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9487,6 +9818,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &1978693044
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9537,6 +9869,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1990357931}
+  - component: {fileID: 1990357932}
   m_Layer: 0
   m_Name: Frame
   m_TagString: Untagged
@@ -9574,6 +9907,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1990357932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1990357930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &2037857192
 GameObject:
   m_ObjectHideFlags: 0
@@ -9620,6 +9968,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &2037857195
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9707,6 +10056,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &2046687556
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9801,6 +10151,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 4
+  dclNodeType: 5
 --- !u!23 &2067055128
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9846,6 +10197,7 @@ GameObject:
   - component: {fileID: 2074771014}
   - component: {fileID: 2074771013}
   - component: {fileID: 2074771012}
+  - component: {fileID: 2074771015}
   m_Layer: 0
   m_Name: credit
   m_TagString: Untagged
@@ -9924,6 +10276,21 @@ Transform:
   m_Father: {fileID: 21764282}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &2074771015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2074771011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5855706adc1f6b4385162845c875b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visible: 1
+  withCollision: 0
+  m_primitiveType: 6
+  dclNodeType: 1
 --- !u!1 &2092853601
 GameObject:
   m_ObjectHideFlags: 0
@@ -9969,6 +10336,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 0
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &2092853604
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10056,6 +10424,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &2096984841
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10143,6 +10512,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 0
+  dclNodeType: 2
 --- !u!23 &2125156588
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10230,6 +10600,7 @@ MonoBehaviour:
   visible: 1
   withCollision: 1
   m_primitiveType: 2
+  dclNodeType: 4
 --- !u!23 &2134225454
 MeshRenderer:
   m_ObjectHideFlags: 0

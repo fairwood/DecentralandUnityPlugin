@@ -34,7 +34,7 @@ namespace Dcl
 
         private static DclSceneMeta _sceneMeta;
 
-        public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
+        //public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
 
 
         public static void TraverseAllScene(StringBuilder exportStr, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
@@ -49,12 +49,12 @@ namespace Dcl
             _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
             primitiveMaterialsToExport = new List<Material>();
             primitiveTexturesToExport = new List<Texture>();
-            GameObjectToNodeTypeDict.Clear();
+            //GameObjectToNodeTypeDict.Clear();
             
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, exportStr, meshesToExport, 4, statistics, warningRecorder, GameObjectToNodeTypeDict);
+                RecursivelyTraverseTransform(rootGO.transform, exportStr, meshesToExport, 4, statistics, warningRecorder);
             }
 
             foreach (var material in primitiveMaterialsToExport)
@@ -62,6 +62,10 @@ namespace Dcl
                 TraverseMaterial(material, warningRecorder);
             }
 
+            if (statistics != null)
+            {
+                statistics.textureCount = primitiveTexturesToExport.Count;
+            }
         }
 
         public static void RecursivelyTraverseTransform(Transform tra,
@@ -69,11 +73,13 @@ namespace Dcl
             List<GameObject> meshesToExport,
             int indentLevel,
             SceneStatistics statistics,
-            SceneWarningRecorder warningRecorder,
-            Dictionary<GameObject, EDclNodeType> gameObjectToNodeTypeDict)
+            SceneWarningRecorder warningRecorder)
         {
             if (!tra.gameObject.activeInHierarchy) return;
             if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
+
+            var dclObject = tra.GetComponent<DclObject>() ?? tra.gameObject.AddComponent<DclObject>();
+            if (dclObject.dclNodeType == EDclNodeType._none) dclObject.dclNodeType = EDclNodeType.entity;
 
             if (statistics != null)
             {
@@ -102,22 +108,19 @@ namespace Dcl
                 exportStr.AppendFormat(SetTransform, entityName, position.x, position.y,                    position.z);
                 exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z,                    rotation.w);
                 exportStr.AppendFormat(SetScale, entityName, scale.x, scale.y, scale.z);
+                
+            }
 
-                TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
+            TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
 
-                TraverseText(tra, entityName, exportStr);
+            TraverseText(tra, entityName, exportStr);
 
+            if (exportStr != null)
+            {
                 exportStr.Append('\n');
             }
 
-
             
-
-            string nodeName = null;
-            var nodeType = EDclNodeType._none;
-
-            var dclObject = tra.GetComponent<DclObject>();
-
             //        if (tra.GetComponent<DclCustomNode>())
             //        {
             //            var customNode = tra.GetComponent<DclCustomNode>();
@@ -178,19 +181,30 @@ namespace Dcl
             {
                 //TODO： if (dclObject.visible != true) extraProperties.Append(" visible={false}");
             }
+
+            //GameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
             
-            if (gameObjectToNodeTypeDict != null) gameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
-            
-            if (nodeType != EDclNodeType.gltf) //gltf node will force to pack all its children, so should not traverse into it again.
+            if (dclObject.dclNodeType != EDclNodeType.gltf) //gltf node will force to pack all its children, so should not traverse into it again.
             {
                 foreach (Transform child in tra)
                 {
-                    RecursivelyTraverseTransform(child, exportStr, meshesToExport, indentLevel + 1, statistics,
-                        warningRecorder, gameObjectToNodeTypeDict);
+                    RecursivelyTraverseTransform(child, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
+                }
+            }
+            else
+            {
+                foreach (Transform child in tra)
+                {
+                    RecursivelyTraverseUnderGLTF(child);
                 }
             }
         }
 
+        public static void RecursivelyTraverseUnderGLTF(Transform gltfNode)
+        {
+            var dclObject = gltfNode.GetComponent<DclObject>() ?? gltfNode.gameObject.AddComponent<DclObject>();
+            dclObject.dclNodeType = EDclNodeType.ChildOfGLTF;
+        }
 
         #region Utils
 
@@ -206,62 +220,13 @@ namespace Dcl
             return entityName;
         }
 
-        public static string CalcName(Object _object)
-        {
-            string name = "";
-            PrefabType t = PrefabUtility.GetPrefabType(_object);
-            switch (t)
-            {
-                case PrefabType.PrefabInstance:
-                case PrefabType.ModelPrefabInstance:
-                    {
-                        PropertyModification[] pm = PrefabUtility.GetPropertyModifications(_object);
-
-                        bool change = false;
-                        foreach (var v in pm)
-                        {
-                            if (!(v.propertyPath == "m_LocalPosition.x" ||
-                                v.propertyPath == "m_LocalPosition.y" ||
-                                v.propertyPath == "m_LocalPosition.z" ||
-                                v.propertyPath == "m_LocalRotation.x" ||
-                                v.propertyPath == "m_LocalRotation.y" ||
-                                v.propertyPath == "m_LocalRotation.z" ||
-                                v.propertyPath == "m_LocalRotation.w" ||
-                                v.propertyPath == "m_RootOrder" ||
-                                v.propertyPath == "m_Name"))
-                            {
-
-                                change = true;
-                                break;
-                                //Debug.Log (v.propertyPath);
-                            }
-                        }
-
-                        if (change == true)
-                        {
-                            name = _object.name + Mathf.Abs(_object.GetInstanceID());
-                        }
-                        else
-                        {
-                            Object o = PrefabUtility.GetCorrespondingObjectFromSource(_object);
-                            name = o.name + Mathf.Abs(o.GetInstanceID());
-                        }
-                    }
-                    break;
-                default:
-                    name = _object.name + Mathf.Abs(_object.GetInstanceID());
-                    break;
-            }
-
-            return name;
-        }
 
         public static string GetTextureRelativePath(Texture texture)
         {
             var relPath = AssetDatabase.GetAssetPath(texture);
             if (string.IsNullOrEmpty(relPath))
             {
-                //TODO: this is a built-in asset
+                //this is a built-in asset
                 relPath = texture.name + ".png";
             }
             else
@@ -269,10 +234,8 @@ namespace Dcl
 
             }
 
-            string str = "./unity_assets/" + relPath;
+            string str = "unity_assets/" + relPath;
             return str;
-            //replace space by zcy
-            //return str.Replace (" ", string.Empty);
         }
 
         private const string NewEntity = "const {0} = new Entity()\n";
@@ -308,17 +271,19 @@ namespace Dcl
                 if (material != PrimitiveHelper.GetDefaultMaterial())
                 {
                     string materialName = "material" + Mathf.Abs(material.GetInstanceID());
-                    Debug.Log(material.name);
                     if (!primitiveMaterialsToExport.Contains(material))
                     {
                         primitiveMaterialsToExport.Add(material);
 
-                        exportStr.AppendFormat(NewMaterial, materialName);
-                        exportStr.AppendFormat(SetMaterialAlbedoColor, materialName, ToJsColorCtor(material.color));
-                        exportStr.AppendFormat(SetMaterialMetallic, materialName, material.GetFloat("_Metallic"));
-                        exportStr.AppendFormat(SetMaterialRoughness, materialName, 1 - material.GetFloat("_Glossiness"));
+                        if (exportStr != null)
+                        {
+                            exportStr.AppendFormat(NewMaterial, materialName);
+                            exportStr.AppendFormat(SetMaterialAlbedoColor, materialName, ToJsColorCtor(material.color));
+                            exportStr.AppendFormat(SetMaterialMetallic, materialName, material.GetFloat("_Metallic"));
+                            exportStr.AppendFormat(SetMaterialRoughness, materialName, 1 - material.GetFloat("_Glossiness"));
+                        }
                         var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
-                        if (albedoTex)
+                        if (exportStr != null && albedoTex)
                         {
                             exportStr.AppendFormat(SetMaterialAlbedoTexture, materialName, GetTextureRelativePath(albedoTex));
                         }
@@ -326,14 +291,14 @@ namespace Dcl
                         bool b = material.IsKeywordEnabled("_ALPHATEST_ON") ||
                                  material.IsKeywordEnabled("_ALPHABLEND_ON") ||
                                  material.IsKeywordEnabled("_ALPHAPREMULTIPLY_ON");
-                        if (b)
+                        if (exportStr != null && b)
                         {
                             exportStr.AppendFormat(SetMaterialAlbedoTextureHasAlpha, materialName);
                             exportStr.AppendFormat(SetMaterialAlpha, materialName, material.color.a);
                         }
 
                         var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
-                        if (bumpTexture)
+                        if (exportStr != null && bumpTexture)
                         {
                             exportStr.AppendFormat(SetMaterialBumptexture, materialName, GetTextureRelativePath(bumpTexture));
                         }
@@ -341,7 +306,7 @@ namespace Dcl
                         var refractionTexture = material.HasProperty("_MetallicGlossMap")
                             ? material.GetTexture("_MetallicGlossMap")
                             : null;
-                        if (refractionTexture)
+                        if (exportStr != null && refractionTexture)
                         {
                             exportStr.AppendFormat(SetMaterialRefractionTexture, materialName, GetTextureRelativePath(refractionTexture));
                         }
@@ -349,13 +314,15 @@ namespace Dcl
                         Texture emissiveTexture = null;
                         if (material.IsKeywordEnabled("_EMISSION"))
                         {
-                            exportStr.AppendFormat(SetMaterialEmissiveColor, materialName, ToJsColorCtor(material.GetColor("_EmissionColor")));
-                            //					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
-
+                            if (exportStr != null)
+                            {
+                                exportStr.AppendFormat(SetMaterialEmissiveColor, materialName, ToJsColorCtor(material.GetColor("_EmissionColor")));
+                                //					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
+                            }
                             emissiveTexture = material.HasProperty("_EmissionMap")
                                 ? material.GetTexture("_EmissionMap")
                                 : null;
-                            if (emissiveTexture)
+                            if (exportStr != null && emissiveTexture)
                             {
                                 exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName, GetTextureRelativePath(emissiveTexture));
                             }
@@ -363,26 +330,29 @@ namespace Dcl
 
                         if (albedoTex)
                         {
-                            SceneTraverser.primitiveTexturesToExport.Add(albedoTex);
+                            primitiveTexturesToExport.Add(albedoTex);
                         }
 
                         if (refractionTexture)
                         {
-                            SceneTraverser.primitiveTexturesToExport.Add(refractionTexture);
+                            primitiveTexturesToExport.Add(refractionTexture);
                         }
 
                         if (bumpTexture)
                         {
-                            SceneTraverser.primitiveTexturesToExport.Add(bumpTexture);
+                            primitiveTexturesToExport.Add(bumpTexture);
                         }
 
                         if (emissiveTexture)
                         {
-                            SceneTraverser.primitiveTexturesToExport.Add(emissiveTexture);
+                            primitiveTexturesToExport.Add(emissiveTexture);
                         }
                     }
 
-                    exportStr.AppendFormat(SetMaterial, entityName, materialName);
+                    if (exportStr != null)
+                    {
+                        exportStr.AppendFormat(SetMaterial, entityName, materialName);
+                    }
 
                     if (statistics != null) statistics.materialCount += 1;
                 }
@@ -414,18 +384,23 @@ namespace Dcl
                 switch (dclObject.dclPrimitiveType)
                 {
                     case DclPrimitiveType.box:
+                        dclObject.dclNodeType = EDclNodeType.box;
                         shapeName = "BoxShape";
                         break;
                     case DclPrimitiveType.sphere:
+                        dclObject.dclNodeType = EDclNodeType.sphere;
                         shapeName = "SphereShape";
                         break;
                     case DclPrimitiveType.plane:
+                        dclObject.dclNodeType = EDclNodeType.plane;
                         shapeName = "PlaneShape";
                         break;
                     case DclPrimitiveType.cylinder:
+                        dclObject.dclNodeType = EDclNodeType.cylinder;
                         shapeName = "CylinderShape";
                         break;
                     case DclPrimitiveType.cone:
+                        dclObject.dclNodeType = EDclNodeType.cone;
                         shapeName = "ConeShape";
                         break;
                 }
@@ -458,15 +433,22 @@ namespace Dcl
             if (shapeName != null)
             {
                 //Primitive
-                exportStr.AppendFormat(SetShape, entityName, shapeName);
+                if (exportStr != null)
+                {
+                    exportStr.AppendFormat(SetShape, entityName, shapeName);
+                }
                 TraverseMaterial(tra, entityName, exportStr, statistics);
             }
             else
             {
                 //gltf
-                string gltfPath = string.Format("./unity_assets/{0}.gltf", CalcName(tra.gameObject));
-                exportStr.AppendFormat(SetGLTFshape, entityName, gltfPath);
+                dclObject.dclNodeType = EDclNodeType.gltf;
 
+                if (exportStr != null)
+                {
+                    string gltfPath = string.Format("./unity_assets/{0}.gltf", GetIdentityName(tra.gameObject));
+                    exportStr.AppendFormat(SetGLTFshape, entityName, gltfPath);
+                }
 
                 //export as a glTF model
                 if (meshesToExport != null)
@@ -475,14 +457,17 @@ namespace Dcl
                 }
             }
 
-            if (dclObject && dclObject.withCollision)
+            if (exportStr != null)
             {
-                exportStr.AppendFormat("{0}.getComponent({1}).withCollisions = true\n", entityName, shapeName);
-            }
+                if (dclObject && dclObject.withCollision)
+                {
+                    exportStr.AppendFormat("{0}.getComponent({1}).withCollisions = true\n", entityName, shapeName);
+                }
 
-            if (dclObject && !dclObject.visible)
-            {
-                exportStr.AppendFormat("{0}.getComponent(Shape).visible = false\n", entityName);
+                if (dclObject && !dclObject.visible)
+                {
+                    exportStr.AppendFormat("{0}.getComponent(Shape).visible = false\n", entityName);
+                }
             }
 
             if (statistics != null)
@@ -499,65 +484,67 @@ namespace Dcl
                 return;
             }
 
-            exportStr.AppendFormat("{0}.addComponent(new TextShape())\n", entityName);
-
-            var tm = tra.GetComponent<TextMesh>();
-            var str = System.Text.RegularExpressions.Regex.Escape(tm.text);
-            exportStr.AppendFormat("{0}.getComponent(TextShape).value = \"{1}\"\n", entityName, str);
-            //scale *= tm.fontSize * 0.5f;
-            //exportStr.AppendFormat(" fontS=\"{0}\"", 100);
-            var color = ToJsColorCtor(tm.color);
-            exportStr.AppendFormat("{0}.getComponent(TextShape).color = {1}\n", entityName, color);
-
-            var rdrr = tra.GetComponent<MeshRenderer>();
-            if (rdrr)
+            if (exportStr != null)
             {
+                exportStr.AppendFormat("{0}.addComponent(new TextShape())\n", entityName);
 
-                var width = Math.Min(32, rdrr.bounds.size.x * 2 / tra.lossyScale.x); //rdrr.bounds.extents.x*2;
-                var height = Math.Min(32, rdrr.bounds.size.y * 2 / tra.lossyScale.y); //rdrr.bounds.extents.y * 2;
+                var tm = tra.GetComponent<TextMesh>();
+                var str = System.Text.RegularExpressions.Regex.Escape(tm.text);
+                exportStr.AppendFormat("{0}.getComponent(TextShape).value = \"{1}\"\n", entityName, str);
+                //scale *= tm.fontSize * 0.5f;
+                //exportStr.AppendFormat(" fontS=\"{0}\"", 100);
+                var color = ToJsColorCtor(tm.color);
+                exportStr.AppendFormat("{0}.getComponent(TextShape).color = {1}\n", entityName, color);
 
-                exportStr.AppendFormat("{0}.getComponent(TextShape).width = {1}\n", entityName, width);
-                exportStr.AppendFormat("{0}.getComponent(TextShape).height = {1}\n", entityName, height);
+                var rdrr = tra.GetComponent<MeshRenderer>();
+                if (rdrr)
+                {
+
+                    var width = Math.Min(32, rdrr.bounds.size.x * 2 / tra.lossyScale.x); //rdrr.bounds.extents.x*2;
+                    var height = Math.Min(32, rdrr.bounds.size.y * 2 / tra.lossyScale.y); //rdrr.bounds.extents.y * 2;
+
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).width = {1}\n", entityName, width);
+                    exportStr.AppendFormat("{0}.getComponent(TextShape).height = {1}\n", entityName, height);
+                }
+
+                var fontSize = tm.fontSize == 0 ? 13f * 38f : tm.fontSize * 38f;
+                exportStr.AppendFormat("{0}.getComponent(TextShape).fontSize = {1}\n", entityName, fontSize);
+
+                switch (tm.anchor)
+                {
+                    case TextAnchor.UpperLeft:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                        break;
+                    case TextAnchor.UpperCenter:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                        break;
+                    case TextAnchor.UpperRight:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                        break;
+                    case TextAnchor.MiddleLeft:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                        break;
+                    case TextAnchor.MiddleCenter:
+
+                        break;
+                    case TextAnchor.MiddleRight:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                        break;
+                    case TextAnchor.LowerLeft:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                        break;
+                    case TextAnchor.LowerCenter:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                        break;
+                    case TextAnchor.LowerRight:
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
+                        break;
+                }
             }
-
-            var fontSize = tm.fontSize == 0 ? 13f * 38f : tm.fontSize * 38f;
-            exportStr.AppendFormat("{0}.getComponent(TextShape).fontSize = {1}\n", entityName, fontSize);
-
-            switch (tm.anchor)
-            {
-                case TextAnchor.UpperLeft:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
-                    break;
-                case TextAnchor.UpperCenter:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
-                    break;
-                case TextAnchor.UpperRight:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
-                    break;
-                case TextAnchor.MiddleLeft:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
-                    break;
-                case TextAnchor.MiddleCenter:
-
-                    break;
-                case TextAnchor.MiddleRight:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
-                    break;
-                case TextAnchor.LowerLeft:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
-                    break;
-                case TextAnchor.LowerCenter:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
-                    break;
-                case TextAnchor.LowerRight:
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
-                    exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
-                    break;
-            }
-
         }
 
         public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
@@ -668,7 +655,60 @@ namespace Dcl
 
             return false;
         }
+
+        /*
+         * 
+        public static string CalcName(Object _object)
+        {
+            string name = "";
+            PrefabType t = PrefabUtility.GetPrefabType(_object);
+            switch (t)
+            {
+                case PrefabType.PrefabInstance:
+                case PrefabType.ModelPrefabInstance:
+                    {
+                        PropertyModification[] pm = PrefabUtility.GetPropertyModifications(_object);
+
+                        bool change = false;
+                        foreach (var v in pm)
+                        {
+                            if (!(v.propertyPath == "m_LocalPosition.x" ||
+                                v.propertyPath == "m_LocalPosition.y" ||
+                                v.propertyPath == "m_LocalPosition.z" ||
+                                v.propertyPath == "m_LocalRotation.x" ||
+                                v.propertyPath == "m_LocalRotation.y" ||
+                                v.propertyPath == "m_LocalRotation.z" ||
+                                v.propertyPath == "m_LocalRotation.w" ||
+                                v.propertyPath == "m_RootOrder" ||
+                                v.propertyPath == "m_Name"))
+                            {
+
+                                change = true;
+                                break;
+                                //Debug.Log (v.propertyPath);
+                            }
+                        }
+
+                        if (change == true)
+                        {
+                            name = _object.name + Mathf.Abs(_object.GetInstanceID());
+                        }
+                        else
+                        {
+                            Object o = PrefabUtility.GetCorrespondingObjectFromSource(_object);
+                            name = o.name + Mathf.Abs(o.GetInstanceID());
+                        }
+                    }
+                    break;
+                default:
+                    name = _object.name + Mathf.Abs(_object.GetInstanceID());
+                    break;
+            }
+
+            return name;
+        }*/
         
         #endregion
     }
 }
+ 
