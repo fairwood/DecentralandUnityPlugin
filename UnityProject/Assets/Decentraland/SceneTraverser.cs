@@ -57,11 +57,6 @@ namespace Dcl
                 RecursivelyTraverseTransform(rootGO.transform, exportStr, meshesToExport, 4, statistics, warningRecorder);
             }
 
-            foreach (var material in primitiveMaterialsToExport)
-            {
-                TraverseMaterial(material, warningRecorder);
-            }
-
             if (statistics != null)
             {
                 statistics.textureCount = primitiveTexturesToExport.Count;
@@ -85,7 +80,7 @@ namespace Dcl
             {
                 statistics.entityCount += 1;
             }
-            
+
             var position = tra.localPosition;
             var scale = tra.localScale;
             var rotation = tra.localRotation;
@@ -105,22 +100,22 @@ namespace Dcl
                 //Entity
                 exportStr.AppendFormat(AddEntity, entityName);
                 //Transform
-                exportStr.AppendFormat(SetTransform, entityName, position.x, position.y,                    position.z);
-                exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z,                    rotation.w);
+                exportStr.AppendFormat(SetTransform, entityName, position.x, position.y, position.z);
+                exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
                 exportStr.AppendFormat(SetScale, entityName, scale.x, scale.y, scale.z);
-                
+
             }
 
             TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
 
-            TraverseText(tra, entityName, exportStr);
+            TraverseText(tra, entityName, exportStr, statistics);
 
             if (exportStr != null)
             {
                 exportStr.Append('\n');
             }
 
-            
+
             //        if (tra.GetComponent<DclCustomNode>())
             //        {
             //            var customNode = tra.GetComponent<DclCustomNode>();
@@ -136,7 +131,7 @@ namespace Dcl
             //        }
             //        else
             //        {
-            
+
 
             if (tra.GetComponent<MeshRenderer>())
             {
@@ -176,14 +171,14 @@ namespace Dcl
                     }
                 }
             }
-            
+
             if (dclObject)
             {
                 //TODO： if (dclObject.visible != true) extraProperties.Append(" visible={false}");
             }
 
             //GameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
-            
+
             if (dclObject.dclNodeType != EDclNodeType.gltf) //gltf node will force to pack all its children, so should not traverse into it again.
             {
                 foreach (Transform child in tra)
@@ -406,28 +401,28 @@ namespace Dcl
                 }
                 
                 //Statistics
-                if (statistics != null)
-                {
-                    switch (dclObject.dclPrimitiveType)
-                    {
-                        case DclPrimitiveType.box:
-                            statistics.triangleCount += 12;
-                            break;
-                        case DclPrimitiveType.sphere:
-                            statistics.triangleCount += 4624;
-                            break;
-                        case DclPrimitiveType.plane:
-                            statistics.triangleCount += 4;
-                            break;
-                        case DclPrimitiveType.cylinder:
-                            statistics.triangleCount += 144;
-                            break;
-                        case DclPrimitiveType.cone:
-                            statistics.triangleCount += 108;
-                            break;
-                    }
-                    statistics.bodyCount += 1;
-                }
+                //if (statistics != null)
+                //{
+                //    switch (dclObject.dclPrimitiveType)
+                //    {
+                //        case DclPrimitiveType.box:
+                //            statistics.triangleCount += 12;
+                //            break;
+                //        case DclPrimitiveType.sphere:
+                //            statistics.triangleCount += 4624;
+                //            break;
+                //        case DclPrimitiveType.plane:
+                //            statistics.triangleCount += 4;
+                //            break;
+                //        case DclPrimitiveType.cylinder:
+                //            statistics.triangleCount += 144;
+                //            break;
+                //        case DclPrimitiveType.cone:
+                //            statistics.triangleCount += 108;
+                //            break;
+                //    }
+                //    statistics.bodyCount += 1;
+                //}
             }
 
             if (shapeName != null)
@@ -477,7 +472,7 @@ namespace Dcl
             }
         }
 
-        public static void TraverseText(Transform tra, string entityName, StringBuilder exportStr)
+        public static void TraverseText(Transform tra, string entityName, StringBuilder exportStr, SceneStatistics statistics)
         {
             if (!(tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()))
             {
@@ -545,6 +540,12 @@ namespace Dcl
                         break;
                 }
             }
+
+            if (statistics != null)
+            {
+                statistics.triangleCount += 4;
+                statistics.bodyCount += 2;
+            }
         }
 
         public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
@@ -593,41 +594,6 @@ namespace Dcl
         public static string ParcelToString(ParcelCoordinates parcel)
         {
             return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
-        }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="material"></param>
-        public static void TraverseMaterial(Material material, SceneWarningRecorder warningRecorder)
-        {
-            //Check is it a Unity Standard Material
-            if (material.shader.name != "Standard")
-            {
-                warningRecorder.UnsupportedShaderWarnings.Add(new SceneWarningRecorder.UnsupportedShader(material));
-            }
-
-            var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
-            var refractionTexture = material.HasProperty("_MetallicGlossMap") ? material.GetTexture("_MetallicGlossMap") : null;
-            var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
-            var emisiveTexture = material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null;
-
-            if (albedoTex)
-            {
-                primitiveTexturesToExport.Add(albedoTex);
-            }
-            if (refractionTexture)
-            {
-                primitiveTexturesToExport.Add(refractionTexture);
-            }
-            if (bumpTexture)
-            {
-                primitiveTexturesToExport.Add(bumpTexture);
-            }
-            if (emisiveTexture)
-            {
-                primitiveTexturesToExport.Add(emisiveTexture);
-            }
         }
 
         /// <summary>
