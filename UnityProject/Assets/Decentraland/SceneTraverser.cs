@@ -54,7 +54,7 @@ namespace Dcl
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, exportStr, meshesToExport, 4, statistics, warningRecorder);
+                RecursivelyTraverseTransform(rootGO.transform, false, exportStr, meshesToExport, 4, statistics, warningRecorder);
             }
 
             if (statistics != null)
@@ -63,7 +63,7 @@ namespace Dcl
             }
         }
 
-        public static void RecursivelyTraverseTransform(Transform tra,
+        public static void RecursivelyTraverseTransform(Transform tra, bool isUnderGLTF,
             StringBuilder exportStr,
             List<GameObject> meshesToExport,
             int indentLevel,
@@ -74,47 +74,62 @@ namespace Dcl
             if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
 
             var dclObject = tra.GetComponent<DclObject>() ?? tra.gameObject.AddComponent<DclObject>();
-            if (dclObject.dclNodeType == EDclNodeType._none) dclObject.dclNodeType = EDclNodeType.entity;
-
-            if (statistics != null)
+            
+            if (isUnderGLTF)
             {
-                statistics.entityCount += 1;
+                dclObject.dclNodeType = EDclNodeType.ChildOfGLTF;
             }
-
-            var position = tra.localPosition;
-            var scale = tra.localScale;
-            var rotation = tra.localRotation;
+            else
+            {
+                dclObject.dclNodeType = EDclNodeType.entity;
+            }
 
             var entityName = GetIdentityName(tra.gameObject);
 
-            if (exportStr != null)
+            if (!isUnderGLTF)
             {
-                exportStr.AppendFormat(NewEntityWithName, entityName, tra.name);
-
-                //set parent
-                if (tra.parent)
+                if (statistics != null)
                 {
-                    exportStr.AppendFormat(SetParent, entityName, GetIdentityName(tra.parent.gameObject));
+                    statistics.entityCount += 1;
                 }
 
-                //Entity
-                exportStr.AppendFormat(AddEntity, entityName);
-                //Transform
-                exportStr.AppendFormat(SetTransform, entityName, position.x, position.y, position.z);
-                exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
-                exportStr.AppendFormat(SetScale, entityName, scale.x, scale.y, scale.z);
+                var position = tra.localPosition;
+                var scale = tra.localScale;
+                var rotation = tra.localRotation;
 
+
+                if (exportStr != null)
+                {
+                    exportStr.AppendFormat(NewEntityWithName, entityName, tra.name);
+
+                    //set parent
+                    if (tra.parent)
+                    {
+                        exportStr.AppendFormat(SetParent, entityName, GetIdentityName(tra.parent.gameObject));
+                    }
+
+                    //Entity
+                    exportStr.AppendFormat(AddEntity, entityName);
+                    //Transform
+                    exportStr.AppendFormat(SetTransform, entityName, position.x, position.y, position.z);
+                    exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
+                    exportStr.AppendFormat(SetScale, entityName, scale.x, scale.y, scale.z);
+
+                }
+
+                TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
+
+                TraverseText(tra, entityName, exportStr, statistics);
+
+                if (exportStr != null)
+                {
+                    exportStr.Append('\n');
+                }
             }
-
-            TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
-
-            TraverseText(tra, entityName, exportStr, statistics);
-
-            if (exportStr != null)
+            else
             {
-                exportStr.Append('\n');
+                TraverseMaterial(tra, null, null, statistics);
             }
-
 
             //        if (tra.GetComponent<DclCustomNode>())
             //        {
@@ -135,11 +150,18 @@ namespace Dcl
 
             if (tra.GetComponent<MeshRenderer>())
             {
+                var meshFilter = tra.GetComponent<MeshFilter>();
                 var meshRenderer = tra.GetComponent<MeshRenderer>();
-
+                
                 //Statistics
                 if (statistics != null)
                 {
+                    if (meshFilter && meshFilter.sharedMesh)
+                    {
+                        statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+                        statistics.bodyCount += 1;
+                    }
+
                     var curHeight = meshRenderer.bounds.max.y;
                     if (curHeight > statistics.maxHeight) statistics.maxHeight = curHeight;
                 }
@@ -183,22 +205,16 @@ namespace Dcl
             {
                 foreach (Transform child in tra)
                 {
-                    RecursivelyTraverseTransform(child, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
+                    RecursivelyTraverseTransform(child, false, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
                 }
             }
             else
             {
                 foreach (Transform child in tra)
                 {
-                    RecursivelyTraverseUnderGLTF(child);
+                    RecursivelyTraverseTransform(child, true, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
                 }
             }
-        }
-
-        public static void RecursivelyTraverseUnderGLTF(Transform gltfNode)
-        {
-            var dclObject = gltfNode.GetComponent<DclObject>() ?? gltfNode.gameObject.AddComponent<DclObject>();
-            dclObject.dclNodeType = EDclNodeType.ChildOfGLTF;
         }
 
         #region Utils
@@ -399,30 +415,6 @@ namespace Dcl
                         shapeName = "ConeShape";
                         break;
                 }
-                
-                //Statistics
-                //if (statistics != null)
-                //{
-                //    switch (dclObject.dclPrimitiveType)
-                //    {
-                //        case DclPrimitiveType.box:
-                //            statistics.triangleCount += 12;
-                //            break;
-                //        case DclPrimitiveType.sphere:
-                //            statistics.triangleCount += 4624;
-                //            break;
-                //        case DclPrimitiveType.plane:
-                //            statistics.triangleCount += 4;
-                //            break;
-                //        case DclPrimitiveType.cylinder:
-                //            statistics.triangleCount += 144;
-                //            break;
-                //        case DclPrimitiveType.cone:
-                //            statistics.triangleCount += 108;
-                //            break;
-                //    }
-                //    statistics.bodyCount += 1;
-                //}
             }
 
             if (shapeName != null)
@@ -436,7 +428,7 @@ namespace Dcl
             }
             else
             {
-                //gltf
+                //gltf - root
                 dclObject.dclNodeType = EDclNodeType.gltf;
 
                 if (exportStr != null)
@@ -463,12 +455,6 @@ namespace Dcl
                 {
                     exportStr.AppendFormat("{0}.getComponent(Shape).visible = false\n", entityName);
                 }
-            }
-
-            if (statistics != null)
-            {
-                statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
-                statistics.bodyCount += 1;
             }
         }
 
