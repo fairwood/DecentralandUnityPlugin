@@ -669,7 +669,7 @@ namespace Dcl
                 UnityEditor.FileUtil.DeleteFileOrDirectory(unityAssetsFolderPath);
             }
 
-            Directory.CreateDirectory(unityAssetsFolderPath);
+            Directory.CreateDirectory(unityAssetsFolderPath);//TODO:用异步等待删除完毕
 
 
             if (!Directory.Exists(Path.Combine(exportPath, "src"))){
@@ -688,10 +688,7 @@ namespace Dcl
             foreach (var go in meshesToExport)
             {
 				string tempPath = Path.Combine (unityAssetsFolderPath, SceneTraverser.GetIdentityName(go) + ".gltf");
-				if (!File.Exists (tempPath)) {
-					sceneMeta.sceneToGlTFWiz.ExportGameObjectAndChildren(go, tempPath,
-						null, false, true, false, false);
-				}
+				sceneMeta.sceneToGlTFWiz.ExportGameObjectAndChildren(go, tempPath, null, false, true, false, false);
             }
 
             //textures
@@ -699,8 +696,8 @@ namespace Dcl
             foreach (var texture in primitiveTexturesToExport)
             {
                 var relPath = AssetDatabase.GetAssetPath(texture);
-				//if (string.IsNullOrEmpty(relPath) || relPath.Contains("builtin"))
-				if (string.IsNullOrEmpty(relPath))
+                Debug.Log(relPath);
+				if (string.IsNullOrEmpty(relPath) || relPath.StartsWith("Library/"))
                 {
                     //built-in asset
                     var bytes = ((Texture2D) texture).EncodeToPNG();
@@ -718,6 +715,7 @@ namespace Dcl
                     if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
                     File.Copy(path, toPath, true);
                 }
+                Debug.Log("Texture out "+ relPath);
             }
 
             //scene.json

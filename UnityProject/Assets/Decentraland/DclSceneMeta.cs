@@ -127,5 +127,6 @@ namespace Dcl
         public float materialCount;
         public float textureCount;
         public float maxHeight;
+        public readonly List<Material> gltfMaterials = new List<Material>(); //to record the materials inside a GLTF model. clear this when traverse into a new GLTF object.
     }
 }

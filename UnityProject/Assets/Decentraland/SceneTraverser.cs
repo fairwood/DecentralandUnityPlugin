@@ -101,15 +101,18 @@ namespace Dcl
                 if (exportStr != null)
                 {
                     exportStr.AppendFormat(NewEntityWithName, entityName, tra.name);
-
-                    //set parent
+                    
                     if (tra.parent)
                     {
+                        //Set Parent
                         exportStr.AppendFormat(SetParent, entityName, GetIdentityName(tra.parent.gameObject));
                     }
+                    else
+                    {
+                        //Entity
+                        exportStr.AppendFormat(AddEntity, entityName);
+                    }
 
-                    //Entity
-                    exportStr.AppendFormat(AddEntity, entityName);
                     //Transform
                     exportStr.AppendFormat(SetTransform, entityName, position.x, position.y, position.z);
                     exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
@@ -119,16 +122,28 @@ namespace Dcl
 
                 TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
 
+                if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf) //reverse 180° along local y-axis because of DCL's special purpose.
+                {
+                    rotation = Quaternion.AngleAxis(180, tra.up) * rotation;
+                    exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
+                }
+
                 TraverseText(tra, entityName, exportStr, statistics);
 
                 if (exportStr != null)
                 {
                     exportStr.Append('\n');
                 }
+
+            }
+
+            if (isUnderGLTF || dclObject.dclNodeType == EDclNodeType.gltf)
+            {
+                TraverseMaterial(tra, true, null, null, statistics);
             }
             else
             {
-                TraverseMaterial(tra, null, null, statistics);
+                TraverseMaterial(tra, false, entityName, exportStr, statistics);
             }
 
             //        if (tra.GetComponent<DclCustomNode>())
@@ -181,8 +196,7 @@ namespace Dcl
                             {
                                 if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
                                 {
-                                    warningRecorder.OutOfLandWarnings.Add(
-                                        new SceneWarningRecorder.OutOfLand(meshRenderer));
+                                    warningRecorder.OutOfLandWarnings.Add(new SceneWarningRecorder.OutOfLand(meshRenderer));
                                     isOutOfLand = true;
                                     break;
                                 }
@@ -210,6 +224,7 @@ namespace Dcl
             }
             else
             {
+                if (statistics != null) statistics.gltfMaterials.Clear();
                 foreach (Transform child in tra)
                 {
                     RecursivelyTraverseTransform(child, true, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
@@ -272,13 +287,14 @@ namespace Dcl
         private const string SetMaterialEmissiveIntensity = "{0}.emissiveIntensity = {1}\n";
         private const string SetMaterialEmissiveTexture = "{0}.emissiveTexture = new Texture(\"{1}\")\n";
 
-        public static void TraverseMaterial(Transform tra, string entityName, StringBuilder exportStr, SceneStatistics statistics)
+        public static void TraverseMaterial(Transform tra, bool isOnOrUnderGLTF, string entityName, StringBuilder exportStr, SceneStatistics statistics)
         {
 
             var rdrr = tra.GetComponent<MeshRenderer>();
-            if (rdrr && rdrr.sharedMaterial)
+            if (rdrr && tra.GetComponent<MeshFilter>() && rdrr.sharedMaterial)
             {
                 var material = rdrr.sharedMaterial;
+
                 if (material != PrimitiveHelper.GetDefaultMaterial())
                 {
                     string materialName = "material" + Mathf.Abs(material.GetInstanceID());
@@ -289,14 +305,19 @@ namespace Dcl
                         if (exportStr != null)
                         {
                             exportStr.AppendFormat(NewMaterial, materialName);
-                            exportStr.AppendFormat(SetMaterialAlbedoColor, materialName, ToJsColorCtor(material.color));
-                            exportStr.AppendFormat(SetMaterialMetallic, materialName, material.GetFloat("_Metallic"));
-                            exportStr.AppendFormat(SetMaterialRoughness, materialName, 1 - material.GetFloat("_Glossiness"));
+                            exportStr.AppendFormat(SetMaterialAlbedoColor, materialName,
+                                ToJsColorCtor(material.color));
+                            exportStr.AppendFormat(SetMaterialMetallic, materialName,
+                                material.GetFloat("_Metallic"));
+                            exportStr.AppendFormat(SetMaterialRoughness, materialName,
+                                1 - material.GetFloat("_Glossiness"));
                         }
+
                         var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
                         if (exportStr != null && albedoTex)
                         {
-                            exportStr.AppendFormat(SetMaterialAlbedoTexture, materialName, GetTextureRelativePath(albedoTex));
+                            exportStr.AppendFormat(SetMaterialAlbedoTexture, materialName,
+                                GetTextureRelativePath(albedoTex));
                         }
 
                         bool b = material.IsKeywordEnabled("_ALPHATEST_ON") ||
@@ -311,7 +332,8 @@ namespace Dcl
                         var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
                         if (exportStr != null && bumpTexture)
                         {
-                            exportStr.AppendFormat(SetMaterialBumptexture, materialName, GetTextureRelativePath(bumpTexture));
+                            exportStr.AppendFormat(SetMaterialBumptexture, materialName,
+                                GetTextureRelativePath(bumpTexture));
                         }
 
                         var refractionTexture = material.HasProperty("_MetallicGlossMap")
@@ -319,7 +341,8 @@ namespace Dcl
                             : null;
                         if (exportStr != null && refractionTexture)
                         {
-                            exportStr.AppendFormat(SetMaterialRefractionTexture, materialName, GetTextureRelativePath(refractionTexture));
+                            exportStr.AppendFormat(SetMaterialRefractionTexture, materialName,
+                                GetTextureRelativePath(refractionTexture));
                         }
 
                         Texture emissiveTexture = null;
@@ -327,15 +350,18 @@ namespace Dcl
                         {
                             if (exportStr != null)
                             {
-                                exportStr.AppendFormat(SetMaterialEmissiveColor, materialName, ToJsColorCtor(material.GetColor("_EmissionColor")));
+                                exportStr.AppendFormat(SetMaterialEmissiveColor, materialName,
+                                    ToJsColorCtor(material.GetColor("_EmissionColor")));
                                 //					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
                             }
+
                             emissiveTexture = material.HasProperty("_EmissionMap")
                                 ? material.GetTexture("_EmissionMap")
                                 : null;
                             if (exportStr != null && emissiveTexture)
                             {
-                                exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName, GetTextureRelativePath(emissiveTexture));
+                                exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName,
+                                    GetTextureRelativePath(emissiveTexture));
                             }
                         }
 
@@ -424,7 +450,6 @@ namespace Dcl
                 {
                     exportStr.AppendFormat(SetShape, entityName, shapeName);
                 }
-                TraverseMaterial(tra, entityName, exportStr, statistics);
             }
             else
             {
@@ -663,4 +688,3 @@ namespace Dcl
         #endregion
     }
 }
- 
