@@ -32,6 +32,33 @@ namespace Dcl
 			m_GroundMaterial.color = Color.gray;
         }
 
+        private void Start()
+        {
+            if (Application.isPlaying)
+            {
+                //Create FPS Controller
+                Debug.LogWarning("Start!!!!!!!!!!");
+                var ground = new GameObject("_Ground");
+                var cldr = ground.AddComponent<BoxCollider>();
+                cldr.size = new Vector3(1e6f, 0, 1e6f);
+                var prefab = Resources.Load<GameObject>("FirstPersonCharacter/Prefabs/FPSController");
+                if (prefab)
+                {
+                    var mainCamera = Camera.main;
+                    if (mainCamera)
+                    {
+                        mainCamera.gameObject.SetActive(false);
+                        Destroy(mainCamera.gameObject);
+                    }
+                    Instantiate(prefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+                }
+                else
+                {
+                    Debug.LogWarning("Cannot find FPS Controller");
+                }
+            }
+        }
+
         void Update()// OnDrawGizmos()
         {
             if (parcels.Count > 0)
