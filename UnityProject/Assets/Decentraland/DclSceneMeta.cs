@@ -37,7 +37,6 @@ namespace Dcl
             if (Application.isPlaying)
             {
                 //Create FPS Controller
-                Debug.LogWarning("Start!!!!!!!!!!");
                 var ground = new GameObject("_Ground");
                 var cldr = ground.AddComponent<BoxCollider>();
                 cldr.size = new Vector3(1e6f, 0, 1e6f);
@@ -50,7 +49,8 @@ namespace Dcl
                         mainCamera.gameObject.SetActive(false);
                         Destroy(mainCamera.gameObject);
                     }
-                    Instantiate(prefab, new Vector3(0, 0.1f, 0), Quaternion.identity);
+                    var go = Instantiate(prefab, new Vector3(0, 0.01f, 0), Quaternion.identity);
+                    go.transform.forward = new Vector3(1, 0, 1);
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace Dcl
         {
             sceneStatistics = new SceneStatistics();
             sceneWarningRecorder = new SceneWarningRecorder();
-            SceneTraverser.TraverseAllScene(null, null, sceneStatistics, sceneWarningRecorder);
+            SceneTraverser.TraverseAllScene(null, sceneStatistics, sceneWarningRecorder);
         }
     }
 

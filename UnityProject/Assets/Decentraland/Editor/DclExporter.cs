@@ -676,27 +676,24 @@ namespace Dcl
                 Directory.CreateDirectory(Path.Combine(exportPath, "src"));
             } 
             
-            var meshesToExport = new List<GameObject>();
             var statistics = new SceneStatistics();
 
             StringBuilder exportStr = new StringBuilder();
-            SceneTraverser.TraverseAllScene(exportStr, meshesToExport, statistics, null);
+            var resourceRecorder = SceneTraverser.TraverseAllScene(exportStr, statistics, null);
             
             File.WriteAllText(Path.Combine(exportPath, "src/game.ts"), exportStr.ToString());
 
             //glTF in unity_asset
-            foreach (var go in meshesToExport)
+            foreach (var go in resourceRecorder.meshesToExport)
             {
 				string tempPath = Path.Combine (unityAssetsFolderPath, SceneTraverser.GetIdentityName(go) + ".gltf");
 				sceneMeta.sceneToGlTFWiz.ExportGameObjectAndChildren(go, tempPath, null, false, true, false, false);
             }
 
             //textures
-            var primitiveTexturesToExport = SceneTraverser.primitiveTexturesToExport;
-            foreach (var texture in primitiveTexturesToExport)
+            foreach (var texture in resourceRecorder.primitiveTexturesToExport)
             {
                 var relPath = AssetDatabase.GetAssetPath(texture);
-                Debug.Log(relPath);
 				if (string.IsNullOrEmpty(relPath) || relPath.StartsWith("Library/"))
                 {
                     //built-in asset
@@ -716,6 +713,26 @@ namespace Dcl
                     File.Copy(path, toPath, true);
                 }
                 Debug.Log("Texture out "+ relPath);
+            }
+
+            //audioClips
+            foreach (var audioClip in resourceRecorder.audioClipsToExport)
+            {
+                var relPath = AssetDatabase.GetAssetPath(audioClip);
+                if (string.IsNullOrEmpty(relPath) || relPath.StartsWith("Library/"))
+                {
+                    Debug.LogError("AudioClip should not be built-in assets.");
+                }
+                else
+                {
+                    var path = Application.dataPath; //<path to project folder>/Assets
+                    path = path.Remove(path.Length - 6, 6) + relPath;
+                    var toPath = unityAssetsFolderPath + relPath;
+                    var directoryPath = Path.GetDirectoryName(toPath);
+                    if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+                    File.Copy(path, toPath, true);
+                }
+                Debug.Log("Audio out " + relPath);
             }
 
             //scene.json

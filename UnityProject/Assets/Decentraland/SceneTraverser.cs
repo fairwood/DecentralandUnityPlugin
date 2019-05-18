@@ -24,21 +24,38 @@ namespace Dcl
         ChildOfGLTF,
         CustomNode,
     }
+    public class ResourceRecorder
+    {
+        public List<GameObject> meshesToExport;
+        public List<Material> primitiveMaterialsToExport;
+        public List<Texture> primitiveTexturesToExport;
+        public List<Texture> gltfTextures;
+        public List<AudioClip> audioClipsToExport;
+        public List<string> audioSourceAddFunctions = new List<string>();
+
+        public ResourceRecorder()
+        {
+            meshesToExport = new List<GameObject>();
+            primitiveMaterialsToExport = new List<Material>();
+            primitiveTexturesToExport = new List<Texture>();
+            gltfTextures = new List<Texture>();
+            audioClipsToExport = new List<AudioClip>();
+        }
+    }
     public static class SceneTraverser
     {
 
         const string indentUnit = "  ";
 
-        public static List<Material> primitiveMaterialsToExport;
-        public static List<Texture> primitiveTexturesToExport;
-        public static List<Texture> gltfTextures;
+        public static ResourceRecorder resourceRecorder;
+
 
         private static DclSceneMeta _sceneMeta;
 
         //public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
 
 
-        public static void TraverseAllScene(StringBuilder exportStr, List<GameObject> meshesToExport, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+        public static ResourceRecorder TraverseAllScene(StringBuilder exportStr, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             var rootGameObjects = new List<GameObject>();
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -48,25 +65,42 @@ namespace Dcl
             }
 
             _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
-            primitiveMaterialsToExport = new List<Material>();
-            primitiveTexturesToExport = new List<Texture>();
-            gltfTextures = new List<Texture>();
+
+            resourceRecorder = new ResourceRecorder();
+
             //GameObjectToNodeTypeDict.Clear();
 
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, exportStr, meshesToExport, 4, statistics, warningRecorder);
+                RecursivelyTraverseTransform(rootGO.transform, exportStr, resourceRecorder, 4, statistics, warningRecorder);
+            }
+
+            //Append PlayAudio functions
+            if (exportStr != null)
+            {
+                if (resourceRecorder.audioSourceAddFunctions.Count > 0)
+                {
+                    exportStr.AppendLine();
+                    exportStr.AppendLine("Input.instance.subscribe(\"BUTTON_UP\", e => {");
+                    foreach (var functionName in resourceRecorder.audioSourceAddFunctions)
+                    {
+                        exportStr.AppendIndent(indentUnit, 1).AppendFormat("{0}()\n", functionName);
+                    }
+                    exportStr.AppendLine("})\n");
+                }
             }
 
             if (statistics != null)
             {
-                statistics.textureCount = primitiveTexturesToExport.Count + gltfTextures.Count;
+                statistics.textureCount = resourceRecorder.primitiveTexturesToExport.Count + resourceRecorder.gltfTextures.Count;
             }
+
+            return resourceRecorder;
         }
 
         public static void RecursivelyTraverseTransform(Transform tra, StringBuilder exportStr,
-            List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+            ResourceRecorder resourceRecorder, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             if (!tra.gameObject.activeInHierarchy) return;
             if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
@@ -109,7 +143,7 @@ namespace Dcl
 
             }
 
-            TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
+            ProcessShape(tra, entityName, exportStr, resourceRecorder, statistics);
 
             if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf) //reverse 180° along local y-axis because of DCL's special purpose.
             {
@@ -119,12 +153,12 @@ namespace Dcl
 
             if (dclObject.dclNodeType != EDclNodeType.gltf)
             {
-                TraverseText(tra, entityName, exportStr, statistics);
+                ProcessText(tra, entityName, exportStr, statistics);
             }
             
             if (dclObject.dclNodeType != EDclNodeType.gltf)
             {
-                TraverseMaterial(tra, false, entityName, primitiveMaterialsToExport, exportStr, statistics);
+                ProcessMaterial(tra, false, entityName, resourceRecorder.primitiveMaterialsToExport, exportStr, statistics);
 
                 if (tra.GetComponent<MeshRenderer>())
                 {
@@ -201,7 +235,7 @@ namespace Dcl
 
                 foreach (Transform child in tra)
                 {
-                    RecursivelyTraverseTransform(child, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
+                    RecursivelyTraverseTransform(child, exportStr, resourceRecorder, indentLevel + 1, statistics, warningRecorder);
                 }
             }
             else
@@ -213,6 +247,8 @@ namespace Dcl
                     statistics.materialCount += statistics.gltfMaterials.Count;
                 }
             }
+
+            ProcessAudio(tra, entityName, exportStr);
         }
 
         public static void RecursivelyTraverseIntoGLTF(Transform tra, int layerUnderGLTFRoot, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
@@ -273,7 +309,7 @@ namespace Dcl
                 }
             }
 
-            TraverseMaterial(tra, true, null, statistics.gltfMaterials, null, statistics);
+            ProcessMaterial(tra, true, null, statistics.gltfMaterials, null, statistics);
 
             foreach (Transform child in tra)
             {
@@ -282,38 +318,9 @@ namespace Dcl
         }
         #region Utils
 
-        public static string ToJsColorCtor(Color color)
-        {
-            return string.Format("new Color3({0}, {1}, {2})", color.r, color.g, color.b);
-        }
 
-        public static string GetIdentityName(GameObject go)
-        {
-            string entityName = "entity" + Mathf.Abs(go.GetInstanceID());
-            entityName = entityName.Replace(" ", string.Empty);
-            return entityName;
-        }
-
-
-        public static string GetTextureRelativePath(Texture texture)
-        {
-            var relPath = AssetDatabase.GetAssetPath(texture);
-            if (string.IsNullOrEmpty(relPath))
-            {
-                //this is a built-in asset
-                relPath = texture.name + ".png";
-            }
-            else
-            {
-
-            }
-
-            string str = "unity_assets/" + relPath;
-            return str;
-        }
-
-        private const string NewEntity = "const {0} = new Entity()\n";
-        private const string NewEntityWithName = "const {0} = new Entity() //{1}\n";
+        private const string NewEntity = "var {0} = new Entity()\n";
+        private const string NewEntityWithName = "var {0} = new Entity(\"{1}\")\n";
         private const string AddEntity = "engine.addEntity({0})\n";
         private const string SetTransform = "{0}.addComponent(new Transform({{ position: new Vector3({1}, {2}, {3}) }}))\n";
         private const string SetRotation = "{0}.getComponent(Transform).rotation.set({1}, {2}, {3}, {4})\n";
@@ -321,7 +328,7 @@ namespace Dcl
         private const string SetShape = "{0}.addComponent(new {1}())\n";
         private const string SetGLTFshape = "{0}.addComponent(new GLTFShape(\"{1}\"))\n";
         private const string SetParent = "{0}.setParent({1})\n";
-        private const string NewMaterial = "const {0} = new Material()\n";
+        private const string NewMaterial = "var {0} = new Material()\n";
         private const string SetMaterial = "{0}.addComponent({1})\n";
         private const string SetMaterialAlbedoColor = "{0}.albedoColor = {1}\n";
         private const string SetMaterialMetallic = "{0}.metallic = {1}\n";
@@ -335,7 +342,7 @@ namespace Dcl
         private const string SetMaterialEmissiveIntensity = "{0}.emissiveIntensity = {1}\n";
         private const string SetMaterialEmissiveTexture = "{0}.emissiveTexture = new Texture(\"{1}\")\n";
 
-        public static void TraverseMaterial(Transform tra, bool isOnOrUnderGLTF, string entityName, List<Material> materialsToExport, StringBuilder exportStr, SceneStatistics statistics)
+        public static void ProcessMaterial(Transform tra, bool isOnOrUnderGLTF, string entityName, List<Material> materialsToExport, StringBuilder exportStr, SceneStatistics statistics)
         {
             var rdrr = tra.GetComponent<MeshRenderer>();
             if (rdrr && tra.GetComponent<MeshFilter>())
@@ -419,7 +426,7 @@ namespace Dcl
                                 }
                             }
 
-                            var textureList = isOnOrUnderGLTF ? gltfTextures : primitiveTexturesToExport;
+                            var textureList = isOnOrUnderGLTF ? resourceRecorder.gltfTextures : resourceRecorder.primitiveTexturesToExport;
                             if (albedoTex)
                             {
                                 if (!textureList.Contains(albedoTex)) textureList.Add(albedoTex);
@@ -439,16 +446,15 @@ namespace Dcl
                             {
                                 if (!textureList.Contains(emissiveTexture)) textureList.Add(emissiveTexture);
                             }
-
-                            if (exportStr != null)
-                            {
-                                exportStr.AppendFormat(SetMaterial, entityName, materialName);
-                            }
-
+                            
                             if (!isOnOrUnderGLTF)
                             {
                                 if (statistics != null) statistics.materialCount += 1;
                             }
+                        }
+                        if (exportStr != null)
+                        {
+                            exportStr.AppendFormat(SetMaterial, entityName, materialName);
                         }
                     }
                 }
@@ -464,7 +470,7 @@ namespace Dcl
 
         }
 
-        public static void TraverseShape(Transform tra, string entityName, StringBuilder exportStr, List<GameObject> meshesToExport, SceneStatistics statistics)
+        public static void ProcessShape(Transform tra, string entityName, StringBuilder exportStr, ResourceRecorder resourceRecorder, SceneStatistics statistics)
         {
             var meshFilter = tra.GetComponent<MeshFilter>();
             if (!(meshFilter && tra.GetComponent<MeshRenderer>()))
@@ -522,9 +528,9 @@ namespace Dcl
                 }
 
                 //export as a glTF model
-                if (meshesToExport != null)
+                if (resourceRecorder != null)
                 {
-                    meshesToExport.Add(tra.gameObject);
+                    resourceRecorder.meshesToExport.Add(tra.gameObject);
                 }
             }
 
@@ -542,7 +548,7 @@ namespace Dcl
             }
         }
 
-        public static void TraverseText(Transform tra, string entityName, StringBuilder exportStr, SceneStatistics statistics)
+        public static void ProcessText(Transform tra, string entityName, StringBuilder exportStr, SceneStatistics statistics)
         {
             if (!(tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()))
             {
@@ -618,6 +624,34 @@ namespace Dcl
             }
         }
 
+        public static void ProcessAudio(Transform tra, string entityName, StringBuilder exportStr)
+        {
+            var audioSource = tra.GetComponent<AudioSource>();
+            if (audioSource && exportStr != null)
+            {
+                var audioClip = audioSource.clip;
+                string audioClipRelPath = null;
+                if (audioClip)
+                {
+                    audioClipRelPath = string.Format("'{0}'", GetAudioClipRelativePath(audioClip));
+                    resourceRecorder.audioClipsToExport.Add(audioClip);
+                }
+                var playFunctionName = "playAudioSource" + Mathf.Abs(audioSource.GetInstanceID());
+                exportStr.AppendFormat(
+@"var audioSource = new AudioSource(new AudioClip({0}))
+var {1} = () => {{
+{2}{3}.addComponent(audioSource)\n"
+                , audioClipRelPath, playFunctionName, indentUnit, entityName);
+                exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.playing = {0}\n", BoolToString(audioSource.playOnAwake));
+                exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.loop = {0}\n", BoolToString(audioSource.loop));
+                exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.volume = {0}\n", audioSource.volume);
+                exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.pitch = {0}\n", audioSource.pitch);
+                exportStr.Append("}\n");
+
+                resourceRecorder.audioSourceAddFunctions.Add(playFunctionName);
+            }
+        }
+
         public static void ParseTextToCoordinates(string text, List<ParcelCoordinates> coordinates)
         {
             coordinates.Clear();
@@ -647,6 +681,52 @@ namespace Dcl
             return new StringBuilder().Append(warning);
         }
 
+        public static string ToJsColorCtor(Color color)
+        {
+            return string.Format("new Color3({0}, {1}, {2})", color.r, color.g, color.b);
+        }
+
+        public static string GetIdentityName(GameObject go)
+        {
+            string entityName = "entity" + Mathf.Abs(go.GetInstanceID());
+            entityName = entityName.Replace(" ", string.Empty);
+            return entityName;
+        }
+        
+        public static string GetTextureRelativePath(Texture texture)
+        {
+            var relPath = AssetDatabase.GetAssetPath(texture);
+            if (string.IsNullOrEmpty(relPath))
+            {
+                //this is a built-in asset
+                relPath = texture.name + ".png";
+            }
+            else
+            {
+
+            }
+
+            string str = "unity_assets/" + relPath;
+            return str;
+        }
+
+        public static string GetAudioClipRelativePath(AudioClip audioClip)
+        {
+            var relPath = AssetDatabase.GetAssetPath(audioClip);
+            if (string.IsNullOrEmpty(relPath))
+            {
+                //this is a built-in asset
+                Debug.LogError("AudioClip should not be built-in assets!");
+            }
+            else
+            {
+
+            }
+
+            string str = "unity_assets/" + relPath;
+            return str;
+        }
+
         public static string Vector3ToJSONString(Vector3 v)
         {
             return string.Format("{{x:{0},y:{1},z:{2}}}", v.x, v.y, v.z);
@@ -660,7 +740,10 @@ namespace Dcl
             var color256 = (Color32)color;
             return String.Format("#{0:X2}{1:X2}{2:X2}", color256.r, color256.g, color256.b);
         }
-
+        public static string BoolToString(bool b)
+        {
+            return b ? "true" : "false";
+        }
         public static string ParcelToString(ParcelCoordinates parcel)
         {
             return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
@@ -743,7 +826,7 @@ namespace Dcl
 
             return name;
         }*/
-        
-        #endregion
-    }
-}
+
+                #endregion
+            }
+        }
