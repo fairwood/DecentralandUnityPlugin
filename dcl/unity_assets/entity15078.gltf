@@ -1,0 +1,166 @@
+{
+	"asset": {
+		"generator": "Unity 2018.2.3f1",
+		"extras": {
+			"exporterVersion" : "2.2.1"
+		},
+		"version": "2.0"
+	},
+	"accessors": [
+		{
+			"bufferView": 2,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 1827,
+			"max": [ 13.6376, 7.204862, 0.4418259 ],
+			"min": [ -13.6376, -7.537484, -5.298335 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"byteOffset": 21924,
+			"componentType": 5126,
+			"count": 1827,
+			"max": [ 0.9999244, 1, 1 ],
+			"min": [ -0.9999954, -1, -1 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 1827,
+			"max": [ 4.775183, 8.491631 ],
+			"min": [ -6.673832, -9.521857 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 1827,
+			"max": [ 0.999985, 0.9992203, 1, 1 ],
+			"min": [ -0.9999701, -0.9999647, -1, 1 ],
+			"type": "VEC4"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 0,
+			"componentType": 5123,
+			"count": 4920,
+			"max": [ 1826 ],
+			"min": [ 0 ],
+			"type": "SCALAR"
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 97536,
+			"uri": "entity15078.bin"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 9840,
+			"target": 34963,
+			"byteOffset": 87696
+		},
+		{
+			"buffer": 0,
+			"byteLength": 14616,
+			"target": 34962,
+			"byteStride": 8,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 43848,
+			"target": 34962,
+			"byteStride": 12,
+			"byteOffset": 14616
+		},
+		{
+			"buffer": 0,
+			"byteLength": 29232,
+			"target": 34962,
+			"byteStride": 16,
+			"byteOffset": 58464
+		}
+	],
+	"images": [
+		{
+			"uri": "Assets/Decentraland/Sample-01/Gamer/Desk_Wood1.jpg"
+		}
+	],
+	"materials": [
+		{
+			"pbrMetallicRoughness": {
+				"baseColorTexture" : {
+					"index" : 0,
+					"texCoord" : 0
+				},
+				"baseColorFactor": [0.8, 0.8, 0.8, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 1
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "Desk_Wood1"
+		}
+	],
+	"meshes": [
+		{
+			"name": "mesh_Cube_001_3524Cube_001",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TANGENT": 3
+					},
+					"indices": 4,
+					"material": 0,
+					"mode": 4
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"name": "UnityGlTF_root",
+			"children": [
+				1
+			]
+		},
+		{
+			"name": "node_Cube_001",
+			"mesh": 0,
+			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9985,
+			"wrapS": 10497,
+			"wrapT": 10497
+		}
+	],
+	"scenes": [
+		{
+			"name":"defaultScene",
+			"nodes": [
+				0
+			]
+		}
+	],
+	"scene": 0,
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		}
+	]
+}

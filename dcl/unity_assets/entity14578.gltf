@@ -1,0 +1,166 @@
+{
+	"asset": {
+		"generator": "Unity 2018.2.3f1",
+		"extras": {
+			"exporterVersion" : "2.2.1"
+		},
+		"version": "2.0"
+	},
+	"accessors": [
+		{
+			"bufferView": 2,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 4,
+			"max": [ 1.11122, 0.8512073, 1.067045 ],
+			"min": [ -1.180536, 0.8416429, -0.1470779 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 2,
+			"byteOffset": 48,
+			"componentType": 5126,
+			"count": 4,
+			"max": [ 0.004173337, 0.9999913, 0 ],
+			"min": [ 0.004173337, 0.9999913, 0 ],
+			"type": "VEC3"
+		},
+		{
+			"bufferView": 1,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 4,
+			"max": [ 0.9999762, 0.9979439 ],
+			"min": [ 2.37595E-05, -0.000171214 ],
+			"type": "VEC2"
+		},
+		{
+			"bufferView": 3,
+			"byteOffset": 0,
+			"componentType": 5126,
+			"count": 4,
+			"max": [ 0.9999913, -0.004173337, 0.0002762981, 1 ],
+			"min": [ 0.9999913, -0.004173338, 0.0002762476, 1 ],
+			"type": "VEC4"
+		},
+		{
+			"bufferView": 0,
+			"byteOffset": 0,
+			"componentType": 5123,
+			"count": 6,
+			"max": [ 3 ],
+			"min": [ 0 ],
+			"type": "SCALAR"
+		}
+	],
+	"buffers": [
+		{
+			"byteLength": 204,
+			"uri": "entity14578.bin"
+		}
+	],
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 12,
+			"target": 34963,
+			"byteOffset": 192
+		},
+		{
+			"buffer": 0,
+			"byteLength": 32,
+			"target": 34962,
+			"byteStride": 8,
+			"byteOffset": 0
+		},
+		{
+			"buffer": 0,
+			"byteLength": 96,
+			"target": 34962,
+			"byteStride": 12,
+			"byteOffset": 32
+		},
+		{
+			"buffer": 0,
+			"byteLength": 64,
+			"target": 34962,
+			"byteStride": 16,
+			"byteOffset": 128
+		}
+	],
+	"images": [
+		{
+			"uri": "Assets/Decentraland/Sample-01/Gamer/Left_Scn.jpg"
+		}
+	],
+	"materials": [
+		{
+			"pbrMetallicRoughness": {
+				"baseColorTexture" : {
+					"index" : 0,
+					"texCoord" : 0
+				},
+				"baseColorFactor": [0.8, 0.8, 0.8, 1],
+				"metallicFactor": 0,
+				"roughnessFactor": 1
+			},
+			"emissiveFactor": [0, 0, 0],
+			"doubleSided": false,
+			"name": "Left_Scn"
+		}
+	],
+	"meshes": [
+		{
+			"name": "mesh_Cube_011_3544Cube_011",
+			"primitives": [
+				{
+					"attributes": {
+						"POSITION": 0,
+						"NORMAL": 1,
+						"TEXCOORD_0": 2,
+						"TANGENT": 3
+					},
+					"indices": 4,
+					"material": 0,
+					"mode": 4
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"name": "UnityGlTF_root",
+			"children": [
+				1
+			]
+		},
+		{
+			"name": "node_Cube_011",
+			"mesh": 0,
+			"matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+		}
+	],
+	"samplers": [
+		{
+			"magFilter": 9729,
+			"minFilter": 9985,
+			"wrapS": 10497,
+			"wrapT": 10497
+		}
+	],
+	"scenes": [
+		{
+			"name":"defaultScene",
+			"nodes": [
+				0
+			]
+		}
+	],
+	"scene": 0,
+	"textures": [
+		{
+			"sampler": 0,
+			"source": 0
+		}
+	]
+}

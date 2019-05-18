@@ -38,6 +38,6 @@ sysinfo.txt
 node_modules/**
 package-lock.json
 
-dcl/
+dcl/node_modules/
 dcl_old/
 _local/
