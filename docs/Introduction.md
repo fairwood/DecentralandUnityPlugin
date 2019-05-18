@@ -15,11 +15,13 @@
 
 * Cone
 
-* TextMesh (custom font is not supported)
+* TextMesh (custom font is not supported; some SDK bugs remaining)
 
 * Standard Materials
 
 * Other models will be exported as glTF models (animations are not supported)
+
+* AudioSource (NEW SUPPORTED!)
 
 * Lights are not supported
 
