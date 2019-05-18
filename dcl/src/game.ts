@@ -789,7 +789,8 @@ entity3126530.getComponent(Transform).scale.set(1, 1, 1)
 
 var audioSource = new AudioSource(new AudioClip('unity_assets/Assets/Decentraland/Sample-01/bgm.mp3'))
 var playAudioSource3128576 = () => {
-  entity3126530.addComponent(audioSource)\n  audioSource.playing = true
+  entity3126530.addComponent(audioSource)
+  audioSource.playing = true
   audioSource.loop = false
   audioSource.volume = 1
   audioSource.pitch = 1

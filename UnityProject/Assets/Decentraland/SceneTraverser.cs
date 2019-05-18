@@ -24,6 +24,7 @@ namespace Dcl
         ChildOfGLTF,
         CustomNode,
     }
+
     public class ResourceRecorder
     {
         public List<GameObject> meshesToExport;
@@ -42,6 +43,7 @@ namespace Dcl
             audioClipsToExport = new List<AudioClip>();
         }
     }
+
     public static class SceneTraverser
     {
 
@@ -55,7 +57,8 @@ namespace Dcl
         //public  static readonly  Dictionary<GameObject, EDclNodeType> GameObjectToNodeTypeDict = new Dictionary<GameObject, EDclNodeType>();
 
 
-        public static ResourceRecorder TraverseAllScene(StringBuilder exportStr, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+        public static ResourceRecorder TraverseAllScene(StringBuilder exportStr, SceneStatistics statistics,
+            SceneWarningRecorder warningRecorder)
         {
             var rootGameObjects = new List<GameObject>();
             for (int i = 0; i < SceneManager.sceneCount; i++)
@@ -73,7 +76,8 @@ namespace Dcl
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, exportStr, resourceRecorder, 4, statistics, warningRecorder);
+                RecursivelyTraverseTransform(rootGO.transform, exportStr, resourceRecorder, 4, statistics,
+                    warningRecorder);
             }
 
             //Append PlayAudio functions
@@ -87,23 +91,26 @@ namespace Dcl
                     {
                         exportStr.AppendIndent(indentUnit, 1).AppendFormat("{0}()\n", functionName);
                     }
+
                     exportStr.AppendLine("})\n");
                 }
             }
 
             if (statistics != null)
             {
-                statistics.textureCount = resourceRecorder.primitiveTexturesToExport.Count + resourceRecorder.gltfTextures.Count;
+                statistics.textureCount = resourceRecorder.primitiveTexturesToExport.Count +
+                                          resourceRecorder.gltfTextures.Count;
             }
 
             return resourceRecorder;
         }
 
         public static void RecursivelyTraverseTransform(Transform tra, StringBuilder exportStr,
-            ResourceRecorder resourceRecorder, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+            ResourceRecorder resourceRecorder, int indentLevel, SceneStatistics statistics,
+            SceneWarningRecorder warningRecorder)
         {
             if (!tra.gameObject.activeInHierarchy) return;
-            if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
+            if (tra.gameObject.GetComponent<DclSceneMeta>()) return; //skip .dcl
 
             var dclObject = tra.GetComponent<DclObject>() ?? tra.gameObject.AddComponent<DclObject>();
 
@@ -145,7 +152,8 @@ namespace Dcl
 
             ProcessShape(tra, entityName, exportStr, resourceRecorder, statistics);
 
-            if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf) //reverse 180° along local y-axis because of DCL's special purpose.
+            if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf
+            ) //reverse 180° along local y-axis because of DCL's special purpose.
             {
                 rotation = Quaternion.AngleAxis(180, tra.up) * rotation;
                 exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
@@ -155,10 +163,11 @@ namespace Dcl
             {
                 ProcessText(tra, entityName, exportStr, statistics);
             }
-            
+
             if (dclObject.dclNodeType != EDclNodeType.gltf)
             {
-                ProcessMaterial(tra, false, entityName, resourceRecorder.primitiveMaterialsToExport, exportStr, statistics);
+                ProcessMaterial(tra, false, entityName, resourceRecorder.primitiveMaterialsToExport, exportStr,
+                    statistics);
 
                 if (tra.GetComponent<MeshRenderer>())
                 {
@@ -193,7 +202,8 @@ namespace Dcl
                                 {
                                     if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
                                     {
-                                        warningRecorder.OutOfLandWarnings.Add(new SceneWarningRecorder.OutOfLand(meshRenderer));
+                                        warningRecorder.OutOfLandWarnings.Add(
+                                            new SceneWarningRecorder.OutOfLand(meshRenderer));
                                         isOutOfLand = true;
                                         break;
                                     }
@@ -235,7 +245,8 @@ namespace Dcl
 
                 foreach (Transform child in tra)
                 {
-                    RecursivelyTraverseTransform(child, exportStr, resourceRecorder, indentLevel + 1, statistics, warningRecorder);
+                    RecursivelyTraverseTransform(child, exportStr, resourceRecorder, indentLevel + 1, statistics,
+                        warningRecorder);
                 }
             }
             else
@@ -251,18 +262,15 @@ namespace Dcl
             ProcessAudio(tra, entityName, exportStr);
         }
 
-        public static void RecursivelyTraverseIntoGLTF(Transform tra, int layerUnderGLTFRoot, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+        public static void RecursivelyTraverseIntoGLTF(Transform tra, int layerUnderGLTFRoot,
+            SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             if (!tra.gameObject.activeInHierarchy) return;
-            if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
+            if (tra.gameObject.GetComponent<DclSceneMeta>()) return; //skip .dcl
 
             var dclObject = tra.GetComponent<DclObject>() ?? tra.gameObject.AddComponent<DclObject>();
 
             if (layerUnderGLTFRoot > 0) dclObject.dclNodeType = EDclNodeType.ChildOfGLTF;
-
-            var position = tra.localPosition;
-            var scale = tra.localScale;
-            var rotation = tra.localRotation;
 
             if (tra.GetComponent<MeshRenderer>())
             {
@@ -297,7 +305,8 @@ namespace Dcl
                             {
                                 if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
                                 {
-                                    warningRecorder.OutOfLandWarnings.Add(new SceneWarningRecorder.OutOfLand(meshRenderer));
+                                    warningRecorder.OutOfLandWarnings.Add(
+                                        new SceneWarningRecorder.OutOfLand(meshRenderer));
                                     isOutOfLand = true;
                                     break;
                                 }
@@ -316,13 +325,17 @@ namespace Dcl
                 RecursivelyTraverseIntoGLTF(child, layerUnderGLTFRoot + 1, statistics, warningRecorder);
             }
         }
+
         #region Utils
 
 
         private const string NewEntity = "var {0} = new Entity()\n";
         private const string NewEntityWithName = "var {0} = new Entity(\"{1}\")\n";
         private const string AddEntity = "engine.addEntity({0})\n";
-        private const string SetTransform = "{0}.addComponent(new Transform({{ position: new Vector3({1}, {2}, {3}) }}))\n";
+
+        private const string SetTransform =
+            "{0}.addComponent(new Transform({{ position: new Vector3({1}, {2}, {3}) }}))\n";
+
         private const string SetRotation = "{0}.getComponent(Transform).rotation.set({1}, {2}, {3}, {4})\n";
         private const string SetScale = "{0}.getComponent(Transform).scale.set({1}, {2}, {3})\n";
         private const string SetShape = "{0}.addComponent(new {1}())\n";
@@ -342,7 +355,8 @@ namespace Dcl
         private const string SetMaterialEmissiveIntensity = "{0}.emissiveIntensity = {1}\n";
         private const string SetMaterialEmissiveTexture = "{0}.emissiveTexture = new Texture(\"{1}\")\n";
 
-        public static void ProcessMaterial(Transform tra, bool isOnOrUnderGLTF, string entityName, List<Material> materialsToExport, StringBuilder exportStr, SceneStatistics statistics)
+        public static void ProcessMaterial(Transform tra, bool isOnOrUnderGLTF, string entityName,
+            List<Material> materialsToExport, StringBuilder exportStr, SceneStatistics statistics)
         {
             var rdrr = tra.GetComponent<MeshRenderer>();
             if (rdrr && tra.GetComponent<MeshFilter>())
@@ -357,6 +371,7 @@ namespace Dcl
                     materialList = new List<Material>();
                     if (rdrr.sharedMaterial) materialList.Add(rdrr.sharedMaterial);
                 }
+
                 foreach (var material in materialList)
                 {
                     if (material && material != PrimitiveHelper.GetDefaultMaterial())
@@ -414,11 +429,14 @@ namespace Dcl
                             {
                                 if (exportStr != null)
                                 {
-                                    exportStr.AppendFormat(SetMaterialEmissiveColor, materialName, ToJsColorCtor(material.GetColor("_EmissionColor")));
+                                    exportStr.AppendFormat(SetMaterialEmissiveColor, materialName,
+                                        ToJsColorCtor(material.GetColor("_EmissionColor")));
                                     //					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
                                 }
 
-                                emissiveTexture = material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null;
+                                emissiveTexture = material.HasProperty("_EmissionMap")
+                                    ? material.GetTexture("_EmissionMap")
+                                    : null;
                                 if (exportStr != null && emissiveTexture)
                                 {
                                     exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName,
@@ -426,7 +444,9 @@ namespace Dcl
                                 }
                             }
 
-                            var textureList = isOnOrUnderGLTF ? resourceRecorder.gltfTextures : resourceRecorder.primitiveTexturesToExport;
+                            var textureList = isOnOrUnderGLTF
+                                ? resourceRecorder.gltfTextures
+                                : resourceRecorder.primitiveTexturesToExport;
                             if (albedoTex)
                             {
                                 if (!textureList.Contains(albedoTex)) textureList.Add(albedoTex);
@@ -446,12 +466,13 @@ namespace Dcl
                             {
                                 if (!textureList.Contains(emissiveTexture)) textureList.Add(emissiveTexture);
                             }
-                            
+
                             if (!isOnOrUnderGLTF)
                             {
                                 if (statistics != null) statistics.materialCount += 1;
                             }
                         }
+
                         if (exportStr != null)
                         {
                             exportStr.AppendFormat(SetMaterial, entityName, materialName);
@@ -470,7 +491,8 @@ namespace Dcl
 
         }
 
-        public static void ProcessShape(Transform tra, string entityName, StringBuilder exportStr, ResourceRecorder resourceRecorder, SceneStatistics statistics)
+        public static void ProcessShape(Transform tra, string entityName, StringBuilder exportStr,
+            ResourceRecorder resourceRecorder, SceneStatistics statistics)
         {
             var meshFilter = tra.GetComponent<MeshFilter>();
             if (!(meshFilter && tra.GetComponent<MeshRenderer>()))
@@ -548,7 +570,8 @@ namespace Dcl
             }
         }
 
-        public static void ProcessText(Transform tra, string entityName, StringBuilder exportStr, SceneStatistics statistics)
+        public static void ProcessText(Transform tra, string entityName, StringBuilder exportStr,
+            SceneStatistics statistics)
         {
             if (!(tra.GetComponent<TextMesh>() && tra.GetComponent<MeshRenderer>()))
             {
@@ -584,34 +607,43 @@ namespace Dcl
                 switch (tm.anchor)
                 {
                     case TextAnchor.UpperLeft:
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName,
+                            "\"right\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName,
+                            "\"bottom\"");
                         break;
                     case TextAnchor.UpperCenter:
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName,
+                            "\"bottom\"");
                         break;
                     case TextAnchor.UpperRight:
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"bottom\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName,
+                            "\"left\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName,
+                            "\"bottom\"");
                         break;
                     case TextAnchor.MiddleLeft:
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName,
+                            "\"right\"");
                         break;
                     case TextAnchor.MiddleCenter:
 
                         break;
                     case TextAnchor.MiddleRight:
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName,
+                            "\"left\"");
                         break;
                     case TextAnchor.LowerLeft:
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"right\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName,
+                            "\"right\"");
                         exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
                         break;
                     case TextAnchor.LowerCenter:
                         exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
                         break;
                     case TextAnchor.LowerRight:
-                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName, "\"left\"");
+                        exportStr.AppendFormat("{0}.getComponent(TextShape).hAlign = \"{1}\"\n", entityName,
+                            "\"left\"");
                         exportStr.AppendFormat("{0}.getComponent(TextShape).vAlign = \"{1}\"\n", entityName, "\"top\"");
                         break;
                 }
@@ -636,14 +668,18 @@ namespace Dcl
                     audioClipRelPath = string.Format("'{0}'", GetAudioClipRelativePath(audioClip));
                     resourceRecorder.audioClipsToExport.Add(audioClip);
                 }
+
                 var playFunctionName = "playAudioSource" + Mathf.Abs(audioSource.GetInstanceID());
                 exportStr.AppendFormat(
-@"var audioSource = new AudioSource(new AudioClip({0}))
+                    @"var audioSource = new AudioSource(new AudioClip({0}))
 var {1} = () => {{
-{2}{3}.addComponent(audioSource)\n"
-                , audioClipRelPath, playFunctionName, indentUnit, entityName);
-                exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.playing = {0}\n", BoolToString(audioSource.playOnAwake));
-                exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.loop = {0}\n", BoolToString(audioSource.loop));
+{2}{3}.addComponent(audioSource)"
+                    , audioClipRelPath, playFunctionName, indentUnit, entityName);
+                exportStr.AppendLine();
+                exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.playing = {0}\n",
+                    BoolToString(audioSource.playOnAwake));
+                exportStr.AppendIndent(indentUnit, 1)
+                    .AppendFormat("audioSource.loop = {0}\n", BoolToString(audioSource.loop));
                 exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.volume = {0}\n", audioSource.volume);
                 exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.pitch = {0}\n", audioSource.pitch);
                 exportStr.Append("}\n");
@@ -692,7 +728,7 @@ var {1} = () => {{
             entityName = entityName.Replace(" ", string.Empty);
             return entityName;
         }
-        
+
         public static string GetTextureRelativePath(Texture texture)
         {
             var relPath = AssetDatabase.GetAssetPath(texture);
@@ -737,13 +773,15 @@ var {1} = () => {{
         /// </summary>
         private static string ToHexString(Color color)
         {
-            var color256 = (Color32)color;
+            var color256 = (Color32) color;
             return String.Format("#{0:X2}{1:X2}{2:X2}", color256.r, color256.g, color256.b);
         }
+
         public static string BoolToString(bool b)
         {
             return b ? "true" : "false";
         }
+
         public static string ParcelToString(ParcelCoordinates parcel)
         {
             return string.Format("\"{0},{1}\"", parcel.x, parcel.y);
@@ -827,6 +865,6 @@ var {1} = () => {{
             return name;
         }*/
 
-                #endregion
-            }
-        }
+        #endregion
+    }
+}
