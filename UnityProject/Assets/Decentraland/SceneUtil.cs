@@ -12,8 +12,8 @@ namespace Dcl
             var sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
 			worldPosition -= sceneMeta.parcelPosOffset;
             if (sceneMeta && sceneMeta.parcels.Count > 0) baseParcel = sceneMeta.parcels[0];
-			coordinates.x = Mathf.RoundToInt(worldPosition.x / 10) + baseParcel.x;
-			coordinates.y = Mathf.RoundToInt(worldPosition.z / 10) + baseParcel.y;
+			coordinates.x = Mathf.RoundToInt(worldPosition.x / 16) + baseParcel.x;
+			coordinates.y = Mathf.RoundToInt(worldPosition.z / 16) + baseParcel.y;
             return coordinates;
         }
     }

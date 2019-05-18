@@ -22,7 +22,7 @@ namespace Dcl
         public SceneWarningRecorder sceneWarningRecorder = new SceneWarningRecorder();
 		public Material m_GroundMaterial;
 
-		public Vector3 parcelPosOffset = new Vector3(5f, 0f, 5f);
+		public readonly Vector3 parcelPosOffset = new Vector3(8f, 0f, 8f);
 
         private void Awake()
         {
@@ -37,15 +37,13 @@ namespace Dcl
             if (parcels.Count > 0)
             {
                 var baseParcel = parcels[0];
-                //            Gizmos.color = new Color(0.7, 0);
+                var mtr = new Matrix4x4();
                 foreach (var parcel in parcels)
                 {
-                    var pos = new Vector3((parcel.x - baseParcel.x) * 10, 0, (parcel.y - baseParcel.y) * 10);
+                    var pos = new Vector3((parcel.x - baseParcel.x) * 16, 0, (parcel.y - baseParcel.y) * 16);
 					pos += parcelPosOffset;
-                    //Gizmos.DrawWireCube(pos, new Vector3(10, 0f, 10));
-                    //Gizmos.DrawCube(pos, new Vector3(10, 0f, 10));
-                    //Gizmos.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos);
-					Graphics.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), pos, Quaternion.identity, m_GroundMaterial, 0);
+                    mtr.SetTRS(pos, Quaternion.identity, new Vector3(1.6f, 1f, 1.6f));
+					Graphics.DrawMesh(PrimitiveHelper.GetPrimitiveMesh(PrimitiveType.Plane), mtr, m_GroundMaterial, 0);
                 }
             }
         }
