@@ -228,8 +228,8 @@ namespace Dcl
                 var n = sceneMeta.parcels.Count;
                 var sceneStatistics = sceneMeta.sceneStatistics;
 				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Triangles), sceneStatistics.triangleCount, LimitationConfigs.GetMaxTriangles(n));
-				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Entities), sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n));
-				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Bodies), sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n));
+                StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Bodies), sceneStatistics.bodyCount, LimitationConfigs.GetMaxBodies(n));
+                StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Entities), sceneStatistics.entityCount, LimitationConfigs.GetMaxTriangles(n));
 				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Materials), sceneStatistics.materialCount, LimitationConfigs.GetMaxMaterials(n));
 				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Textures), sceneStatistics.textureCount, LimitationConfigs.GetMaxTextures(n));
 				StatisticsLineGUI(LabelLocalization.getString(LanguageStringValue.Height), sceneStatistics.maxHeight, LimitationConfigs.GetMaxHeight(n));

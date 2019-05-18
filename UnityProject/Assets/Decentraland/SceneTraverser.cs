@@ -3,7 +3,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using Object = UnityEngine.Object;
 
@@ -31,6 +31,7 @@ namespace Dcl
 
         public static List<Material> primitiveMaterialsToExport;
         public static List<Texture> primitiveTexturesToExport;
+        public static List<Texture> gltfTextures;
 
         private static DclSceneMeta _sceneMeta;
 
@@ -49,125 +50,189 @@ namespace Dcl
             _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
             primitiveMaterialsToExport = new List<Material>();
             primitiveTexturesToExport = new List<Texture>();
+            gltfTextures = new List<Texture>();
             //GameObjectToNodeTypeDict.Clear();
-            
+
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, false, exportStr, meshesToExport, 4, statistics, warningRecorder);
+                RecursivelyTraverseTransform(rootGO.transform, exportStr, meshesToExport, 4, statistics, warningRecorder);
             }
 
             if (statistics != null)
             {
-                statistics.textureCount = primitiveTexturesToExport.Count;
+                statistics.textureCount = primitiveTexturesToExport.Count + gltfTextures.Count;
             }
         }
 
-        public static void RecursivelyTraverseTransform(Transform tra, bool isUnderGLTF,
-            StringBuilder exportStr,
-            List<GameObject> meshesToExport,
-            int indentLevel,
-            SceneStatistics statistics,
-            SceneWarningRecorder warningRecorder)
+        public static void RecursivelyTraverseTransform(Transform tra, StringBuilder exportStr,
+            List<GameObject> meshesToExport, int indentLevel, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
         {
             if (!tra.gameObject.activeInHierarchy) return;
             if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
 
             var dclObject = tra.GetComponent<DclObject>() ?? tra.gameObject.AddComponent<DclObject>();
-            
-            if (isUnderGLTF)
-            {
-                dclObject.dclNodeType = EDclNodeType.ChildOfGLTF;
-            }
-            else
-            {
-                dclObject.dclNodeType = EDclNodeType.entity;
-            }
+
+            dclObject.dclNodeType = EDclNodeType.entity;
 
             var entityName = GetIdentityName(tra.gameObject);
 
-            if (!isUnderGLTF)
+            if (statistics != null)
             {
-                if (statistics != null)
+                statistics.entityCount += 1;
+            }
+
+            var position = tra.localPosition;
+            var scale = tra.localScale;
+            var rotation = tra.localRotation;
+
+
+            if (exportStr != null)
+            {
+                exportStr.AppendFormat(NewEntityWithName, entityName, tra.name);
+
+                if (tra.parent)
                 {
-                    statistics.entityCount += 1;
+                    //Set Parent
+                    exportStr.AppendFormat(SetParent, entityName, GetIdentityName(tra.parent.gameObject));
+                }
+                else
+                {
+                    //Entity
+                    exportStr.AppendFormat(AddEntity, entityName);
                 }
 
-                var position = tra.localPosition;
-                var scale = tra.localScale;
-                var rotation = tra.localRotation;
+                //Transform
+                exportStr.AppendFormat(SetTransform, entityName, position.x, position.y, position.z);
+                exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
+                exportStr.AppendFormat(SetScale, entityName, scale.x, scale.y, scale.z);
 
+            }
 
-                if (exportStr != null)
-                {
-                    exportStr.AppendFormat(NewEntityWithName, entityName, tra.name);
-                    
-                    if (tra.parent)
-                    {
-                        //Set Parent
-                        exportStr.AppendFormat(SetParent, entityName, GetIdentityName(tra.parent.gameObject));
-                    }
-                    else
-                    {
-                        //Entity
-                        exportStr.AppendFormat(AddEntity, entityName);
-                    }
+            TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
 
-                    //Transform
-                    exportStr.AppendFormat(SetTransform, entityName, position.x, position.y, position.z);
-                    exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
-                    exportStr.AppendFormat(SetScale, entityName, scale.x, scale.y, scale.z);
+            if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf) //reverse 180° along local y-axis because of DCL's special purpose.
+            {
+                rotation = Quaternion.AngleAxis(180, tra.up) * rotation;
+                exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
+            }
 
-                }
-
-                TraverseShape(tra, entityName, exportStr, meshesToExport, statistics);
-
-                if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf) //reverse 180° along local y-axis because of DCL's special purpose.
-                {
-                    rotation = Quaternion.AngleAxis(180, tra.up) * rotation;
-                    exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
-                }
-
+            if (dclObject.dclNodeType != EDclNodeType.gltf)
+            {
                 TraverseText(tra, entityName, exportStr, statistics);
+            }
+            
+            if (dclObject.dclNodeType != EDclNodeType.gltf)
+            {
+                TraverseMaterial(tra, false, entityName, primitiveMaterialsToExport, exportStr, statistics);
+
+                if (tra.GetComponent<MeshRenderer>())
+                {
+                    var meshFilter = tra.GetComponent<MeshFilter>();
+                    var meshRenderer = tra.GetComponent<MeshRenderer>();
+
+                    //Statistics
+                    if (statistics != null)
+                    {
+                        if (meshFilter && meshFilter.sharedMesh)
+                        {
+                            statistics.triangleCount += meshFilter.sharedMesh.triangles.LongLength / 3;
+                            statistics.bodyCount += 1;
+                        }
+
+                        var curHeight = meshRenderer.bounds.max.y;
+                        if (curHeight > statistics.maxHeight) statistics.maxHeight = curHeight;
+                    }
+
+                    //Warnings
+                    if (warningRecorder != null)
+                    {
+                        //OutOfLand
+                        if (_sceneMeta)
+                        {
+                            var isOutOfLand = false;
+                            var startParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.min);
+                            var endParcel = SceneUtil.GetParcelCoordinates(meshRenderer.bounds.max);
+                            for (int x = startParcel.x; x <= endParcel.x; x++)
+                            {
+                                for (int y = startParcel.y; y <= endParcel.y; y++)
+                                {
+                                    if (!_sceneMeta.parcels.Exists(parcel => parcel == new ParcelCoordinates(x, y)))
+                                    {
+                                        warningRecorder.OutOfLandWarnings.Add(new SceneWarningRecorder.OutOfLand(meshRenderer));
+                                        isOutOfLand = true;
+                                        break;
+                                    }
+                                }
+
+                                if (isOutOfLand) break;
+                            }
+                        }
+                    }
+                }
 
                 if (exportStr != null)
                 {
                     exportStr.Append('\n');
                 }
 
-            }
+                //        if (tra.GetComponent<DclCustomNode>())
+                //        {
+                //            var customNode = tra.GetComponent<DclCustomNode>();
+                //            nodeName = customNode.nodeName;
+                //            nodeType = EDclNodeType.CustomNode;
 
-            if (isUnderGLTF || dclObject.dclNodeType == EDclNodeType.gltf)
-            {
-                TraverseMaterial(tra, true, null, null, statistics);
+                //if(customNode.propertyPairs!=null){
+                //	foreach (var propertyPair in customNode.propertyPairs)
+                //	{
+                //		extraProperties.AppendFormat(" {0}={1}", propertyPair.name, propertyPair.value);
+                //	}
+                //}
+                //        }
+                //        else
+                //        {
+
+                if (dclObject)
+                {
+                    //TODO： if (dclObject.visible != true) extraProperties.Append(" visible={false}");
+                }
+
+                //GameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
+
+                foreach (Transform child in tra)
+                {
+                    RecursivelyTraverseTransform(child, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
+                }
             }
             else
             {
-                TraverseMaterial(tra, false, entityName, exportStr, statistics);
+                if (statistics != null) statistics.gltfMaterials.Clear();
+                RecursivelyTraverseIntoGLTF(tra, 0, statistics, warningRecorder);
+                if (statistics != null)
+                {
+                    statistics.materialCount += statistics.gltfMaterials.Count;
+                }
             }
+        }
 
-            //        if (tra.GetComponent<DclCustomNode>())
-            //        {
-            //            var customNode = tra.GetComponent<DclCustomNode>();
-            //            nodeName = customNode.nodeName;
-            //            nodeType = EDclNodeType.CustomNode;
+        public static void RecursivelyTraverseIntoGLTF(Transform tra, int layerUnderGLTFRoot, SceneStatistics statistics, SceneWarningRecorder warningRecorder)
+        {
+            if (!tra.gameObject.activeInHierarchy) return;
+            if (tra.gameObject.GetComponent<DclSceneMeta>()) return;//skip .dcl
 
-            //if(customNode.propertyPairs!=null){
-            //	foreach (var propertyPair in customNode.propertyPairs)
-            //	{
-            //		extraProperties.AppendFormat(" {0}={1}", propertyPair.name, propertyPair.value);
-            //	}
-            //}
-            //        }
-            //        else
-            //        {
+            var dclObject = tra.GetComponent<DclObject>() ?? tra.gameObject.AddComponent<DclObject>();
 
+            if (layerUnderGLTFRoot > 0) dclObject.dclNodeType = EDclNodeType.ChildOfGLTF;
+
+            var position = tra.localPosition;
+            var scale = tra.localScale;
+            var rotation = tra.localRotation;
 
             if (tra.GetComponent<MeshRenderer>())
             {
                 var meshFilter = tra.GetComponent<MeshFilter>();
                 var meshRenderer = tra.GetComponent<MeshRenderer>();
-                
+
                 //Statistics
                 if (statistics != null)
                 {
@@ -208,30 +273,13 @@ namespace Dcl
                 }
             }
 
-            if (dclObject)
-            {
-                //TODO： if (dclObject.visible != true) extraProperties.Append(" visible={false}");
-            }
+            TraverseMaterial(tra, true, null, statistics.gltfMaterials, null, statistics);
 
-            //GameObjectToNodeTypeDict.Add(tra.gameObject, nodeType);
-
-            if (dclObject.dclNodeType != EDclNodeType.gltf) //gltf node will force to pack all its children, so should not traverse into it again.
+            foreach (Transform child in tra)
             {
-                foreach (Transform child in tra)
-                {
-                    RecursivelyTraverseTransform(child, false, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
-                }
-            }
-            else
-            {
-                if (statistics != null) statistics.gltfMaterials.Clear();
-                foreach (Transform child in tra)
-                {
-                    RecursivelyTraverseTransform(child, true, exportStr, meshesToExport, indentLevel + 1, statistics, warningRecorder);
-                }
+                RecursivelyTraverseIntoGLTF(child, layerUnderGLTFRoot + 1, statistics, warningRecorder);
             }
         }
-
         #region Utils
 
         public static string ToJsColorCtor(Color color)
@@ -287,111 +335,122 @@ namespace Dcl
         private const string SetMaterialEmissiveIntensity = "{0}.emissiveIntensity = {1}\n";
         private const string SetMaterialEmissiveTexture = "{0}.emissiveTexture = new Texture(\"{1}\")\n";
 
-        public static void TraverseMaterial(Transform tra, bool isOnOrUnderGLTF, string entityName, StringBuilder exportStr, SceneStatistics statistics)
+        public static void TraverseMaterial(Transform tra, bool isOnOrUnderGLTF, string entityName, List<Material> materialsToExport, StringBuilder exportStr, SceneStatistics statistics)
         {
-
             var rdrr = tra.GetComponent<MeshRenderer>();
-            if (rdrr && tra.GetComponent<MeshFilter>() && rdrr.sharedMaterial)
+            if (rdrr && tra.GetComponent<MeshFilter>())
             {
-                var material = rdrr.sharedMaterial;
-
-                if (material != PrimitiveHelper.GetDefaultMaterial())
+                List<Material> materialList;
+                if (isOnOrUnderGLTF)
                 {
-                    string materialName = "material" + Mathf.Abs(material.GetInstanceID());
-                    if (!primitiveMaterialsToExport.Contains(material))
+                    materialList = rdrr.sharedMaterials.ToList();
+                }
+                else
+                {
+                    materialList = new List<Material>();
+                    if (rdrr.sharedMaterial) materialList.Add(rdrr.sharedMaterial);
+                }
+                foreach (var material in materialList)
+                {
+                    if (material && material != PrimitiveHelper.GetDefaultMaterial())
                     {
-                        primitiveMaterialsToExport.Add(material);
-
-                        if (exportStr != null)
+                        string materialName = "material" + Mathf.Abs(material.GetInstanceID());
+                        if (!materialsToExport.Contains(material))
                         {
-                            exportStr.AppendFormat(NewMaterial, materialName);
-                            exportStr.AppendFormat(SetMaterialAlbedoColor, materialName,
-                                ToJsColorCtor(material.color));
-                            exportStr.AppendFormat(SetMaterialMetallic, materialName,
-                                material.GetFloat("_Metallic"));
-                            exportStr.AppendFormat(SetMaterialRoughness, materialName,
-                                1 - material.GetFloat("_Glossiness"));
-                        }
+                            materialsToExport.Add(material);
 
-                        var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
-                        if (exportStr != null && albedoTex)
-                        {
-                            exportStr.AppendFormat(SetMaterialAlbedoTexture, materialName,
-                                GetTextureRelativePath(albedoTex));
-                        }
-
-                        bool b = material.IsKeywordEnabled("_ALPHATEST_ON") ||
-                                 material.IsKeywordEnabled("_ALPHABLEND_ON") ||
-                                 material.IsKeywordEnabled("_ALPHAPREMULTIPLY_ON");
-                        if (exportStr != null && b)
-                        {
-                            exportStr.AppendFormat(SetMaterialAlbedoTextureHasAlpha, materialName);
-                            exportStr.AppendFormat(SetMaterialAlpha, materialName, material.color.a);
-                        }
-
-                        var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
-                        if (exportStr != null && bumpTexture)
-                        {
-                            exportStr.AppendFormat(SetMaterialBumptexture, materialName,
-                                GetTextureRelativePath(bumpTexture));
-                        }
-
-                        var refractionTexture = material.HasProperty("_MetallicGlossMap")
-                            ? material.GetTexture("_MetallicGlossMap")
-                            : null;
-                        if (exportStr != null && refractionTexture)
-                        {
-                            exportStr.AppendFormat(SetMaterialRefractionTexture, materialName,
-                                GetTextureRelativePath(refractionTexture));
-                        }
-
-                        Texture emissiveTexture = null;
-                        if (material.IsKeywordEnabled("_EMISSION"))
-                        {
                             if (exportStr != null)
                             {
-                                exportStr.AppendFormat(SetMaterialEmissiveColor, materialName,
-                                    ToJsColorCtor(material.GetColor("_EmissionColor")));
-                                //					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
+                                exportStr.AppendFormat(NewMaterial, materialName);
+                                exportStr.AppendFormat(SetMaterialAlbedoColor, materialName,
+                                    ToJsColorCtor(material.color));
+                                exportStr.AppendFormat(SetMaterialMetallic, materialName,
+                                    material.GetFloat("_Metallic"));
+                                exportStr.AppendFormat(SetMaterialRoughness, materialName,
+                                    1 - material.GetFloat("_Glossiness"));
                             }
 
-                            emissiveTexture = material.HasProperty("_EmissionMap")
-                                ? material.GetTexture("_EmissionMap")
-                                : null;
-                            if (exportStr != null && emissiveTexture)
+                            var albedoTex = material.HasProperty("_MainTex") ? material.GetTexture("_MainTex") : null;
+                            if (exportStr != null && albedoTex)
                             {
-                                exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName,
-                                    GetTextureRelativePath(emissiveTexture));
+                                exportStr.AppendFormat(SetMaterialAlbedoTexture, materialName,
+                                    GetTextureRelativePath(albedoTex));
+                            }
+
+                            bool b = material.IsKeywordEnabled("_ALPHATEST_ON") ||
+                                     material.IsKeywordEnabled("_ALPHABLEND_ON") ||
+                                     material.IsKeywordEnabled("_ALPHAPREMULTIPLY_ON");
+                            if (exportStr != null && b)
+                            {
+                                exportStr.AppendFormat(SetMaterialAlbedoTextureHasAlpha, materialName);
+                                exportStr.AppendFormat(SetMaterialAlpha, materialName, material.color.a);
+                            }
+
+                            var bumpTexture = material.HasProperty("_BumpMap") ? material.GetTexture("_BumpMap") : null;
+                            if (exportStr != null && bumpTexture)
+                            {
+                                exportStr.AppendFormat(SetMaterialBumptexture, materialName,
+                                    GetTextureRelativePath(bumpTexture));
+                            }
+
+                            var refractionTexture = material.HasProperty("_MetallicGlossMap")
+                                ? material.GetTexture("_MetallicGlossMap")
+                                : null;
+                            if (exportStr != null && refractionTexture)
+                            {
+                                exportStr.AppendFormat(SetMaterialRefractionTexture, materialName,
+                                    GetTextureRelativePath(refractionTexture));
+                            }
+
+                            Texture emissiveTexture = null;
+                            if (material.IsKeywordEnabled("_EMISSION"))
+                            {
+                                if (exportStr != null)
+                                {
+                                    exportStr.AppendFormat(SetMaterialEmissiveColor, materialName, ToJsColorCtor(material.GetColor("_EmissionColor")));
+                                    //					        exportStr.AppendFormat(SetMaterialEmissiveIntensity, materialName, material.GetColor("_EmissionColor")); TODO:
+                                }
+
+                                emissiveTexture = material.HasProperty("_EmissionMap") ? material.GetTexture("_EmissionMap") : null;
+                                if (exportStr != null && emissiveTexture)
+                                {
+                                    exportStr.AppendFormat(SetMaterialEmissiveTexture, materialName,
+                                        GetTextureRelativePath(emissiveTexture));
+                                }
+                            }
+
+                            var textureList = isOnOrUnderGLTF ? gltfTextures : primitiveTexturesToExport;
+                            if (albedoTex)
+                            {
+                                if (!textureList.Contains(albedoTex)) textureList.Add(albedoTex);
+                            }
+
+                            if (refractionTexture)
+                            {
+                                if (!textureList.Contains(refractionTexture)) textureList.Add(refractionTexture);
+                            }
+
+                            if (bumpTexture)
+                            {
+                                if (!textureList.Contains(bumpTexture)) textureList.Add(bumpTexture);
+                            }
+
+                            if (emissiveTexture)
+                            {
+                                if (!textureList.Contains(emissiveTexture)) textureList.Add(emissiveTexture);
+                            }
+
+                            if (exportStr != null)
+                            {
+                                exportStr.AppendFormat(SetMaterial, entityName, materialName);
+                            }
+
+                            if (!isOnOrUnderGLTF)
+                            {
+                                if (statistics != null) statistics.materialCount += 1;
                             }
                         }
-
-                        if (albedoTex)
-                        {
-                            primitiveTexturesToExport.Add(albedoTex);
-                        }
-
-                        if (refractionTexture)
-                        {
-                            primitiveTexturesToExport.Add(refractionTexture);
-                        }
-
-                        if (bumpTexture)
-                        {
-                            primitiveTexturesToExport.Add(bumpTexture);
-                        }
-
-                        if (emissiveTexture)
-                        {
-                            primitiveTexturesToExport.Add(emissiveTexture);
-                        }
                     }
-
-                    if (exportStr != null)
-                    {
-                        exportStr.AppendFormat(SetMaterial, entityName, materialName);
-                    }
-
-                    if (statistics != null) statistics.materialCount += 1;
                 }
             }
             //const myMaterial = new Material()
