@@ -86,13 +86,18 @@ namespace Dcl
                 if (resourceRecorder.audioSourceAddFunctions.Count > 0)
                 {
                     exportStr.AppendLine();
-                    exportStr.AppendLine("Input.instance.subscribe(\"BUTTON_UP\", e => {");
+                    exportStr.AppendLine(
+@"export class AutoPlayUnityAudio implements ISystem {
+  activate() {");
                     foreach (var functionName in resourceRecorder.audioSourceAddFunctions)
                     {
-                        exportStr.AppendIndent(indentUnit, 1).AppendFormat("{0}()\n", functionName);
+                        exportStr.AppendIndent(indentUnit, 2).AppendFormat("{0}()\n", functionName);
                     }
-
-                    exportStr.AppendLine("})\n");
+                    exportStr.AppendLine(
+@"  }
+}
+engine.addSystem(new AutoPlayUnityAudio())
+");
                 }
             }
 
@@ -152,8 +157,7 @@ namespace Dcl
 
             ProcessShape(tra, entityName, exportStr, resourceRecorder, statistics);
 
-            if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf
-            ) //reverse 180° along local y-axis because of DCL's special purpose.
+            if (exportStr != null && dclObject.dclNodeType == EDclNodeType.gltf) //reverse 180° along local y-axis because of DCL's special purpose.
             {
                 rotation = Quaternion.AngleAxis(180, tra.up) * rotation;
                 exportStr.AppendFormat(SetRotation, entityName, rotation.x, rotation.y, rotation.z, rotation.w);
