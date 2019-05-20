@@ -49,7 +49,7 @@ namespace Dcl
 
         const string indentUnit = "  ";
 
-        public static ResourceRecorder resourceRecorder;
+        static ResourceRecorder _resourceRecorder;
 
 
         private static DclSceneMeta _sceneMeta;
@@ -69,27 +69,27 @@ namespace Dcl
 
             _sceneMeta = Object.FindObjectOfType<DclSceneMeta>();
 
-            resourceRecorder = new ResourceRecorder();
+            _resourceRecorder = new ResourceRecorder();
 
             //GameObjectToNodeTypeDict.Clear();
 
             //====== Start Traversing ======
             foreach (var rootGO in rootGameObjects)
             {
-                RecursivelyTraverseTransform(rootGO.transform, exportStr, resourceRecorder, 4, statistics,
+                RecursivelyTraverseTransform(rootGO.transform, exportStr, _resourceRecorder, 4, statistics,
                     warningRecorder);
             }
 
             //Append PlayAudio functions
             if (exportStr != null)
             {
-                if (resourceRecorder.audioSourceAddFunctions.Count > 0)
+                if (_resourceRecorder.audioSourceAddFunctions.Count > 0)
                 {
                     exportStr.AppendLine();
                     exportStr.AppendLine(
 @"export class AutoPlayUnityAudio implements ISystem {
   activate() {");
-                    foreach (var functionName in resourceRecorder.audioSourceAddFunctions)
+                    foreach (var functionName in _resourceRecorder.audioSourceAddFunctions)
                     {
                         exportStr.AppendIndent(indentUnit, 2).AppendFormat("{0}()\n", functionName);
                     }
@@ -103,11 +103,11 @@ engine.addSystem(new AutoPlayUnityAudio())
 
             if (statistics != null)
             {
-                statistics.textureCount = resourceRecorder.primitiveTexturesToExport.Count +
-                                          resourceRecorder.gltfTextures.Count;
+                statistics.textureCount = _resourceRecorder.primitiveTexturesToExport.Count +
+                                          _resourceRecorder.gltfTextures.Count;
             }
 
-            return resourceRecorder;
+            return _resourceRecorder;
         }
 
         public static void RecursivelyTraverseTransform(Transform tra, StringBuilder exportStr,
@@ -449,8 +449,8 @@ engine.addSystem(new AutoPlayUnityAudio())
                             }
 
                             var textureList = isOnOrUnderGLTF
-                                ? resourceRecorder.gltfTextures
-                                : resourceRecorder.primitiveTexturesToExport;
+                                ? _resourceRecorder.gltfTextures
+                                : _resourceRecorder.primitiveTexturesToExport;
                             if (albedoTex)
                             {
                                 if (!textureList.Contains(albedoTex)) textureList.Add(albedoTex);
@@ -670,7 +670,7 @@ engine.addSystem(new AutoPlayUnityAudio())
                 if (audioClip)
                 {
                     audioClipRelPath = string.Format("'{0}'", GetAudioClipRelativePath(audioClip));
-                    resourceRecorder.audioClipsToExport.Add(audioClip);
+                    _resourceRecorder.audioClipsToExport.Add(audioClip);
                 }
 
                 var playFunctionName = "playAudioSource" + Mathf.Abs(audioSource.GetInstanceID());
@@ -688,7 +688,7 @@ var {1} = () => {{
                 exportStr.AppendIndent(indentUnit, 1).AppendFormat("audioSource.pitch = {0}\n", audioSource.pitch);
                 exportStr.Append("}\n");
 
-                resourceRecorder.audioSourceAddFunctions.Add(playFunctionName);
+                _resourceRecorder.audioSourceAddFunctions.Add(playFunctionName);
             }
         }
 

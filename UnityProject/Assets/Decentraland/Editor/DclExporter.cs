@@ -669,7 +669,7 @@ namespace Dcl
                 UnityEditor.FileUtil.DeleteFileOrDirectory(unityAssetsFolderPath);
             }
 
-            Directory.CreateDirectory(unityAssetsFolderPath);//TODO:用异步等待删除完毕
+            Directory.CreateDirectory(unityAssetsFolderPath);//TODO:当DCLSDK运行时，文件操作会冲突。可能可以用异步等待删除完毕。
 
 
             if (!Directory.Exists(Path.Combine(exportPath, "src"))){
